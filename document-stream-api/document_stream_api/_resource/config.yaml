@@ -1,0 +1,4 @@
+server:
+    static_dirs: [
+        '/home/alexander/projects/document-stream/document-stream-web/static'
+    ]

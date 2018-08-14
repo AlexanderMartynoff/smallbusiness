@@ -1,0 +1,12 @@
+*.egg-info
+*.sublime-project
+*.sublime-workspace
+*.idea
+**/dist
+**/build
+**/_build
+**/__pycache__
+**/.cache
+**/.eggs
+**/node_modules
+**/bundle
