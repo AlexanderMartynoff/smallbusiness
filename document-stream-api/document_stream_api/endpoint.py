@@ -17,3 +17,14 @@ class Account:
                 .fields(T.account.id, T.account.name)
                 .crud()
                 .selectall())
+
+    def on_post(request, response):
+        response.body = json.dumps(Q()
+            .tables(T.account)
+            .fields(T.account.id, T.account.name)
+            .crud()
+            .selectall())
+
+    def on_put(request, response):
+        print('PUT')
+        print(request)
