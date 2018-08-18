@@ -13,7 +13,7 @@ export default new VueRouter({
         {path: "/documents", component: DocumentMaster},
         {path: "/document/:id", component: DocumentDetail},
 
-        {path: "/account/:id", component: AccountDetail, rops: true},
+        {path: "/account/:id", component: AccountDetail, props: true},
         {path: "/account", component: AccountDetail},
         {path: "/accounts", component: AccountMaster},
 

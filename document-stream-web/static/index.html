@@ -19,7 +19,7 @@
                 <router-link to="/documents" class="button">Documents</router-link>
             </header>
         </div>
-        <router-view></router-view>
+        <router-view :key="$route.path"></router-view>
     </div>
 </body>
 

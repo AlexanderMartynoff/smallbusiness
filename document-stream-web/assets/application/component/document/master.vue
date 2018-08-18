@@ -12,7 +12,6 @@
                 <router-link to="/account" class="sublink-1 doc">New Account</router-link>
                 <a href="#" class="sublink-1 doc">New Invoice</a>
                 <a href="#" class="sublink-1 doc">New Packet</a>
-                <a href="#" class="doc">Module help</a>
             </nav>
         </div>
         <div class="application-content">
