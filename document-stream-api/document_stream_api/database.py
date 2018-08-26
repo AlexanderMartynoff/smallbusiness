@@ -23,6 +23,31 @@ class Database:
     def query(self):
         raise NotImplementedError
 
+    @property
+    def service(self):
+
+        class _Service:
+            def __init__(_self, queryclass=None, connection=None, cursor=None):
+                self._database = self
+                self._queryclass = queryclass
+                self._connection = connection
+                self._cursor = cursor
+
+            def database(self):
+
+                if self.queryclass is not None:
+
+                    @contextmanager
+                    def querycache(self):
+                        return self._queryclass
+                    
+                    self._database.query = querycache
+          
+                return self._database
+
+        return _Service
+
+
 
 class SqliteDatabase(Database):
     def __init__(self, database, timeout=None):
@@ -47,8 +72,6 @@ class SqliteDatabase(Database):
                 crudclass=SqliteCrud
             )
             cursor.close()
-
-
 
 
 class MysqlDatabase(Database):

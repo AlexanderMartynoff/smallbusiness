@@ -1,10 +1,26 @@
-from sqlbuilder.smartsql import T, Q
+from sqlbuilder.smartsql import T
 
 from .environment import SQLITE3_DB
 from .database import MysqlDatabase, SqliteDatabase
 
 
 database = SqliteDatabase(SQLITE3_DB)  # IoC
+
+
+class CurrencyUnit(database.service):
+
+    @classmethod
+    def selectall(cls):
+        with self.database.query() as Q:
+            return (Q()
+                .tables(T.currency_unit)
+                .fields(
+                    T.currency_unit.id,
+                    T.currency_unit.name,
+                    T.currency_unit.code,
+                )
+                .crud()
+                .selectall())
 
 
 class TimeUnit:
@@ -61,6 +77,28 @@ class AccountProduct:
                 .crud()
                 .selectall())
 
+    @classmethod
+    def insertmany(cls, products):
+        with database.query() as Q:
+            return (Q().tables(T.account_product)
+                .fields(
+                    T.account_product.account_id,
+                    T.account_product.name,
+                    T.account_product.time_unit_id,
+                    T.account_product.value,
+                    T.account_product.price,
+                )
+                .crud()
+                .insert(
+                    values=[(
+                        product['account_id'],
+                        product['name'],
+                        product['time_unit_id'],
+                        product['value'],
+                        product['price'],
+                    ) for product in products]
+                ))
+
 
 class Account:
 
@@ -109,7 +147,6 @@ class Account:
 
     @classmethod
     def insertone(cls, account):
-        print(account)
         with database.query() as Q:
             account_id = (Q()
                 .tables(T.account)
@@ -136,36 +173,31 @@ class Account:
                     T.account.purchaser_id: account['purchaser_id'],
                 }))
 
-            update_products = []
             insert_products = []
+            update_products = []
+            delete_products = []
 
             for product in account['products']:
 
-                if product.get('__phantom__', False):
+                product.update(account_id=account_id)
+
+                if product.get('_insert', False):
                     insert_products.append(product)
-                else:
+                elif product.get('_update', False):
                     update_products.append(product)
+                elif product.get('_delete', False):
+                    delete_products.append(product)
+
+            account_product_api = AccountProduct(queryclass=Q)
+            
+            if len(insert_products):
+                account_product_api.insertmany(insert_products)
+            
+            if len(insert_products):
+                account_product_api.updatemany(update_products)
 
             if len(insert_products):
-
-                (Q().tables(T.account_product)
-                    .fields(
-                        T.account_product.account_id,
-                        T.account_product.name,
-                        T.account_product.time_unit_id,
-                        T.account_product.value,
-                        T.account_product.price,
-                    )
-                    .crud()
-                    .insert(
-                        values=[(
-                            account_id,
-                            product['name'],
-                            product['time_unit_id'],
-                            product['value'],
-                            product['price'],
-                        ) for product in insert_products]
-                    ))
+                account_product_api.deletemany(update_products)
     
     @classmethod
     def deleteone(cls, account_id):

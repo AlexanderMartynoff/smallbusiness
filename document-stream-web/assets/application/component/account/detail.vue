@@ -81,7 +81,7 @@
                         </div>
                     </fieldset>
 
-                    <table class="doc form-table" v-if="account.products.length">
+                    <table class="doc form-table" v-if="visibleProducts.length">
                         <thead class="doc">
                             <tr class="doc">
                                 <th class="doc">Name</th>
@@ -93,7 +93,7 @@
                             </tr>
                         </thead>
                         <tbody class="doc">
-                            <tr class="doc form-table-action-col" v-for="product in account.products">
+                            <tr class="doc form-table-action-col" v-for="product in visibleProducts" @change="onProductChange(product)">
                                 <td class="doc">
                                     <input :readonly="readonly" v-model="product.name" type="text" class="doc"/>
                                 </td>
@@ -129,6 +129,7 @@
 
 <script type="text/javascript">
     import _ from 'lodash'
+    import Vue from 'vue'
 
 
     export default {
@@ -138,7 +139,7 @@
             return {
                 deleting: false,
                 deletingAccountProduct: false,
-                readonly: true,
+                readonly: false,
                 providers: [],
                 purchasers: [],
                 currencyUnits: [],
@@ -147,7 +148,7 @@
                     name: null,
                     providerId: null,
                     currencyUnitId: null,
-                    reason: null,
+                    reason: Date.now(),
                     partnerId: null,
                     products: []
                 }
@@ -184,8 +185,14 @@
                 })
             },
 
+            loadCurrencyUnit() {
+                return this.$axios.get(`/api/currency_unit`).then(currencyUnits => {
+                    this.currencyUnits = currencyUnits
+                })
+            },
+
             deleteAccount(id) {
-                this.$axios.delete(`/api/account/${this.id}`).then(() => this.$router.push(`/accounts`))
+                // this.$axios.delete(`/api/account/${this.id}`).then(() => this.$router.push(`/accounts`))
             },
 
             closeDeleteAccountProductAlert() {
@@ -199,7 +206,7 @@
                     timeUnitId: null,
                     value: null,
                     price: null,
-                    __phantom__: true
+                    _insert: true
                 })
             },
 
@@ -209,10 +216,9 @@
             },
 
             deleteAccountProduct(product) {
-                this.account.products = _.filter(this.account.products, _product => {
-                    return !_.isEqual(_product.id, product.id)
-                })
-                
+                this.$delete(product, '_insert')
+                this.$delete(product, '_update')
+                this.$set(product, '_delete', true)
             },
 
             openDeleteAlert() {
@@ -229,18 +235,30 @@
 
             toggleReadonly() {
                 this.readonly = !this.readonly
+            },
+
+            onProductChange(product) {
+                if (!product._insert && !product._delete) {
+                    console.log('onProductChange')
+                    this.$set(product, '_update', true)
+                }
             }
         },
 
         computed: {
             deletingAccountProductMarker() {
                 return !_.isEmpty(this.deletingAccountProduct)
+            },
+
+            visibleProducts() {
+                return _.filter(this.account.products, product => !product._delete)
             }
         },
 
         mounted() {
             this.loadPartners()
             this.loadTimeUnit()
+            this.loadCurrencyUnit()
             
             if (!_.isEmpty(this.id)) {
                 this.loadAccount(this.id)
