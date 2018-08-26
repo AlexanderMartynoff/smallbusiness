@@ -5,12 +5,13 @@
     "watch": "./node_modules/.bin/webpack --watch"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free-webfonts": "^1.0.3",
+    "@fortawesome/fontawesome-free": "^5.2.0",
     "axios": "^0.15.3",
     "lodash": "^4.17.10",
     "mini.css": "^3.0.0",
     "purecss": "^1.0.0",
     "tether": "^1.4.0",
+    "url-join": "^4.0.0",
     "vue": "^2.4.2",
     "vue-router": "^2.3.0"
   },

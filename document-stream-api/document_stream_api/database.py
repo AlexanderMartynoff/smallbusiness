@@ -4,7 +4,7 @@ import sqlite3
 from sqlbuilder.smartsql import Q, T, Result
 from sqlbuilder.smartsql.dialects import mysql
 from sqlbuilder.smartsql.dialects import sqlite
-from contextlib import asynccontextmanager, contextmanager
+from contextlib import contextmanager
 
 
 class Database:
@@ -33,8 +33,12 @@ class SqliteDatabase(Database):
 
     @contextmanager
     def query(self):
+
+        def row_factory(cursor, row):
+            return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}
+
         with sqlite3.connect(self._database) as connection:
-            connection.row_factory = sqlite3.Row
+            connection.row_factory = row_factory
             cursor = connection.cursor()
 
             yield _Query.with_context(
@@ -43,6 +47,8 @@ class SqliteDatabase(Database):
                 crudclass=SqliteCrud
             )
             cursor.close()
+
+
 
 
 class MysqlDatabase(Database):
@@ -115,20 +121,17 @@ class Crud:
         self._cursor.execute(*self._query.delete())
         return self._cursor.fetchone()
 
-    def execute(self, code):
-        self._cursor.execute(code)
-        return self._cursor.fetchone()
-
     def last_insert_id(self):
-        # DOIT: replace with: (Q().call('LAST_INSERT_ROWID').crud().selectone())
         raise NotImplementedError
 
 
 class SqliteCrud(Crud):
     def last_insert_id(self):
-        return self.execute('SELECT LAST_INSERT_ROWID()')
+        self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ROWID()').select())
+        return self._cursor.fetchone()
 
 
 class MysqlCrud(Crud):
     def last_insert_id(self, name):
-        return self.execute('SELECT LAST_INSERT_ID()')
+        self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ID()').select())
+        return self._cursor.fetchone()

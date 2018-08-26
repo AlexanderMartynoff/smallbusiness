@@ -1,5 +1,13 @@
 $secondary-color: #ffca28;
 
+.text-right {
+    text-align: right;
+}
+
+nav .fas, nav .nav-span {
+    padding: 0;
+}
+
 .application-container {
     align-self: stretch;
     justify-self: stretch;
@@ -43,7 +51,7 @@ $secondary-color: #ffca28;
 
     .application-body-with-sidebar {
         display: grid;
-        grid-template-columns: 20% 80%;
+        grid-template-columns: 15% 85%;
         grid-template-rows: auto;
 
         .application-sidebar {
@@ -72,6 +80,7 @@ $secondary-color: #ffca28;
         width: 100%;
         padding: 0;
 
+
         &.hoverable tr {
             cursor: pointer;
             &:hover {
@@ -85,9 +94,42 @@ $secondary-color: #ffca28;
         &:not(.horizontal) thead {
             top: 5px;
         }
+
         td, th {
             padding: 10px;
+            font-weight: normal;
         }
+
+        &.form-table {
+            border-spacing: 15px;
+            border-collapse: separate;
+            border: 1px solid var(--form-border-color);
+            background: var(--form-back-color);
+
+            .form-table-action-icon {
+                cursor: pointer;
+            }
+
+            th, td {
+                padding: 0;
+                border: 0;
+                background: none;
+
+                input, select {
+                    margin: 0;
+                    width: 100%;
+                }
+            }
+
+            tr {
+                display: table-row;
+            }
+
+            tbody, thead {
+                display: table-row-group;
+            }
+
+        } 
 
     }
 
@@ -103,7 +145,7 @@ $secondary-color: #ffca28;
         margin: calc(var(--universal-margin) / 2)
     }
 
-    .frame {
+    .panel {
         align-self: stretch;
         justify-self: stretch;
         margin: var(--universal-margin);
@@ -126,6 +168,7 @@ $secondary-color: #ffca28;
     form {
         padding: var(--universal-padding);
         background: none;
+
         
         fieldset {
             background: var(--form-back-color);
@@ -162,6 +205,7 @@ $secondary-color: #ffca28;
         .td-input {
             width: 100%;
         }
+
     }
 
     .application-document-action-frame {

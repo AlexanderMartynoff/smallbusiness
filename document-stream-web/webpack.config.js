@@ -22,7 +22,8 @@ module.exports = {
         alias: {
             'vue$': 'vue/dist/vue.js',
             '@style': resolve('assets/scss'),
-            '@application': resolve('assets/application')
+            '@application': resolve('assets/application'),
+            '@': resolve('assets')
         }
     },
 
@@ -56,6 +57,7 @@ module.exports = {
         new CopyWebpackPlugin([
             { from: resolve('node_modules/mini.css/dist/mini-default.css'), to: './static/_build/css' },
             { from: resolve('node_modules/mini.css/dist/mini-dark.css'), to: './static/_build/css' },
+            { from: resolve('node_modules/@fortawesome/fontawesome-free'), to: "./static/_build/css/font-awesome", ignore: ["*.map"] }
         ])
     ]
 }

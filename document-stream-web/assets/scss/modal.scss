@@ -1,0 +1,22 @@
+.modal-frame, .modal-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.modal-frame {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+
+.modal-overlay {
+    background: black;
+    opacity: .3;
+    z-index: 1000;
+}
+
+.modal-card {
+    z-index: 1001;
+    border: none;
+}

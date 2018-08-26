@@ -3,19 +3,20 @@
         <div class="application-sidebar">
             <nav>
                 <span class="doc block">Operations</span>
-                <router-link to="/account" class="sublink-1 doc">New Account</router-link>
-                <a href="#" class="doc">Module help</a>
+                <router-link to="/account" class="sublink-1 doc">
+                    <i class="fas fa-plus-circle"></i> Add
+                </router-link>
             </nav>
         </div>
         
         <div class="application-content">
 
-            <div class="frame">
-                <div class="frame-topbar">
+            <div class="panel">
+                <div class="panel-topbar">
                     <h1>Account</h1>
                 </div>
 
-                <div class="frame-content">
+                <div class="panel-content">
                     <table class="doc striped hoverable">
                         <thead class="doc">
                             <tr class="doc">
@@ -52,8 +53,8 @@
 
         methods: {
             loadAccounts: function() {
-                axios.get('/api/account').then(response => {
-                    this.accounts = response.data
+                this.$axios.get('/api/account').then(accounts => {
+                    this.accounts = accounts
                 })
             },
 
