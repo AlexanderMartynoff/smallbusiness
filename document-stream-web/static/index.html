@@ -1,29 +1,18 @@
 <!doctype html>
 <html>
+    <head>
+        <title>Document stream</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/static/_build/css/bootstrap.css" />
+        <link rel="stylesheet" href="/static/_build/css/bootstrap-vue.css" />
+        <link rel="stylesheet" type="text/css" href="/static/_build/css/font-awesome/css/all.css" />
+        <script type="text/javascript" src="/static/_build/application.js" defer></script>
+    </head>
 
-<head>
-    <title>Document stream</title>
-    <link rel="stylesheet" href="/static/_build/css/mini-default.css"/>
-    <link rel="stylesheet" type="text/css" href="/static/_build/css/font-awesome/css/all.css"/>
-    <script type="text/javascript" src="/static/_build/application.js" defer></script>
-</head>
-
-<body>
-    <div class="application-container vueapp">
-        <div class="application-header">
-            <header>
-                <router-link to="/" class="logo">
-                    <code> [DOCUMENT&MANAGER]</code>
-                </router-link>
-                <router-link to="/packets" class="button">Packets</router-link>
-                <router-link to="/accounts" class="button">Accounts</router-link>
-                <router-link to="/invoice" class="button">Invoices</router-link>
-                <router-link to="/act" class="button">Acts</router-link>
-                <router-link to="/partner" class="button">Partners</router-link>
-            </header>
+    <body>
+        <div class="application-container vueapp">
+            <main-menu></main-menu>
+            <router-view :key="$route.path"></router-view>
         </div>
-        <router-view :key="$route.path"></router-view>
-    </div>
-</body>
-
+    </body>
 </html>

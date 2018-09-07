@@ -1,0 +1,18 @@
+.table-bordered thead th, .table-bordered thead td {
+    border-bottom-width: 1px;
+}
+
+
+table.table-light {
+    border: solid 1px #dee2e6;
+
+    thead th {
+        border-bottom: none;
+        background: #e9edef;
+        font-weight: normal;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+}

@@ -1,17 +1,31 @@
 from sqlbuilder.smartsql import T
 
 from .environment import SQLITE3_DB
-from .database import MysqlDatabase, SqliteDatabase
+from .database import MysqlDatabase, SqliteDatabase, Service
 
 
-database = SqliteDatabase(SQLITE3_DB)  # IoC
+class Bank(Service):
+    
+    def selectall(self):
+        with self.query() as Q:
+            return (Q()
+                .tables(T.bank)
+                .fields(
+                    T.bank.id,
+                    T.bank.name,
+                    T.bank.taxpayer_number,
+                    T.bank.reason_code,
+                    T.bank.identity_code,
+                    T.bank.correspondent_account,
+                )
+                .crud()
+                .selectall())
 
 
-class CurrencyUnit(database.service):
+class CurrencyUnit(Service):
 
-    @classmethod
-    def selectall(cls):
-        with self.database.query() as Q:
+    def selectall(self):
+        with self.query() as Q:
             return (Q()
                 .tables(T.currency_unit)
                 .fields(
@@ -23,11 +37,10 @@ class CurrencyUnit(database.service):
                 .selectall())
 
 
-class TimeUnit:
+class TimeUnit(Service):
 
-    @classmethod
-    def selectall(cls):
-        with database.query() as Q:
+    def selectall(self):
+        with self.query() as Q:
             return (Q()
                 .tables(T.time_unit)
                 .fields(
@@ -38,11 +51,11 @@ class TimeUnit:
                 .selectall())
 
 
-class Partner:
-    @classmethod
-    def selectall(cls):
-        
-        with database.query() as Q:
+class Partner(Service):
+
+    def selectall(self):
+
+        with self.query() as Q:
             return (Q()
                 .tables(T.partner)
                 .fields(
@@ -57,13 +70,68 @@ class Partner:
                 .crud()
                 .selectall())
 
+    def selectone(self, partner_id):
 
-class AccountProduct:
+        with self.query() as Q:
+            return (Q()
+                .tables(T.partner)
+                .fields(
+                    T.partner.id,
+                    T.partner.name,
+                    T.partner.address,
+                    T.partner.taxpayer_number,
+                    T.partner.reason_code,
+                    T.partner.bank_id,
+                    T.partner.bank_checking_account,
+                )
+                .where(T.partner.id == partner_id)
+                .crud()
+                .selectone())
 
-    @classmethod
-    def selectall(cls, account_id):
+    def updateone(self, partner_id, partner):
+
+        with self.query() as Q:
+            (Q().tables(T.partner)
+                .where(T.partner.id == partner_id)
+                .crud()
+                .update({
+                    T.partner.name: partner['name'],
+                    T.partner.address: partner['address'],
+                    T.partner.taxpayer_number: partner['taxpayer_number'],
+                    T.partner.reason_code: partner['reason_code'],
+                    T.partner.bank_id: partner['bank_id'],
+                    T.partner.bank_checking_account: partner['bank_checking_account'],
+                }))
+
+    def deleteone(self, partner_id):
+
+        with self.query() as Q:
+            (Q().tables(T.partner)
+                .where(T.partner.id == partner_id)
+                .crud()
+                .delete())
+
+    def insertone(self, partner):
+        with self.query() as Q:
+            partner_id = (Q()
+                .tables(T.partner)
+                .crud()
+                .insert({
+                    T.partner.name: partner['name'],
+                    T.partner.address: partner['address'],
+                    T.partner.taxpayer_number: partner['taxpayer_number'],
+                    T.partner.reason_code: partner['reason_code'],
+                    T.partner.bank_id: partner['bank_id'],
+                    T.partner.bank_checking_account: partner['bank_checking_account'],
+                }))
+            return partner_id
+
+
+class AccountProduct(Service):
+
+    def selectall(self, account_id):
         
-        with database.query() as Q:
+        with self.query() as Q:
             return (Q()
                 .tables(T.account_product)
                 .fields(
@@ -77,9 +145,30 @@ class AccountProduct:
                 .crud()
                 .selectall())
 
-    @classmethod
-    def insertmany(cls, products):
-        with database.query() as Q:
+    def updatemany(self, products):
+        with self.query() as Q:
+            for product in products:
+                (Q().tables(T.account_product)
+                    .where(T.account_product.id == product['id'])
+                    .crud()
+                    .update({
+                        T.account_product.name: product['name'],
+                        T.account_product.time_unit_id: product['time_unit_id'],
+                        T.account_product.value: product['value'],
+                        T.account_product.price: product['price'],
+                    }))
+
+    def deletemany(self, products):
+        with self.query() as Q:
+            for product in products:
+                (Q().tables(T.account_product)
+                    .where(T.account_product.id == product['id'])
+                    .crud()
+                    .delete())
+
+
+    def insertmany(self, products):
+        with self.query() as Q:
             return (Q().tables(T.account_product)
                 .fields(
                     T.account_product.account_id,
@@ -100,11 +189,10 @@ class AccountProduct:
                 ))
 
 
-class Account:
+class Account(Service):
 
-    @classmethod
-    def selectone(cls, account_id, include_products=False):
-        with database.query() as Q:
+    def selectone(self, account_id, include_products=False):
+        with self.query() as Q:
             account = (Q()
                 .tables(T.account)
                 .fields(
@@ -122,11 +210,10 @@ class Account:
             if not include_products:
                 return account
 
-            return {**account, 'products': AccountProduct.selectall(account_id=account_id)}
+            return {**account, 'products': AccountProduct(queryclass=Q).selectall(account_id=account_id)}
 
-    @classmethod
-    def selectall(cls, include_products=False):
-        with database.query() as Q:
+    def selectall(self, include_products=False):
+        with self.query() as Q:
             accounts = (Q()
                 .tables(T.account)
                 .fields(
@@ -145,9 +232,8 @@ class Account:
                 'products': AccountProduct.selectall(account_id=account['id'])
             } for account in accounts]
 
-    @classmethod
-    def insertone(cls, account):
-        with database.query() as Q:
+    def insertone(self, account):
+        with self.query() as Q:
             account_id = (Q()
                 .tables(T.account)
                 .crud()
@@ -159,10 +245,9 @@ class Account:
                 }))
             return account_id
 
-    @classmethod
-    def updateone(cls, account_id, account):
+    def updateone(self, account_id, account):
 
-        with database.query() as Q:
+        with self.query() as Q:
             (Q().tables(T.account)
                 .where(T.account.id == account_id)
                 .crud()
@@ -181,11 +266,11 @@ class Account:
 
                 product.update(account_id=account_id)
 
-                if product.get('_insert', False):
+                if product.get('_crud', None) == 'insert':
                     insert_products.append(product)
-                elif product.get('_update', False):
+                elif product.get('_crud', None) == 'update':
                     update_products.append(product)
-                elif product.get('_delete', False):
+                elif product.get('_crud', None) == 'delete':
                     delete_products.append(product)
 
             account_product_api = AccountProduct(queryclass=Q)
@@ -193,15 +278,14 @@ class Account:
             if len(insert_products):
                 account_product_api.insertmany(insert_products)
             
-            if len(insert_products):
+            if len(update_products):
                 account_product_api.updatemany(update_products)
 
-            if len(insert_products):
-                account_product_api.deletemany(update_products)
+            if len(delete_products):
+                account_product_api.deletemany(delete_products)
     
-    @classmethod
-    def deleteone(cls, account_id):
-        with database.query() as Q:
+    def deleteone(self, account_id):
+        with self.query() as Q:
             return (Q().tables(T.account)
                 .where(T.account.id == account_id)
                 .crud()

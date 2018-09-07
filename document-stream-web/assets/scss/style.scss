@@ -1,0 +1,27 @@
+.application-menu-item button, .application-menu-item button:hover {
+    color: white;
+}
+
+
+table td .custom-checkbox {
+    margin: 0;
+}
+
+.center-center-cell {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.checkbox {
+    font-size: 20px;
+    line-height: unset;
+}
+
+
+table.table-hover tr {
+    cursor: pointer;
+}

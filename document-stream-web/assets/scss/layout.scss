@@ -1,243 +1,44 @@
-$secondary-color: #ffca28;
-
-.text-right {
-    text-align: right;
-}
-
-nav .fas, nav .nav-span {
-    padding: 0;
-}
-
 .application-container {
-    align-self: stretch;
-    justify-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
 
-    overflow: hidden;
+    height: 100%;
+    width: 100%;
 
-    display: grid;
+    .application-menu {
+        width: 70px;
 
-    grid-template-columns: auto;
-    grid-template-rows: minmax(min-content, max-content) auto;
-    grid-template-areas:
-        "header"
-        "body";
-
-    .application-header {
-        grid-area: header;
-    }
-
-    .application-body {
-        grid-area: body;
-        overflow: auto;
-
-        h1 {
-            margin: 0;
-            padding: 0;
-            font-size: 20px;
-            text-transform: uppercase;;
-
-            small {
-                font-size: 0.55em !important;
-                font-weight: bold;
-            }
-        }
-    }
-    .underline {
-        border-bottom: solid 1px #000000;
-    }
-    .application-footer {
-        grid-area: footer;
-    }
-
-    .application-body-with-sidebar {
-        display: grid;
-        grid-template-columns: 15% 85%;
-        grid-template-rows: auto;
-
-        .application-sidebar {
-            display: grid;
-            grid-template-columns: auto;
-            grid-template-rows: auto;
-        }
-
-        .application-content {
-            display: grid;
-            grid-template-columns: auto;
-            grid-template-rows: auto;
-        }
-
-        .spinner {
-            height: 100px;
-            width: 100px;
-            border-width: 2px;
-            border-left-width: 2px;
-        }
-    }
-
-    table {
-        max-height: max-content;
-        display: table;
-        width: 100%;
-        padding: 0;
-
-
-        &.hoverable tr {
-            cursor: pointer;
-            &:hover {
-                background: $secondary-color;
-                td {
-                    background: $secondary-color; 
-                }
-            }
-        }
-
-        &:not(.horizontal) thead {
-            top: 5px;
-        }
-
-        td, th {
+        &-item {
+            color: white;
             padding: 10px;
-            font-weight: normal;
-        }
-
-        &.form-table {
-            border-spacing: 15px;
-            border-collapse: separate;
-            border: 1px solid var(--form-border-color);
-            background: var(--form-back-color);
-
-            .form-table-action-icon {
-                cursor: pointer;
-            }
-
-            th, td {
-                padding: 0;
-                border: 0;
-                background: none;
-
-                input, select {
-                    margin: 0;
-                    width: 100%;
-                }
-            }
-
-            tr {
-                display: table-row;
-            }
-
-            tbody, thead {
-                display: table-row-group;
-            }
-
-        } 
-
-    }
-
-    .grid {
-        display: grid;
-    }
-
-    button.huge {
-        padding: 50px;
-    }
-
-    .button-group.button-input {
-        margin: calc(var(--universal-margin) / 2)
-    }
-
-    .panel {
-        align-self: stretch;
-        justify-self: stretch;
-        margin: var(--universal-margin);
-        border: 1px solid var(--card-border-color);
-
-        position: relative;
-        z-index: 1;
-
-        &-content {
-            padding: var(--universal-padding);
-        }
-
-        &-topbar {
-            padding: 15px var(--universal-padding);
-            background: #eee;
-            border-bottom: 1px solid var(--card-border-color);
+            text-align: center;
+            display: block;
         }
     }
+    
+    .application-body {
+        flex: 1 1 auto;
+        display: flex;
+    }
 
-    form {
-        padding: var(--universal-padding);
-        background: none;
+    .application-sidebar {
+        width: 250px;
 
-        
-        fieldset {
-            background: var(--form-back-color);
-            margin: 0 0 10px 0;
-        }
-
-        input[type="date"] {
-            background: var(--input-back-color);
-            color: var(--input-fore-color);
-            border: 0.0625rem solid var(--input-border-color);
-            border-radius: var(--universal-border-radius);
-            margin: calc(var(--universal-margin) / 2);
-            padding: var(--universal-padding) calc(1.5 * var(--universal-padding));
-            flex: auto;
-        }
-
-        input:not([type="button"]):not([type="submit"]):not([type="reset"])[readonly],
-        textarea[readonly],
-        select[readonly],
-        select[disabled] {
-            background: #f5f5f5;
-        }
-
-        select {
-            opacity: 1;
-        }
-
-        &.form-plain {
-            padding: 0;
+        &-header {
+            padding: 0.5rem 1rem;
             margin: 0;
-            border: 0;
         }
-
-        .td-input {
-            width: 100%;
-        }
-
     }
 
-    .application-document-action-frame {
-        align-self: center;
-        justify-self: center;
+    .application-content {
+        flex: 1 1 auto;
+        overflow: auto;
     }
-
-    .spinner-overlay {
-        display: grid;
-        align-items: center;
-        justify-items: center;
-        z-index: 1000;
-        background: #f8f8f8;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-    }
-
 }
 
 html, body {
-    position: absolute;
     width: 100%;
     height: 100%;
 }
 
-body {
-    display: grid;
-    grid-template-columns: auto;
-    grid-template-rows: auto;
-}
-
-.block {
-    display: block;
-}

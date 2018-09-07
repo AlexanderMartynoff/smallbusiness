@@ -1,129 +1,152 @@
 <template>
-<div class="application-body application-body-with-sidebar">
-    <div class="application-sidebar">
-        <nav>
-            <span class="doc block">Operations</span>
-            <a href="#" class="sublink-1 doc" @click.prevent.stop="saveAccount(id)">
-                <i class="fas fa-file"></i> Save
-            </a>
-            <a href="#" class="sublink-1 doc" @click.prevent.stop="toggleReadonly()">
-                <span class="nav-span" v-if="readonly">
-                    <i class="fas fa-lock-open"></i> Unlock
-                </span>
-                <span class="nav-span" v-else>
-                    <i class="fas fa-lock"></i> Lock
-                </span>
-            </a>
-            <a href="#" class="sublink-1 doc" @click.prevent.stop="openDeleteAlert()" v-if="id">
-                <i class="fas fa-trash"></i> Delete
-            </a>
-            <span class="doc block">Position</span>
-            <a href="#" class="sublink-1 doc" @click.prevent.stop="addAccountProduct()">
-                <i class="fas fa-plus-circle"></i> Add
-            </a>
-        </nav>
+    <div class="application-body">
+        <div class="application-sidebar bg-light border-right">
+            <h4 class="application-sidebar-header">OPERATIONS</h4>
+
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="#" class="nav-link" @click.prevent.stop="saveAccount(id)">
+                        <i class="fas fa-file"></i> Save
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" @click.prevent.stop="toggleReadonly()">
+                        <span v-if="readonly">
+                            <i class="fas fa-lock-open"></i> Unlock
+                        </span>
+                        <span v-else>
+                            <i class="fas fa-lock"></i> Lock
+                        </span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" @click.prevent.stop="openDeleteAlert()" v-if="id">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </li>
+
+                <h4 class="application-sidebar-header">PRODUCTS</h4>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" @click.prevent.stop="addAccountProduct()" v-if="id">
+                        <i class="fas fa-plus-circle"></i> Add
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" @click.prevent.stop="openDeleteAccountProductAlert()" v-if="id">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="application-content pl-3 pt-3 pr-3">
+
+            <nav aria-label="breadcrumb" class="sticky-top">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Library</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Data</li>
+                </ol>
+            </nav>
+
+            <b-modal v-model="deleting"
+                :hide-header="true"
+                :no-fade="true"
+                @ok="deleteAccount(id)"
+                @cancel="closeDeleteAlert()">
+                <h4>Delete account?</h4>
+            </b-modal>
+
+            <b-modal v-model="deletingAccountProduct"
+                :hide-header="true"
+                :no-fade="true"
+                @ok="deleteAccountProductFromAlert(id)"
+                @cancel="closeDeleteAccountProductAlert()">
+                <h4>Delete account product?</h4>
+            </b-modal>
+
+            <h1>#{{account.id || 'NEW'}}</h1>
+
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>Purchaser</label>
+                        <select class="form-control" v-model="account.purchaserId" :disabled="readonly">
+                            <option :value="purchaser.id" v-for="purchaser in purchasers">{{purchaser.name}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Provider</label>
+                        <select class="form-control" v-model="account.providerId" :disabled="readonly">
+                            <option :value="provider.id" v-for="provider in providers">{{provider.name}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+
+                        <label>Currency</label>
+                        <select class="form-control" v-model="account.currencyUnitId" :disabled="readonly">
+                            <option :value="currencyUnit.id" v-for="currencyUnit in currencyUnits">{{currencyUnit.name}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Reason</label>
+                        <input class="form-control" v-model="account.reason" :readonly="readonly" type="text"/>
+                    </div>
+                </div>
+
+
+                <table class="table table-light">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Value</th>
+                            <th>Unit</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="product in visibleProducts" @change="onProductChange(product)">
+                            <td class="center-center-cell">
+                                <checkbox v-model="product._selected"/>
+                            </td>
+                            <td>
+                                <input class="form-control" :readonly="readonly" v-model="product.name" type="text"/>
+                            </td>
+                            <td>
+                                <input class="form-control" :readonly="readonly" v-model="product.price" type="text"/>
+                            </td>
+                            <td>
+                                <input class="form-control" :readonly="readonly" v-model="product.value" type="text"/>
+                            </td>
+                            <td>
+                                <select class="form-control" v-model="product.timeUnitId" :disabled="readonly">
+                                    <option :value="timeUnit.id" v-for="timeUnit in timeUnits">{{timeUnit.name}}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input class="form-control" :readonly="readonly" v-model="product.amount" type="text"/>
+                            </td>
+                        </tr>
+                        <tr v-if="visibleProducts.length === 0">
+                            <td colspan="6">Records not found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
     </div>
-
-    <div class="application-content">
-        <alert :trigger="deleting"
-               content="Delete account?"
-               @confirm="deleteAccount(id)"
-               @discard="closeDeleteAlert()"></alert>
-
-        <alert :trigger="deletingAccountProductMarker"
-                content="Delete account product?"
-                @confirm="deleteAccountProductFromAlert()"
-                @discard="closeDeleteAccountProductAlert()"></alert>
-
-        <panel>
-            <template slot="topbar">
-                <h1>#{{account.id || 'new'}}, 12.12.2018</h1>
-            </template>
-
-            <template slot="content">
-                <form class="form-plain">
-                    <fieldset>
-                        <div class="row">
-                            <div class="col-sm">
-                                <div class="input-group vertical">
-                                    <label class="doc">Purchaser</label>
-                                    <select class="doc" name="provider_id" v-model="account.purchaserId" :disabled="readonly">
-                                        <option class="doc" :value="purchaser.id" v-for="purchaser in purchasers">{{purchaser.name}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="input-group vertical">
-                                    <label class="doc">Provider</label>
-                                    <select class="doc" name="provider_id" v-model="account.providerId" :disabled="readonly">
-                                        <option class="doc" :value="provider.id" v-for="provider in providers">{{provider.name}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm">
-                                <div class="input-group vertical">
-
-                                    <label class="doc">Currency</label>
-
-                                    <select class="doc" name="currency_unit_id" v-model="account.currencyUnitId" :disabled="readonly">
-                                        <option class="doc" :value="currencyUnit.id" v-for="currencyUnit in currencyUnits">{{currencyUnit.name}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm">
-                                <div class="input-group vertical">
-                                    <label class="doc">Reason</label>
-                                    <input v-model="account.reason" :readonly="readonly" type="text" class="doc">
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <table class="doc form-table" v-if="visibleProducts.length">
-                        <thead class="doc">
-                            <tr class="doc">
-                                <th class="doc">Name</th>
-                                <th class="doc">Price</th>
-                                <th class="doc">Value</th>
-                                <th class="doc">Unit</th>
-                                <th class="doc">Amount</th>
-                                <th class="doc form-table-action-col"></th>
-                            </tr>
-                        </thead>
-                        <tbody class="doc">
-                            <tr class="doc form-table-action-col" v-for="product in visibleProducts" @change="onProductChange(product)">
-                                <td class="doc">
-                                    <input :readonly="readonly" v-model="product.name" type="text" class="doc"/>
-                                </td>
-                                <td class="doc">
-                                    <input :readonly="readonly" v-model="product.price" type="text" class="doc"/>
-                                </td>
-                                <td class="doc">
-                                    <input :readonly="readonly" v-model="product.value" type="text" class="doc"/>
-                                </td>
-                                <td class="doc">
-                                    <select class="doc" name="productTimeUnit" v-model="product.timeUnitId" :disabled="readonly">
-                                        <option class="doc" :value="timeUnit.id" v-for="timeUnit in timeUnits">{{timeUnit.name}}</option>
-                                    </select>
-                                </td>
-                                <td class="doc">
-                                    <input :readonly="readonly" v-model="product.amount" type="text" class="doc"/>
-                                </td>
-                                <td class="doc form-table-action-col">
-                                    <i class="fas fa-trash form-table-action-icon" @click="openDeleteAccountProductAlert(product)"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </form>
-            </template>            
-            
-        </panel>
-
-    </div>
-</div>
 </template>
 
 
@@ -145,12 +168,14 @@
                 currencyUnits: [],
                 timeUnits: [],
                 account: {
+                    id: null,
                     name: null,
                     providerId: null,
+                    purchaserId: null,
                     currencyUnitId: null,
+                    products: [],
                     reason: Date.now(),
-                    partnerId: null,
-                    products: []
+                    _selected: false
                 }
             }
         },
@@ -158,7 +183,9 @@
         methods: {
             saveAccount(id) {
                 if (id) {
-                    this.$axios.put(`/api/account/${id}`, this.account)
+                    this.$axios.put(`/api/account/${id}`, this.account).then(() => {
+                        this.loadAccount(this.id)
+                    })
                 } else {
                     this.$axios.post(`/api/account`, this.account)
                         .then(account => {
@@ -192,11 +219,7 @@
             },
 
             deleteAccount(id) {
-                // this.$axios.delete(`/api/account/${this.id}`).then(() => this.$router.push(`/accounts`))
-            },
-
-            closeDeleteAccountProductAlert() {
-                this.deletingAccountProduct = null
+                this.$axios.delete(`/api/account/${this.id}`).then(() => this.$router.push(`/accounts`))
             },
 
             addAccountProduct() {
@@ -206,19 +229,32 @@
                     timeUnitId: null,
                     value: null,
                     price: null,
-                    _insert: true
+                    _crud: 'insert'
                 })
             },
 
             deleteAccountProductFromAlert() {
-                this.deleteAccountProduct(this.deletingAccountProduct)
+                this.deleteAccountProduct(this.accountProductSelection)
                 this.closeDeleteAccountProductAlert()
             },
 
-            deleteAccountProduct(product) {
-                this.$delete(product, '_insert')
-                this.$delete(product, '_update')
-                this.$set(product, '_delete', true)
+            deleteAccountProduct(products) {
+                _.each(products, product => {
+                    this.$set(product, '_crud', 'delete')
+                    this.$delete(product, '_selected')
+                })
+            },
+
+            openDeleteAccountProductAlert() {
+                this.deletingAccountProduct = !_.isEmpty(this.accountProductSelection)
+            },
+
+            closeDeleteAccountProductAlert() {
+                this.deletingAccountProduct = false
+            },
+
+            toggleReadonly() {
+                this.readonly = !this.readonly
             },
 
             openDeleteAlert() {
@@ -229,29 +265,20 @@
                 this.deleting = false
             },
 
-            openDeleteAccountProductAlert(product) {
-                this.deletingAccountProduct = product
-            },
-
-            toggleReadonly() {
-                this.readonly = !this.readonly
-            },
-
             onProductChange(product) {
-                if (!product._insert && !product._delete) {
-                    console.log('onProductChange')
-                    this.$set(product, '_update', true)
+                if (!_.includes(['delete', 'insert'], product._crud)) {
+                    this.$set(product, '_crud', 'update')
                 }
             }
         },
 
         computed: {
-            deletingAccountProductMarker() {
-                return !_.isEmpty(this.deletingAccountProduct)
+            visibleProducts() {
+                return _.filter(this.account.products, product => !_.isEqual(product._crud, 'delete'))
             },
 
-            visibleProducts() {
-                return _.filter(this.account.products, product => !product._delete)
+            accountProductSelection() {
+                return _.filter(this.account.products, product => product._selected === true)
             }
         },
 
@@ -260,7 +287,9 @@
             this.loadTimeUnit()
             this.loadCurrencyUnit()
             
-            if (!_.isEmpty(this.id)) {
+            if (_.isEmpty(this.id)) {
+                this.addAccountProduct()
+            } else {
                 this.loadAccount(this.id)
             }
         }

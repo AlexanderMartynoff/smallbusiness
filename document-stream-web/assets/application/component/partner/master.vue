@@ -1,10 +1,10 @@
 <template>
-    <div class="application-body">
+     <div class="application-body">
         <div class="application-sidebar bg-light border-right">
             <h4 class="application-sidebar-header">OPERATIONS</h4>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <router-link to="/account" class="nav-link">
+                    <router-link to="/partner" class="nav-link">
                         <i class="fas fa-plus-circle"></i> Add
                     </router-link>
                 </li>
@@ -16,12 +16,11 @@
             <nav aria-label="breadcrumb" class="sticky-top">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Library</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Data</li>
+                    <li class="breadcrumb-item"><a href="#">Partners</a></li>
                 </ol>
             </nav>
 
-            <h1>ACCOUNTS</h1>
+            <h1>PARTNERS</h1>
 
             <table class="table table-striped table-hover">
                 <thead>
@@ -31,12 +30,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="account in accounts" @click="openAccount(account)">
-                        <th scope="row">{{account.id}}</th>
-                        <td>Mark</td>
+                    <tr v-for="partner in partners" @click="openPartner(partner)">
+                        <td scope="row">{{partner.id}}</td>
+                        <td>{{partner.name}}</td>
                     </tr>
-                    <tr v-if="accounts.length === 0">
-                        <td colspan="3">Records not found</td>
+                    <tr v-if="partners.length === 0">
+                        <td colspan="2">Records not found</td>
                     </tr>
                 </tbody>
             </table>
@@ -47,29 +46,27 @@
 
 
 <script type="text/javascript">
-    import axios from 'axios'
-
     export default {
         data: () => {
             return {
-               accounts: []
+               partners: []
             }
         },
 
         methods: {
-            loadAccounts: function() {
-                this.$axios.get('/api/account').then(accounts => {
-                    this.accounts = accounts
+            loadPartners: function() {
+                this.$axios.get('/api/partner').then(partners => {
+                    this.partners = partners
                 })
             },
 
-            openAccount: function (account) {
-                this.$router.push(`/account/${account.id}`)
+            openPartner: function (partner) {
+                this.$router.push(`/partner/${partner.id}`)
             }
         },
 
         mounted: function () {
-            this.loadAccounts()
+            this.loadPartners()
         }
     }
 </script>

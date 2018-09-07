@@ -7,6 +7,20 @@ from sqlbuilder.smartsql.dialects import sqlite
 from contextlib import contextmanager
 
 
+class Service:
+    def __init__(self, database=None, queryclass=None):
+        self._database = database
+        self._queryclass = queryclass
+
+    @contextmanager
+    def query(self):
+        if self._queryclass is not None:
+            yield self._queryclass
+        else:
+            with self._database.query() as Q:
+                yield Q
+
+
 class Database:
     def __init__(self, compile):
         self._compile = compile
@@ -22,31 +36,6 @@ class Database:
     @contextmanager
     def query(self):
         raise NotImplementedError
-
-    @property
-    def service(self):
-
-        class _Service:
-            def __init__(_self, queryclass=None, connection=None, cursor=None):
-                self._database = self
-                self._queryclass = queryclass
-                self._connection = connection
-                self._cursor = cursor
-
-            def database(self):
-
-                if self.queryclass is not None:
-
-                    @contextmanager
-                    def querycache(self):
-                        return self._queryclass
-                    
-                    self._database.query = querycache
-          
-                return self._database
-
-        return _Service
-
 
 
 class SqliteDatabase(Database):
@@ -69,7 +58,8 @@ class SqliteDatabase(Database):
             yield _Query.with_context(
                 compile=self._compile,
                 cursor=cursor,
-                crudclass=SqliteCrud
+                crudclass=SqliteCrud,
+                database=self,
             )
             cursor.close()
 
@@ -101,13 +91,17 @@ class _Query(Q):
         raise NotImplementedError('It is necessary to get the class using `with_conext` method')
 
     @staticmethod
-    def with_context(compile, cursor, crudclass):
+    def with_context(compile, cursor, crudclass, database):
         
         class Query(_Query):
-
+            
             @property
             def _compile(self):
                 return compile
+
+            @property
+            def database(self):
+                return database
 
             def crud(self):
                 return crudclass(self, cursor)

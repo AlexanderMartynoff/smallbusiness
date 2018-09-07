@@ -9,8 +9,11 @@ module.exports = {
     mode: 'none',
 
     entry: {
-        'static/_build/application': resolve('assets/application/application.js')
+        'static/_build/application': resolve('assets/application/application.js'),
+        'static/_build/css': resolve('assets/scss/layout.scss')
     },
+
+    devtool: 'source-map',
 
     output: {
         path: resolve("."),
@@ -55,9 +58,9 @@ module.exports = {
 
     plugins: [
         new CopyWebpackPlugin([
-            { from: resolve('node_modules/mini.css/dist/mini-default.css'), to: './static/_build/css' },
-            { from: resolve('node_modules/mini.css/dist/mini-dark.css'), to: './static/_build/css' },
-            { from: resolve('node_modules/@fortawesome/fontawesome-free'), to: "./static/_build/css/font-awesome", ignore: ["*.map"] }
+            { from: resolve('node_modules/bootstrap/dist/css/bootstrap.css'), to: './static/_build/css' },
+            { from: resolve('node_modules/bootstrap-vue/dist/bootstrap-vue.css'), to: './static/_build/css' },
+            { from: resolve('node_modules/@fortawesome/fontawesome-free'), to: "./static/_build/css/font-awesome" }
         ])
     ]
 }
