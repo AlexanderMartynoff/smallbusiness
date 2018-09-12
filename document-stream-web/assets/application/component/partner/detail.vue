@@ -20,10 +20,6 @@
 
         <div class="application-content pl-3 pt-3 pr-3">
 
-            <nav aria-label="breadcrumb" class="sticky-top">
-                <b-breadcrumb :items="breadcrumbs"/>
-            </nav>
-
             <b-modal v-model="deleting"
                 :hide-header="true"
                 :no-fade="true"
@@ -32,7 +28,9 @@
                 <h4>Delete partner?</h4>
             </b-modal>
 
-            <h1>#{{partner.id || 'NEW'}}</h1>
+            <application-toolbar>
+                <h1>#{{partner.id || 'NEW'}}</h1>
+            </application-toolbar>
 
             <form>
                 <div class="form-row">
@@ -140,19 +138,6 @@
 
             closeDeleteAlert() {
                 this.deleting = false
-            }
-        },
-
-        computed: {
-            breadcrumbs() {
-                let v = _.chain(this.$route.path).trim('/').split('/').map(name => ({
-                    text: _.upperFirst(name),
-                    href: `#`
-                })).value()
-
-                console.log(v)
-
-                return v
             }
         },
 

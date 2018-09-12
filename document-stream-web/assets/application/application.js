@@ -3,35 +3,38 @@ import VueRouter from 'vue-router'
 import BootstrapVue from 'bootstrap-vue'
 
 import router from '@/application/router'
-import Spinner from '@/application/component/spinner/index';
-import Modal from '@/application/component/window/modal';
-import Alert from '@/application/component/window/alert';
-import Panel from '@/application/component/panel/index';
-import MainMenu from '@/application/component/main-menu/index';
-import Checkbox from '@/application/component/checkbox/index';
 
-import Axios from '@/application/plugin/axios';
+import MainMenu from '@/application/component/main-menu/index'
+import Checkbox from '@/application/component/checkbox/index'
+
+import ApplicationContainer from '@/application/component/application/application-container'
+import ApplicationContent from '@/application/component/application/application-content'
+import ApplicationSidebar from '@/application/component/application/application-sidebar'
+import ApplicationBody from '@/application/component/application/application-body'
+import ApplicationToolbar from '@/application/component/application/application-toolbar'
+
+import Axios from '@/application/plugin/axios'
 
 import '@style/layout.scss'
 import '@style/style.scss'
 import '@style/override.scss'
 
-
 Vue.use(VueRouter)
 Vue.use(BootstrapVue)
 Vue.use(Axios)
 
-Vue.component('spinner', Spinner)
-Vue.component('modal', Modal)
-Vue.component('alert', Alert)
-Vue.component('panel', Panel)
-Vue.component('panel', Panel)
 Vue.component('main-menu', MainMenu)
 Vue.component('checkbox', Checkbox)
 
+Vue.component('application-container', ApplicationContainer)
+Vue.component('application-content', ApplicationContent)
+Vue.component('application-sidebar', ApplicationSidebar)
+Vue.component('application-body', ApplicationBody)
+Vue.component('application-toolbar', ApplicationToolbar)
+
 
 const vue = new Vue({
-    el: '.vueapp',
+    el: '._root',
     router: router,
     data() {
         return {
@@ -59,6 +62,6 @@ const vue = new Vue({
             response(response) {
                 return response.data
             }
-        }
+        },
     }
 })

@@ -1,10 +1,11 @@
-import VueRouter from 'vue-router';
+import VueRouter from 'vue-router'
 
-import AccountDetail from '@/application/component/account/detail';
-import AccountMaster from '@/application/component/account/master';
-import ActDetail from '@/application/component/act/detail';
-import PartnerMaster from '@/application/component/partner/master';
-import PartnerDetail from '@/application/component/partner/detail';
+import AccountDetail from '@/application/component/account/detail'
+import AccountMaster from '@/application/component/account/master'
+import BankMaster from '@/application/component/bank/master'
+import BankDetail from '@/application/component/bank/detail'
+import PartnerMaster from '@/application/component/partner/master'
+import PartnerDetail from '@/application/component/partner/detail'
 
 
 export default new VueRouter({
@@ -12,10 +13,10 @@ export default new VueRouter({
         {path: "/", component: AccountMaster},
 
         {path: "/account/:id", component: AccountDetail, props: true},
-        {path: "/account", component: AccountDetail},
-        {path: "/accounts", component: AccountMaster},
+        {path: "/account", component: AccountMaster},
 
-        {path: "/act", component: ActDetail},
+        {path: "/bank", component: BankMaster},
+        {path: "/bank/:id", component: BankDetail, props: true},
 
         {path: "/partners", component: PartnerMaster},
         {path: "/partner", component: PartnerDetail},

@@ -21,8 +21,8 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="#" class="nav-link" @click.prevent.stop="openDeleteAlert()" v-if="id">
+                <li class="nav-item" v-if="isExist">
+                    <a href="#" class="nav-link" @click.prevent.stop="openDeleteAlert()">
                         <i class="fas fa-trash"></i> Delete
                     </a>
                 </li>
@@ -30,32 +30,23 @@
                 <h4 class="application-sidebar-header">PRODUCTS</h4>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link" @click.prevent.stop="addAccountProduct()" v-if="id">
+                    <a href="#" class="nav-link" @click.prevent.stop="addAccountProduct()">
                         <i class="fas fa-plus-circle"></i> Add
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a href="#" class="nav-link" @click.prevent.stop="openDeleteAccountProductAlert()" v-if="id">
+                <li class="nav-item" v-if="selectedProducts.length > 0">
+                    <a href="#" class="nav-link" @click.prevent.stop="openDeleteAccountProductAlert()">
                         <i class="fas fa-trash"></i> Delete
                     </a>
                 </li>
             </ul>
         </div>
 
-        <div class="application-content pl-3 pt-3 pr-3">
-
-            <nav aria-label="breadcrumb" class="sticky-top">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Library</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Data</li>
-                </ol>
-            </nav>
+        <div class="application-content pl-3 pt-3 pr-3 blur-container">
 
             <b-modal v-model="deleting"
                 :hide-header="true"
-                :no-fade="true"
                 @ok="deleteAccount(id)"
                 @cancel="closeDeleteAlert()">
                 <h4>Delete account?</h4>
@@ -63,13 +54,14 @@
 
             <b-modal v-model="deletingAccountProduct"
                 :hide-header="true"
-                :no-fade="true"
                 @ok="deleteAccountProductFromAlert(id)"
                 @cancel="closeDeleteAccountProductAlert()">
                 <h4>Delete account product?</h4>
             </b-modal>
 
-            <h1>#{{account.id || 'NEW'}}</h1>
+            <application-toolbar>
+                <h1>#{{id}}</h1>
+            </application-toolbar>
 
             <form>
                 <div class="form-row">
@@ -102,7 +94,6 @@
                         <input class="form-control" v-model="account.reason" :readonly="readonly" type="text"/>
                     </div>
                 </div>
-
 
                 <table class="table table-light">
                     <thead>
@@ -175,7 +166,7 @@
                     currencyUnitId: null,
                     products: [],
                     reason: Date.now(),
-                    _selected: false
+                    _selected: false,
                 }
             }
         },
@@ -189,7 +180,7 @@
                 } else {
                     this.$axios.post(`/api/account`, this.account)
                         .then(account => {
-                            this.$router.push(`/account/` + _.chain(account).values().head().value())
+                            this.$router.push('/account/' + account['id'])
                         })
                 }
             },
@@ -229,12 +220,12 @@
                     timeUnitId: null,
                     value: null,
                     price: null,
-                    _crud: 'insert'
+                    _crud: 'insert',
                 })
             },
 
             deleteAccountProductFromAlert() {
-                this.deleteAccountProduct(this.accountProductSelection)
+                this.deleteAccountProduct(this.selectedProducts)
                 this.closeDeleteAccountProductAlert()
             },
 
@@ -246,7 +237,7 @@
             },
 
             openDeleteAccountProductAlert() {
-                this.deletingAccountProduct = !_.isEmpty(this.accountProductSelection)
+                this.deletingAccountProduct = !_.isEmpty(this.selectedProducts)
             },
 
             closeDeleteAccountProductAlert() {
@@ -273,11 +264,15 @@
         },
 
         computed: {
+            isExist() {
+                return !_.chain(this.id).toNumber().isNaN().value()
+            },
+
             visibleProducts() {
                 return _.filter(this.account.products, product => !_.isEqual(product._crud, 'delete'))
             },
 
-            accountProductSelection() {
+            selectedProducts() {
                 return _.filter(this.account.products, product => product._selected === true)
             }
         },
@@ -286,10 +281,8 @@
             this.loadPartners()
             this.loadTimeUnit()
             this.loadCurrencyUnit()
-            
-            if (_.isEmpty(this.id)) {
-                this.addAccountProduct()
-            } else {
+
+            if (this.isExist) {
                 this.loadAccount(this.id)
             }
         }

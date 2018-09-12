@@ -16,6 +16,19 @@ class Bank:
     def on_get(request, response):
         response.json = api.Bank(database).selectall()
 
+    def on_post(request, response):
+        response.json = api.Bank(database).insertone(request.json)
+    
+    class ID:
+        def on_get(request, response, bank_id):
+            response.json = api.Bank(database).selectone(bank_id)
+    
+        def on_put(request, response, bank_id):
+            response.json = api.Bank(database).updateone(bank_id, request.json)
+    
+        def on_delete(request, response, bank_id):
+            response.json = api.Bank(database).deleteone(bank_id)
+
 
 class CurrencyUnit:
     def on_get(request, response):

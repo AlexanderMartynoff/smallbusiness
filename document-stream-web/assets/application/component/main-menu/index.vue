@@ -4,16 +4,13 @@
             <template slot="button-content">
                 <i class="fas fa-bars"></i>
             </template>
-            <b-dropdown-item @click.prevent="$router.push('/accounts')">Accounts</b-dropdown-item>
-            <b-dropdown-item href="#">Invoices</b-dropdown-item>
-            <b-dropdown-item href="#">Act</b-dropdown-item>
+            <b-dropdown-item @click.prevent="$router.push('/account')">Accounts</b-dropdown-item>
             <b-dropdown-item @click.prevent="$router.push('/partners')">Partners</b-dropdown-item>
-            <b-dropdown-item href="#">Banks</b-dropdown-item>
-            <b-dropdown-item href="#">Packets</b-dropdown-item>
+            <b-dropdown-item @click.prevent="$router.push('/bank')">Banks</b-dropdown-item>
         </b-dropdown>
         <div class="application-menu-item">
             <button type="button" class="btn btn-link">
-                <i class="fas fa-user"></i>
+                <i class="fas fa-meh"></i>
             </button>
         </div>
     </div>

@@ -13,14 +13,9 @@
 
         <div class="application-content pl-3 pt-3 pr-3">
 
-            <nav aria-label="breadcrumb" class="sticky-top">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Partners</a></li>
-                </ol>
-            </nav>
-
-            <h1>PARTNERS</h1>
+            <application-toolbar>
+                <h1>PARTNERS</h1>
+            </application-toolbar>
 
             <table class="table table-striped table-hover">
                 <thead>

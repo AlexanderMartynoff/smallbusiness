@@ -4,7 +4,7 @@
             <h4 class="application-sidebar-header">OPERATIONS</h4>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <router-link to="/account/new" class="nav-link">
+                    <router-link to="/bank/new" class="nav-link">
                         <i class="fas fa-plus-circle"></i> Add
                     </router-link>
                 </li>
@@ -12,9 +12,8 @@
         </div>
 
         <div class="application-content pl-3 pt-3 pr-3">
-
             <application-toolbar>
-                <h1>ACCOUNTS</h1>
+                <h1>BANKS</h1>
             </application-toolbar>
 
             <table class="table table-striped table-hover">
@@ -25,11 +24,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="account in accounts" @click="openAccount(account)">
-                        <th scope="row">{{account.id}}</th>
-                        <td>Mark</td>
+                    <tr v-for="bank in banks" @click="openBank(bank)">
+                        <th scope="row">{{bank.id}}</th>
+                        <td>{{bank.name}}</td>
                     </tr>
-                    <tr v-if="accounts.length === 0">
+                    <tr v-if="banks.length === 0">
                         <td colspan="3">Records not found</td>
                     </tr>
                 </tbody>
@@ -46,24 +45,23 @@
     export default {
         data: () => {
             return {
-               accounts: []
+               banks: []
             }
         },
 
         methods: {
-            loadAccounts: function() {
-                this.$axios.get('/api/account').then(accounts => {
-                    this.accounts = accounts
+            loadBanks: function() {
+                this.$axios.get('/api/bank').then(banks => {
+                    this.banks = banks
                 })
             },
-
-            openAccount: function (account) {
-                this.$router.push(`/account/${account.id}`)
+            openBank(bank) {
+                this.$router.push(`/bank/${bank.id}`)
             }
         },
 
         mounted: function () {
-            this.loadAccounts()
-        }
+            this.loadBanks()
+        },
     }
 </script>

@@ -58,7 +58,7 @@ class SqliteDatabase(Database):
             yield _Query.with_context(
                 compile=self._compile,
                 cursor=cursor,
-                crudclass=SqliteCrud,
+                crudclass=SqliteCRUD,
                 database=self,
             )
             cursor.close()
@@ -75,7 +75,7 @@ class MysqlDatabase(Database):
             yield _Query.with_context(
                 compile=self._compile,
                 cursor=cursor,
-                crudclass=MysqlCrud
+                crudclass=MysqlCRUD
             )
 
 
@@ -109,7 +109,7 @@ class _Query(Q):
         return Query
 
 
-class Crud:
+class CRUD:
     def __init__(self, query, cursor):
         self._query = query
         self._cursor = cursor
@@ -142,13 +142,13 @@ class Crud:
         raise NotImplementedError
 
 
-class SqliteCrud(Crud):
+class SqliteCRUD(CRUD):
     def last_insert_id(self):
-        self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ROWID()').select())
+        self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ROWID() as id').select())
         return self._cursor.fetchone()
 
 
-class MysqlCrud(Crud):
+class MysqlCRUD(CRUD):
     def last_insert_id(self, name):
-        self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ID()').select())
+        self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ID() as id').select())
         return self._cursor.fetchone()

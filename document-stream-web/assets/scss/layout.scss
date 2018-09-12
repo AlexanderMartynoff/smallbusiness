@@ -14,6 +14,10 @@
             padding: 10px;
             text-align: center;
             display: block;
+
+            .fas {
+                font-size: 20px;
+            }
         }
     }
     
@@ -24,6 +28,7 @@
 
     .application-sidebar {
         width: 250px;
+        overflow: auto;
 
         &-header {
             padding: 0.5rem 1rem;

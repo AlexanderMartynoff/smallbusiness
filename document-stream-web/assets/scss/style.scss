@@ -2,7 +2,6 @@
     color: white;
 }
 
-
 table td .custom-checkbox {
     margin: 0;
 }
@@ -21,7 +20,34 @@ table td .custom-checkbox {
     line-height: unset;
 }
 
-
 table.table-hover tr {
     cursor: pointer;
+}
+
+.application-loader {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+
+    .application-loader-overlay {
+        background: white;
+        opacity: .5;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .application-loader-progress {
+        z-index: 1;
+        width: 30%;
+        height: 20px;
+    }
+}
+
+.bg-mild {
+    background-color: #e9ecef;
 }

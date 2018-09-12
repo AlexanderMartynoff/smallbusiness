@@ -32,7 +32,7 @@ export default class AxiosPlugin extends Axios {
             event: {
                 request() {},
                 response() {},
-                error() {}
+                error() {},
             },
 
             interceptor: {
@@ -42,8 +42,8 @@ export default class AxiosPlugin extends Axios {
 
                 response(response) {
                     return response
-                }
-            }
+                },
+            },
         })
     }
 
@@ -53,7 +53,7 @@ export default class AxiosPlugin extends Axios {
                 if (_.isEqual(this, this.$root)) {
                     Vue.prototype.$axios = new AxiosPlugin(AxiosPlugin.defaultsOptions({
                         scope: this,
-                        ...this.$options.axios
+                        ...this.$options.axios,
                     }))
                 }
             }
