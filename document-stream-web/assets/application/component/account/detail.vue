@@ -64,17 +64,45 @@
             </application-toolbar>
 
             <form>
+
+                <div class="form-row mb-2">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Provider bank attributes</h5>
+                                    <dl class="row">
+                                        <dt class="col-sm-3">Name</dt>
+                                        <dd class="col-sm-9 text-monospace">{{providerBank.name || '-'}}</dd>
+
+                                        <dt class="col-sm-3">Taxpayer number</dt>
+                                        <dd class="col-sm-9 text-monospace">{{providerBank.taxpayerNumber || '-'}}</dd>
+
+                                        <dt class="col-sm-3 text-truncate">Reason code</dt>
+                                        <dd class="col-sm-9 text-monospace">{{providerBank.reasonCode || '-'}}</dd>
+                                        
+                                        <dt class="col-sm-3 text-truncate">Identity code</dt>
+                                        <dd class="col-sm-9 text-monospace">{{providerBank.identityCode || '-'}}</dd>
+                                        
+                                        <dt class="col-sm-3 text-truncate">Correspondent account</dt>
+                                        <dd class="col-sm-9 text-monospace">{{providerBank.correspondentAccount || '-'}}</dd>
+                                    </dl>
+                            </div>
+                        </div>    
+                    </div>
+
+                </div>
+
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>Purchaser</label>
-                        <select class="form-control" v-model="account.purchaserId" :disabled="readonly">
+                        <select class="form-control text-monospace" v-model="account.purchaserId" :disabled="readonly">
                             <option :value="purchaser.id" v-for="purchaser in purchasers">{{purchaser.name}}</option>
                         </select>
                     </div>
 
                     <div class="form-group col-md-6">
                         <label>Provider</label>
-                        <select class="form-control" v-model="account.providerId" :disabled="readonly">
+                        <select class="form-control text-monospace" v-model="account.providerId" :disabled="readonly">
                             <option :value="provider.id" v-for="provider in providers">{{provider.name}}</option>
                         </select>
                     </div>
@@ -84,14 +112,14 @@
                     <div class="form-group col-md-6">
 
                         <label>Currency</label>
-                        <select class="form-control" v-model="account.currencyUnitId" :disabled="readonly">
+                        <select class="form-control text-monospace" v-model="account.currencyUnitId" :disabled="readonly">
                             <option :value="currencyUnit.id" v-for="currencyUnit in currencyUnits">{{currencyUnit.name}}</option>
                         </select>
                     </div>
 
                     <div class="form-group col-md-6">
                         <label>Reason</label>
-                        <input class="form-control" v-model="account.reason" :readonly="readonly" type="text"/>
+                        <input class="form-control text-monospace" v-model="account.reason" :readonly="readonly" type="text"/>
                     </div>
                 </div>
 
@@ -112,21 +140,23 @@
                                 <checkbox v-model="product._selected"/>
                             </td>
                             <td>
-                                <input class="form-control" :readonly="readonly" v-model="product.name" type="text"/>
+                                <input class="form-control text-monospace" :readonly="readonly" v-model="product.name" type="text"/>
                             </td>
                             <td>
-                                <input class="form-control" :readonly="readonly" v-model="product.price" type="text"/>
+                                <input class="form-control text-monospace" :readonly="readonly" v-model="product.price" type="text"/>
                             </td>
                             <td>
-                                <input class="form-control" :readonly="readonly" v-model="product.value" type="text"/>
+                                <input class="form-control text-monospace" :readonly="readonly" v-model="product.value" type="text"/>
                             </td>
                             <td>
-                                <select class="form-control" v-model="product.timeUnitId" :disabled="readonly">
+                                <select class="form-control text-monospace" v-model="product.timeUnitId" :disabled="readonly">
                                     <option :value="timeUnit.id" v-for="timeUnit in timeUnits">{{timeUnit.name}}</option>
                                 </select>
                             </td>
                             <td>
-                                <input class="form-control" :readonly="readonly" v-model="product.amount" type="text"/>
+                                <div class="form-control text-monospace">
+                                    <strong>{{product.price * product.value}}</strong>
+                                </div>
                             </td>
                         </tr>
                         <tr v-if="visibleProducts.length === 0">
@@ -134,6 +164,24 @@
                         </tr>
                     </tbody>
                 </table>
+                
+                <div class="form-row">
+                    <div class="form-group col-md-2 offset-md-8">
+
+                        <label>Currency</label>
+                        <select class="form-control text-monospace" v-model="account.currencyUnitId" :disabled="readonly">
+                            <option :value="currencyUnit.id" v-for="currencyUnit in currencyUnits">{{currencyUnit.name}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label>Total amount</label>
+                        <div class="form-control text-monospace">
+                            <strong>{{totalAmount}}</strong>
+                        </div>
+                    </div>
+                </div>
+
             </form>
 
         </div>
@@ -151,6 +199,7 @@
 
         data() {
             return {
+                providerBank: {},
                 deleting: false,
                 deletingAccountProduct: false,
                 readonly: false,
@@ -274,6 +323,28 @@
 
             selectedProducts() {
                 return _.filter(this.account.products, product => product._selected === true)
+            },
+
+            totalAmount() {
+                return _.chain(this.account.products).map(product => product.price * product.value).sum().value()
+            }
+        },
+
+        watch: {
+            'account.providerId' (value) {
+
+                if (_.isNumber(value)) {
+                    this.$axios.get(`/api/partner/${value}`).then(partner => {
+                        this.providerBank = {
+                            name: partner.bankName,
+                            checkingAccount: partner.bankCheckingAccount,
+                            taxpayerNumber: partner.bankTaxpayerNumber,
+                            reasonCode: partner.bankReasonCode,
+                            identityCode: partner.bankIdentityCode,
+                            correspondentAccount: partner.bankCorrespondentAccount,
+                        }
+                    })
+                }
             }
         },
 
