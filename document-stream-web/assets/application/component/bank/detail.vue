@@ -20,7 +20,6 @@
 
         <div class="application-content pl-3 pt-3 pr-3">
 
-
             <b-modal v-model="deleting"
                 :hide-header="true"
                 :no-fade="true"

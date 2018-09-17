@@ -1,11 +1,11 @@
 import json
 import time
 from pymysql.cursors import DictCursor
-from sqlbuilder.smartsql import T
+from falcon import errors
 
 from .environment import APPLICATION_DIR, SQLITE3_DB
 from .database import MysqlDatabase, SqliteDatabase
-from .service import xslx_report
+from .service import printer, number_to_word
 from . import api
 
 
@@ -82,15 +82,24 @@ class Account:
             response.json = api.Account(database).deleteone(id)
 
 
+class NumberToWord:
+    def on_get(request, response):
+        response.json = number_to_word.number_to_word(
+            request.params.get('number'),
+            number_to_word.ruble,
+            number_to_word.kopeck,
+        )
+
+
 class Report:
 
     class ID:
         def on_get(request, response, entity, entity_id, type, format):
             if entity == 'account':
-                response.body = xslx_report.general_account(api.Account(database)
+                response.body = printer.account_as_pdf(api.Account(database)
                     .selectone(entity_id, include_products=True))
             else:
                 raise NotImplementedError
 
-            response.append_header('Content-Type', 'application/vnd.ms-excel')
-            response.append_header('Content-Disposition', f'attachment; filename="{entity}-report.xls"')
+            response.append_header('Content-Type', 'application/pdf')
+            # response.append_header('Content-Disposition', f'attachment; filename="{entity}-report.pdf"')

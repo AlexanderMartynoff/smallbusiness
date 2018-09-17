@@ -11,6 +11,7 @@ from .endpoint import (
     CurrencyUnit,
     Bank,
     Report,
+    NumberToWord,
 )
 
 
@@ -31,6 +32,7 @@ api.add_route('/api/partner', Partner)
 api.add_route('/api/partner/{id}', Partner.ID)
 api.add_route('/api/time_unit', TimeUnit)
 api.add_route('/api/currency_unit', CurrencyUnit)
+api.add_route('/api/number_to_word', NumberToWord)
 api.add_route('/api/report/{entity}/{entity_id}/{type}/{format}', Report.ID)
 
 

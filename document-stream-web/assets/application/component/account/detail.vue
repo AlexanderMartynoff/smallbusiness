@@ -166,12 +166,12 @@
                 </table>
                 
                 <div class="form-row">
-                    <div class="form-group col-md-2 offset-md-8">
+                    <div class="form-group col-md-6 offset-md-4">
 
-                        <label>Currency</label>
-                        <select class="form-control text-monospace" v-model="account.currencyUnitId" :disabled="readonly">
-                            <option :value="currencyUnit.id" v-for="currencyUnit in currencyUnits">{{currencyUnit.name}}</option>
-                        </select>
+                        <label>Number as words</label>
+                        <div class="form-control text-monospace">
+                            <strong>{{totalAmountAsWords}}</strong>
+                        </div>
                     </div>
 
                     <div class="form-group col-md-2">
@@ -199,6 +199,7 @@
 
         data() {
             return {
+                totalAmountAsWords: null,
                 providerBank: {},
                 deleting: false,
                 deletingAccountProduct: false,
@@ -259,7 +260,7 @@
             },
 
             deleteAccount(id) {
-                this.$axios.delete(`/api/account/${this.id}`).then(() => this.$router.push(`/accounts`))
+                this.$axios.delete(`/api/account/${this.id}`).then(() => this.$router.push(`/account`))
             },
 
             addAccountProduct() {
@@ -345,6 +346,18 @@
                         }
                     })
                 }
+            },
+
+            'totalAmount'(value) {
+                return this.$axios.get(`/api/number_to_word`, {
+                    params: {
+                        number: value
+                    }
+                }).then(asWords => {
+                    this.totalAmountAsWords = asWords
+                }).catch(error => {
+
+                })
             }
         },
 

@@ -22,10 +22,13 @@ class Account(Service):
                 .crud()
                 .selectone())
 
+            if not account:
+                return
+
             if not include_products:
                 return account
 
-            return {**(account or {}), 'products': account_product.AccountProduct(queryclass=Q)
+            return {**account, 'products': account_product.AccountProduct(queryclass=Q)
                 .selectall(account_id=account_id)}
 
     def selectall(self, include_products=False):

@@ -7,6 +7,7 @@ setup(
         'pymysql',
         'sqlbuilder',
         'cached_property',
-        'openpyxl'
+        'openpyxl',
+        'weasyprint',
     ]
 )
