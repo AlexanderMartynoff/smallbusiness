@@ -18,14 +18,14 @@ class Bank:
 
     def on_post(request, response):
         response.json = api.Bank(database).insertone(request.json)
-    
+
     class ID:
         def on_get(request, response, bank_id):
             response.json = api.Bank(database).selectone(bank_id)
-    
+
         def on_put(request, response, bank_id):
             response.json = api.Bank(database).updateone(bank_id, request.json)
-    
+
         def on_delete(request, response, bank_id):
             response.json = api.Bank(database).deleteone(bank_id)
 
@@ -43,7 +43,7 @@ class TimeUnit:
 class Partner:
     def on_get(request, response):
         response.json = api.Partner(database).selectall()
-        
+
     def on_post(request, response):
         response.json = api.Partner(database).insertone(request.json)
 
@@ -64,7 +64,7 @@ class AccountProduct:
 
 
 class Account:
-    
+
     def on_get(request, response):
         response.json = api.Account(database).selectall()
 
@@ -96,10 +96,10 @@ class Report:
     class ID:
         def on_get(request, response, entity, entity_id, type, format):
             if entity == 'account':
-                response.body = printer.account_as_pdf(api.Account(database)
-                    .selectone(entity_id, include_products=True))
+                response.body = printer.account_as_pdf(
+                    api.Account(database).selectone(entity_id, include_products=True))
             else:
                 raise NotImplementedError
 
             response.append_header('Content-Type', 'application/pdf')
-            # response.append_header('Content-Disposition', f'attachment; filename="{entity}-report.pdf"')
+            response.append_header('Content-Disposition', f'attachment; filename="{entity}-report.pdf"')

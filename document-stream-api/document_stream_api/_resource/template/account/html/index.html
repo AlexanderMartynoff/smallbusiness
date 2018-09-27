@@ -9,6 +9,7 @@
 
             body {
                 font-family: monospace;
+                font-size: 12px;
             }
 
             table {
@@ -18,36 +19,165 @@
             }
 
             table td {
+                padding: 0;
+                margin: 0;
+            }
+
+            table.bordered-table  tr  td {
                 border: solid 1px black;
             }
+
+            table.padding-table  tr  td {
+                padding: 5px;
+            }
+
+
+            table.inner-table td {
+                padding: 3px;
+                border-top: none !important;
+                border-right: none !important;
+                border-left: none !important;
+                border-bottom: solid 1px black !important;
+            }
+
+            table.inner-table .inner-table-row-last td {
+                border-bottom: none !important;
+            }
+
+            .height-50  {
+                height: 50px;
+            }
+
+            .height-30  {
+                height: 30px;
+            }
+
+            .horizont-line {
+                background: black;
+                height: 3px;
+            }
+
+            .margin-top-30 {
+                margin-top: 30px;
+            }
+
         </style>
     </head>
     
     <body>
-        <table class="head" cellspacing="0" cellpadding="0">
+        <table class="head bordered-table" cellspacing="0" cellpadding="0">
             <tr>
-                <td rowspan="2">АО "ТИНЬКОФФ БАНК"</td>
-                <td>БИК</td>
-                <td>0</td>
+                <td>
+                    <table class="inner-table">
+                        <tr>
+                            <td class="height-50">АО "ТИНЬКОФФ БАНК"</td>
+                        </tr>
+
+                        <tr class="inner-table-row-last">
+                            <td>Банк получателя</td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td>
+                    <table class="inner-table">
+                        <tr>
+                            <td>БИК</td>
+                        </tr>
+
+                        <tr class="inner-table-row-last">
+                            <td class="height-50">Сч. №</td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td>
+                    <table class="inner-table">
+                        <tr>
+                            <td>044525974</td>
+                        </tr>
+
+                        <tr class="inner-table-row-last">
+                            <td class="height-50">30101810145250000974</td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
 
-            <tr>
-                <td>2</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td>Банк получателя</td>
-                <td>5</td>
-                <td>6</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>8</td>
-                <td>9</td>
+            <tr class="head-bank-client-attribute">
+                <td>
+                    <table class="inner-table">
+                        <tr>
+                            <td>ИНН 643966974283 КПП</td>
+                        </tr>
+
+                        <tr>
+                            <td class="height-30">ИП Мартынов Александр Александрович</td>
+                        </tr>
+
+                        <tr class="inner-table-row-last">
+                            <td>Получатель</td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td>
+                    <table class="inner-table">
+                        <tr class="inner-table-row-last">
+                            <td>Сч. №</td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td>
+                    <table class="inner-table">
+                        <tr class="inner-table-row-last">
+                            <td>40802810700000529486</td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
            
         </table>
 
         <h1>Счет на оплату № 001  от 15.05. 2018 г.</h1>
+
+        <div class="horizont-line"></div>
+
+        <table class="bordered-table padding-table margin-top-30">
+            <tr>
+                <td>
+                    Поставщик
+                    (Исполнитель):
+                </td>
+                
+                <td>
+                    ИП Мартынов Александр Александрович,
+                    ИНН 643966974283 ОГРНИП 318645100011260, 413864, Россия, Саратовская обл,
+                    г. Балаково, ул. Проспект героев, 54, 71
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Покупатель
+                    (Заказчик):
+                </td>
+
+                <td>
+                    ООО «Айкрафт оптикал Нью-Йорк» ИНН 7701733880 КПП 770101001 105064, г.Москва, ул. Земляной вал, д.1/4, стр. 1
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Основание:
+                </td>
+
+                <td>
+                    Договор 2018-001 от 01.05.2018
+                </td>
+            </tr>
+        </table>
     </body>
 </html>

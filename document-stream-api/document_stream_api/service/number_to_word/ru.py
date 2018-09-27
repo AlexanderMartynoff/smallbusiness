@@ -1,13 +1,24 @@
+"""
+Base idea is split number to groups by 3 digits.
+For example 12_345_789 will split as ['12', '345', '789']
+or 1_234_567 will split as ['1', '234', '567'].
+
+Functions `_1_number_to_word`, `_2_number_to_word`, `_3_number_to_word`
+"""
+
+
 import re
 from dataclasses import dataclass
+from typing import Tuple
 
 
-class WordVariant:
-    def resolve(self):
+class Word:
+    def resolve(self, *args, **kwargs):
         raise NotImplementedError
 
+
 @dataclass
-class WordGenus(WordVariant):
+class WordGenus(Word):
     """ See `_runk` for detail """
 
     male: str = None
@@ -22,23 +33,24 @@ class WordGenus(WordVariant):
 
 
 @dataclass
-class WordCase(WordVariant):
+class WordCase(Word):
 
     first: str = None
     second: str = None
     third: str = None
 
     def resolve(self, number, rank):
-        return self._case(number, [self.first, self.second, self.third])
+        return self._resolve_case(number, [self.first, self.second, self.third])
 
-    def _case(self, number, after):
-        return after[2 if (number % 100 > 4 and number % 100 < 20) else [2, 0, 1, 1, 1, 2][min(number % 10, 5)]]
+    def _resolve_case(self, number, after):
+        return after[2 if (4 < number % 100 < 20) else [2, 0, 1, 1, 1, 2][min(number % 10, 5)]]
 
 
 def _1_number_to_word(number):
     """ For N numbers """
 
     return [_numbers[1][number]]
+
 
 def _2_number_to_word(number):
     """ For NN numbers """
@@ -62,6 +74,7 @@ def _2_number_to_word(number):
 
     return words
 
+
 def _3_number_to_word(number):
     """ For NNN numbers """
 
@@ -73,7 +86,42 @@ def _3_number_to_word(number):
     return words + _2_number_to_word(number[1:])
 
 
+def _number_to_group(number):
+    """ Take number and return numbers dict with group of 3 digit
+        by key that represent digit group rank. See `_ranks`.
+    """
+
+    try:
+        integer, fractional = str(number).split('.', maxsplit=2)
+    except ValueError:
+        integer, fractional = str(number), '0'
+
+    def calculate_rank(groups):
+        """
+            For example::
+              >>> calculate_rank(['12', '345', '789'])
+              >>> {2: '12', 1: '345', 0: '789'}
+        """
+
+        return {len(groups) - key: value for key, value in enumerate(groups, 1)}
+
+    def number_to_group(number):
+        """
+            Use case::
+              >>> number_to_group('12_345_789')
+              >>> ['12', '345', '789']
+        """
+
+        # TODO: replace this with `for in number[::-1]`
+        # cause this hard for understanding
+        return [group[::-1] for group in re.findall('.{1,3}', number[::-1])][::-1]
+
+    return tuple(calculate_rank(number_to_group(chunk)) for chunk in [integer, fractional]) + (integer, fractional)
+
+
 def number_to_word(number, uom_integer, uom_fraction):
+    """ Main function for use """
+
     words = []
     integers, fractions, integer_value, fraction_value = _number_to_group(number)
 
@@ -99,35 +147,11 @@ def number_to_word(number, uom_integer, uom_fraction):
         words += [word.resolve(int(integer), rank) for word in _words]
 
     return ' '.join(
-        words + [uom_integer.resolve(int(integer_value), rank)] +
-        [fraction_value] + [uom_fraction.resolve(int(fraction_value), rank)])
-
-
-def _number_to_group(number):
-    """ Take number and return numbers dict with group of 3 digit
-        by key that represent digit group rank. See `_ranks`.
-        
-        number - Number for conversion to groups
-        
-        For example::
-          >>> _number_to_token('12_345_789')
-          >>> {2: '12', 1: '345', 0: '789'}
-    """
-
-    try:
-        integer, fractional = str(number).split('.', maxsplit=2)
-    except ValueError:
-        integer, fractional = str(number), '0'
-
-    def calculate_rank(groups):
-        return {len(groups) - key: value for key, value in enumerate(groups, 1)}
-
-    def number_to_group(number):
-        # NOTE: replace this with for in number[::-1]
-        # cause this hard for understanding
-        return [group[::-1] for group in re.findall('.{1,3}', number[::-1])][::-1]
-
-    return tuple(calculate_rank(number_to_group(chunk)) for chunk in [integer, fractional]) + (integer, fractional)
+        words +
+        [uom_integer.resolve(int(integer_value), None)] +
+        [fraction_value] +
+        [uom_fraction.resolve(int(fraction_value), None)]
+    )
 
 
 _numbers = {

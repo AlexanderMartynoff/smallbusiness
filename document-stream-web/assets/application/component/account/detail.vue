@@ -27,6 +27,12 @@
                     </a>
                 </li>
 
+                <li class="nav-item" v-if="isExist">
+                    <a href="#" class="nav-link" :href="printHref" target="_blank">
+                        <i class="fas fa-print"></i> Print
+                    </a>
+                </li>
+
                 <h4 class="application-sidebar-header">PRODUCTS</h4>
 
                 <li class="nav-item">
@@ -328,6 +334,10 @@
 
             totalAmount() {
                 return _.chain(this.account.products).map(product => product.price * product.value).sum().value()
+            },
+
+            printHref() {
+                return '/api/report/account/1/none/pdf'
             }
         },
 

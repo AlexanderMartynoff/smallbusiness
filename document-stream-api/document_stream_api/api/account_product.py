@@ -7,20 +7,19 @@ from . import account
 class AccountProduct(Service):
 
     def selectall(self, account_id):
-        
         with self.query() as Q:
-            return (Q()
-                .tables(T.account_product)
-                .fields(
-                    T.account_product.id,
-                    T.account_product.name,
-                    T.account_product.time_unit_id,
-                    T.account_product.value,
-                    T.account_product.price
-                )
-                .where(T.account_product.account_id == account_id)
-                .crud()
-                .selectall())
+            return \
+                (Q().tables(T.account_product)
+                    .fields(
+                        T.account_product.id,
+                        T.account_product.name,
+                        T.account_product.time_unit_id,
+                        T.account_product.value,
+                        T.account_product.price,
+                    )
+                    .where(T.account_product.account_id == account_id)
+                    .crud()
+                    .selectall())
 
     def updatemany(self, products):
         with self.query() as Q:
@@ -43,24 +42,24 @@ class AccountProduct(Service):
                     .crud()
                     .delete())
 
-
     def insertmany(self, products):
         with self.query() as Q:
-            return (Q().tables(T.account_product)
-                .fields(
-                    T.account_product.account_id,
-                    T.account_product.name,
-                    T.account_product.time_unit_id,
-                    T.account_product.value,
-                    T.account_product.price,
-                )
-                .crud()
-                .insert(
-                    values=[(
-                        product['account_id'],
-                        product['name'],
-                        product['time_unit_id'],
-                        product['value'],
-                        product['price'],
-                    ) for product in products]
-                ))
+            return \
+                (Q().tables(T.account_product)
+                    .fields(
+                        T.account_product.account_id,
+                        T.account_product.name,
+                        T.account_product.time_unit_id,
+                        T.account_product.value,
+                        T.account_product.price,
+                    )
+                    .crud()
+                    .insert(
+                        values=[(
+                            product['account_id'],
+                            product['name'],
+                            product['time_unit_id'],
+                            product['value'],
+                            product['price'],
+                        ) for product in products]
+                    ))

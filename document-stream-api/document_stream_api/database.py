@@ -28,7 +28,7 @@ class Database:
     @contextmanager
     def connection(self):
         raise NotImplementedError
-    
+
     @contextmanager
     def cursor(self):
         raise NotImplementedError
@@ -41,7 +41,7 @@ class Database:
 class SqliteDatabase(Database):
     def __init__(self, database, timeout=None):
         super().__init__(compile=sqlite.compile)
-        
+
         self._database = database
         self._timeout = timeout
 
@@ -92,9 +92,9 @@ class _Query(Q):
 
     @staticmethod
     def with_context(compile, cursor, crudclass, database):
-        
+
         class Query(_Query):
-            
+
             @property
             def _compile(self):
                 return compile

@@ -8,7 +8,7 @@ class Configurator:
 
     def __init__(self, dirs, name, autoload=True):
         self._names = [join(dir, name) for dir in dirs]
-        
+
         if autoload:
             self._config, _name = self.load()
 
