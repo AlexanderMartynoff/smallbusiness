@@ -92,9 +92,9 @@ def _number_to_group(number):
     """
 
     try:
-        integer, fractional = str(number).split('.', maxsplit=2)
+        integer, fraction = str(number).split('.', maxsplit=2)
     except ValueError:
-        integer, fractional = str(number), '0'
+        integer, fraction = str(number), '0'
 
     def calculate_rank(groups):
         """
@@ -116,11 +116,19 @@ def _number_to_group(number):
         # cause this hard for understanding
         return [group[::-1] for group in re.findall('.{1,3}', number[::-1])][::-1]
 
-    return tuple(calculate_rank(number_to_group(chunk)) for chunk in [integer, fractional]) + (integer, fractional)
+    return (
+        # groups for integer part number
+        calculate_rank(number_to_group(integer)),
+        # groups for fraction part number
+        calculate_rank(number_to_group(fraction)),
+        # integer part number
+        integer,
+        # fraction part number
+        fraction,
+    )
 
 
 def number_to_word(number, uom_integer, uom_fraction):
-    """ Main function for use """
 
     words = []
     integers, fractions, integer_value, fraction_value = _number_to_group(number)
@@ -151,7 +159,7 @@ def number_to_word(number, uom_integer, uom_fraction):
         [uom_integer.resolve(int(integer_value), None)] +
         [fraction_value] +
         [uom_fraction.resolve(int(fraction_value), None)]
-    )
+    ).capitalize()
 
 
 _numbers = {
@@ -214,4 +222,4 @@ ruble = WordCase(first='рубль', second='рубля', third='рублей')
 kopeck = WordCase(first='копейка', second='копейки', third='копеек')
 
 if __name__ == '__main__':
-    print(number_to_word(96000.123, ruble, kopeck))
+    print(number_to_word(96000.12, ruble, kopeck))

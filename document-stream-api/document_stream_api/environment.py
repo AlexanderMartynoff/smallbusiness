@@ -1,5 +1,4 @@
 from os.path import dirname, abspath
-from ruamel.yaml import load as load_yml, RoundTripLoader
 
 
 APPLICATION_DIR = dirname(abspath(__file__))

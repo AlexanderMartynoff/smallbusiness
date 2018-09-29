@@ -1,11 +1,11 @@
 import json
 import time
 from pymysql.cursors import DictCursor
-from falcon import errors
 
 from .environment import APPLICATION_DIR, SQLITE3_DB
-from .database import MysqlDatabase, SqliteDatabase
+from .database import SqliteDatabase
 from .service import printer, number_to_word
+from .addon.falcon import Request
 from . import api
 
 
@@ -66,14 +66,14 @@ class AccountProduct:
 class Account:
 
     def on_get(request, response):
-        response.json = api.Account(database).selectall()
+        response.json = api.Account(database).table.selectall()
 
     def on_post(request, response):
         response.json = api.Account(database).insertone(request.json)
 
     class ID:
         def on_get(request, response, id):
-            response.json = api.Account(database).selectone(id, include_products=True)
+            response.json = api.Account(database).table.selectone(id)
 
         def on_put(request, response, id):
             response.json = api.Account(database).updateone(id, request.json)
@@ -97,9 +97,8 @@ class Report:
         def on_get(request, response, entity, entity_id, type, format):
             if entity == 'account':
                 response.body = printer.account_as_pdf(
-                    api.Account(database).selectone(entity_id, include_products=True))
+                    api.Account(database).selectone(entity_id))
             else:
                 raise NotImplementedError
 
             response.append_header('Content-Type', 'application/pdf')
-            response.append_header('Content-Disposition', f'attachment; filename="{entity}-report.pdf"')

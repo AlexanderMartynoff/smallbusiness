@@ -8,20 +8,59 @@ from contextlib import contextmanager
 
 
 class Service:
+
     def __init__(self, database=None, queryclass=None):
         self._database = database
         self._queryclass = queryclass
+        self._table = _Table(self, self.__class__.__name__.lower(), 'id')
+
+    @property
+    def table(self):
+        return self._table
 
     @contextmanager
     def query(self):
         if self._queryclass is not None:
             yield self._queryclass
         else:
-            with self._database.query() as Q:
-                yield Q
+            with self._database.query() as _Q:
+                yield _Q
 
 
-class Database:
+class _Table:
+
+    def __init__(self, service, table_name, id_column_name):
+        self._service = service
+        self._table_name = table_name
+        self._id_column_name = id_column_name
+
+    def selectone(self, id_column_value):
+
+        with self._service.query() as Q:
+            return Q().tables(self._table) \
+                .fields('*') \
+                .where(self._id_column == id_column_value) \
+                .crud() \
+                .selectone()
+
+    def selectall(self):
+
+        with self._service.query() as Q:
+            return Q().tables(self._table) \
+                .fields('*') \
+                .crud() \
+                .selectall()
+
+    @property
+    def _table(self):
+        return getattr(T, self._table_name)
+
+    @property
+    def _id_column(self):
+        return getattr(self._table, self._id_column_name)
+
+
+class _Database:
     def __init__(self, compile):
         self._compile = compile
 
@@ -38,7 +77,7 @@ class Database:
         raise NotImplementedError
 
 
-class SqliteDatabase(Database):
+class SqliteDatabase(_Database):
     def __init__(self, database, timeout=None):
         super().__init__(compile=sqlite.compile)
 
@@ -64,21 +103,6 @@ class SqliteDatabase(Database):
             cursor.close()
 
 
-class MysqlDatabase(Database):
-
-    def __init__(self, parameters):
-        super().__init__(parameters, compile=mysql.compile)
-
-    @contextmanager
-    def query(self):
-        with pymysql.connect(**self._parameters, cursorclass=self._cursor_type) as cursor:
-            yield _Query.with_context(
-                compile=self._compile,
-                cursor=cursor,
-                crudclass=MysqlCRUD
-            )
-
-
 class _Query(Q):
     def __init__(self, tables=None):
         super().__init__(tables=tables, result=Result(compile=self._compile))
@@ -88,7 +112,7 @@ class _Query(Q):
 
     @property
     def _compile(self):
-        raise NotImplementedError('It is necessary to get the class using `with_conext` method')
+        raise NotImplementedError('It is necessary to get the class using `with_context` method')
 
     @staticmethod
     def with_context(compile, cursor, crudclass, database):
@@ -145,10 +169,4 @@ class CRUD:
 class SqliteCRUD(CRUD):
     def last_insert_id(self):
         self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ROWID() as id').select())
-        return self._cursor.fetchone()
-
-
-class MysqlCRUD(CRUD):
-    def last_insert_id(self, name):
-        self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ID() as id').select())
         return self._cursor.fetchone()

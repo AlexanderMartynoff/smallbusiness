@@ -23,11 +23,11 @@
                 margin: 0;
             }
 
-            table.bordered-table  tr  td {
+            table.bordered-table td, table.bordered-table th {
                 border: solid 1px black;
             }
 
-            table.padding-table  tr  td {
+            table.padding-table td, table.padding-table th {
                 padding: 5px;
             }
 
@@ -61,6 +61,18 @@
                 margin-top: 30px;
             }
 
+            .width-80-per {
+                width: 85%;
+            }
+
+            .text-right {
+                text-align: right;
+            }
+
+            .td-underline {
+                border-bottom: solid 1px black;
+            }
+
         </style>
     </head>
     
@@ -70,7 +82,7 @@
                 <td>
                     <table class="inner-table">
                         <tr>
-                            <td class="height-50">АО "ТИНЬКОФФ БАНК"</td>
+                            <td class="height-50">{{account.provider_bank_name}}</td>
                         </tr>
 
                         <tr class="inner-table-row-last">
@@ -94,11 +106,11 @@
                 <td>
                     <table class="inner-table">
                         <tr>
-                            <td>044525974</td>
+                            <td>{{account.provider_bank_identity_code}}</td>
                         </tr>
 
                         <tr class="inner-table-row-last">
-                            <td class="height-50">30101810145250000974</td>
+                            <td class="height-50">{{account.provider_bank_correspondent_account}}</td>
                         </tr>
                     </table>
                 </td>
@@ -108,11 +120,11 @@
                 <td>
                     <table class="inner-table">
                         <tr>
-                            <td>ИНН 643966974283 КПП</td>
+                            <td>ИНН {{account.provider_bank_taxpayer_number}} КПП</td>
                         </tr>
 
                         <tr>
-                            <td class="height-30">ИП Мартынов Александр Александрович</td>
+                            <td class="height-30">{{account.provider_name}}</td>
                         </tr>
 
                         <tr class="inner-table-row-last">
@@ -132,7 +144,7 @@
                 <td>
                     <table class="inner-table">
                         <tr class="inner-table-row-last">
-                            <td>40802810700000529486</td>
+                            <td>{{account.provider_bank_checking_account}}</td>
                         </tr>
                     </table>
                 </td>
@@ -152,20 +164,17 @@
                 </td>
                 
                 <td>
-                    ИП Мартынов Александр Александрович,
-                    ИНН 643966974283 ОГРНИП 318645100011260, 413864, Россия, Саратовская обл,
-                    г. Балаково, ул. Проспект героев, 54, 71
+                    <strong>{{account.provider_name}}, ИНН {{account.provider_taxpayer_number}}, {{account.provider_address}}</strong>
                 </td>
             </tr>
 
             <tr>
                 <td>
-                    Покупатель
-                    (Заказчик):
+                    Покупатель (Заказчик):
                 </td>
 
                 <td>
-                    ООО «Айкрафт оптикал Нью-Йорк» ИНН 7701733880 КПП 770101001 105064, г.Москва, ул. Земляной вал, д.1/4, стр. 1
+                    <strong>{{account.purchaser_name}}, ИНН {{account.purchaser_taxpayer_number}}, {{account.purchaser_address}}</strong>
                 </td>
             </tr>
 
@@ -175,8 +184,86 @@
                 </td>
 
                 <td>
-                    Договор 2018-001 от 01.05.2018
+                    <strong>{{account.reason}}</strong>
                 </td>
+            </tr>
+        </table>
+
+        <table class="bordered-table padding-table margin-top-30">
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Товары (работы, услуги)</th>
+                    <th>Кол-во</th>
+                    <th>Ед.</th>
+                    <th>Цена</th>
+                    <th>Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for product in account['products'] %}
+                <tr>
+                    <td>
+                        {{loop.index}}
+                    </td>
+
+                    <td>
+                        {{product['name']}}
+                    </td>
+
+                    <td>
+                        {{product['value']}}
+                    </td>
+
+                    <td>
+                        {{product['time_unit_name']}}
+                    </td>
+
+                    <td>
+                        {{product['price']}}
+                    </td>
+                    <td>
+                        {{product['total_price']}}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <table class="padding-table margin-top-30">
+            <tr>
+                <td class="width-80-per text-right"><strong>Итого:</strong></td>
+                <td class="text-right"><strong>{{account['total_price']}}</strong></td>
+            </tr>
+            <tr>
+                <td class="width-80-per text-right"><strong>В том числе НДС:</strong></td>
+                <td class="text-right"><strong>Без НДС</strong></td>
+            </tr>
+            <tr>
+                <td class="width-80-per text-right"><strong>Всего к оплате:</strong></td>
+                <td class="text-right"><strong>{{account['total_price']}}</strong></td>
+            </tr>
+        </table>
+
+        <p>
+            Всего наименований {{account['products'] | length}}, на сумму {{account['total_price']}} руб.<br/>
+            <strong>{{account['total_price'] | number_to_word_ru}}</strong>
+        </p>
+
+        <p>
+            Внимание!<br/>
+            Оплата данного счета означает согласие с условиями поставки товара.
+        </p>
+
+        <div class="horizont-line"></div>
+
+        <table class="padding-table margin-top-30">
+            <tr>
+                <td><strong>Руководитель</strong></td>
+                <td class="td-underline"></td>
+                <td></td>
+                <td><strong>Бухгалтер</strong></td>
+                <td class="td-underline"></td>
             </tr>
         </table>
     </body>

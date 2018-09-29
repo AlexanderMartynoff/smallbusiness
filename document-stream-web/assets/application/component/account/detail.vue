@@ -229,7 +229,7 @@
 
         methods: {
             saveAccount(id) {
-                if (id) {
+                if (this.isExist) {
                     this.$axios.put(`/api/account/${id}`, this.account).then(() => {
                         this.loadAccount(this.id)
                     })
@@ -337,7 +337,7 @@
             },
 
             printHref() {
-                return '/api/report/account/1/none/pdf'
+                return `/api/report/account/${this.id}/none/pdf`
             }
         },
 
