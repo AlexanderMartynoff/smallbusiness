@@ -1,0 +1,69 @@
+@page {
+    width: 1300px;
+}
+
+body {
+    font-family: monospace;
+    font-size: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table td {
+    padding: 0;
+    margin: 0;
+}
+
+table.bordered-table td, table.bordered-table th {
+    border: solid 1px black;
+}
+
+table.padding-table td, table.padding-table th {
+    padding: 5px;
+}
+
+
+table.inner-table td {
+    padding: 3px;
+    border-top: none !important;
+    border-right: none !important;
+    border-left: none !important;
+    border-bottom: solid 1px black !important;
+}
+
+table.inner-table .inner-table-row-last td {
+    border-bottom: none !important;
+}
+
+.height-50  {
+    height: 50px;
+}
+
+.height-30  {
+    height: 30px;
+}
+
+.horizont-line {
+    background: black;
+    height: 3px;
+}
+
+.margin-top-30 {
+    margin-top: 30px;
+}
+
+.width-80-per {
+    width: 85%;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.td-underline {
+    border-bottom: solid 1px black;
+}

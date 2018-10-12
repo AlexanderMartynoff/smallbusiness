@@ -1,9 +1,10 @@
 from gunicorn.app.base import BaseApplication
 
-from . import options
-
 
 class StandaloneApplication(BaseApplication):
+
+    def init(self, parser, opts, args):
+        pass
 
     def __init__(self, application, options):
         self._application = application

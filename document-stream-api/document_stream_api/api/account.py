@@ -1,13 +1,13 @@
 from sqlbuilder.smartsql import T
 
 from ..database import Service
+from ..shortcut import group_by_operations
 from .account_product import AccountProduct
 
 
 class Account(Service):
 
-    def selectone(self, account_id):
-
+    def selectone_filled(self, account_id):
         with self.query() as Q:
             account = Q().tables(
                     T.account +
@@ -46,7 +46,33 @@ class Account(Service):
                 .selectone()
 
             if account:
-                account.update(products=AccountProduct(queryclass=Q).selectall(account_id=account_id))
+                account.update(products=AccountProduct(queryclass=Q).selectall(
+                    T.account_product.account_id == account_id
+                ))
+
+            return account
+
+    def selectone(self, account_id):
+
+        with self.query() as Q:
+
+            account = Q().tables(T.account) \
+                .fields(
+                    T.account.id,
+                    T.account.currency_unit_id,
+                    T.account.reason,
+                    T.account.date,
+                    T.account.provider_id,
+                    T.account.purchaser_id,
+                ) \
+                .where(T.account.id == account_id) \
+                .crud() \
+                .selectone()
+
+            if account:
+                account.update(products=AccountProduct(queryclass=Q).selectall(
+                    T.account_product.account_id == account_id
+                ))
 
             return account
 
@@ -85,22 +111,10 @@ class Account(Service):
                     T.account.purchaser_id: account['purchaser_id'],
                 })
 
-            insert_products = []
-            update_products = []
-            delete_products = []
-
-            for product in account['products']:
-
-                product.update(account_id=account_id)
-
-                if product.get('_crud', None) == 'insert':
-                    insert_products.append(product)
-                elif product.get('_crud', None) == 'update':
-                    update_products.append(product)
-                elif product.get('_crud', None) == 'delete':
-                    delete_products.append(product)
-
             account_product_api = AccountProduct(queryclass=Q)
+
+            insert_products, update_products, delete_products = \
+                group_by_operations(account['products'], {'account_id': account_id})
 
             if len(insert_products):
                 account_product_api.insertmany(insert_products)

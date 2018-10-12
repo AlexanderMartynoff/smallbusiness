@@ -1,8 +1,7 @@
 import falcon
 
 from .addon.falcon import Request, Response
-from .configurator import Configurator
-from .environment import APPLICATION_DIR, RESOURCE_DIR
+from .environment import APPLICATION_DIR, RESOURCE_DIR, Environment
 from .endpoint import (
     Account,
     AccountProduct,
@@ -15,26 +14,29 @@ from .endpoint import (
 )
 
 
-config = Configurator(dirs=[RESOURCE_DIR], name='config.yaml')
+environment = Environment.get().setup(
+    working_dir=RESOURCE_DIR,
+    parameter_path='./parameters.yaml',
+)
 
-api = falcon.API(
+application = falcon.API(
     request_type=Request,
-    response_type=Response
+    response_type=Response,
 )
 
 
-api.add_route('/api/account', Account)
-api.add_route('/api/account/{id}', Account.ID)
-api.add_route('/api/account_product', AccountProduct)
-api.add_route('/api/bank', Bank)
-api.add_route('/api/bank/{bank_id}', Bank.ID)
-api.add_route('/api/partner', Partner)
-api.add_route('/api/partner/{id}', Partner.ID)
-api.add_route('/api/time_unit', TimeUnit)
-api.add_route('/api/currency_unit', CurrencyUnit)
-api.add_route('/api/number_to_word', NumberToWord)
-api.add_route('/api/report/{entity}/{entity_id}/{type}/{format}', Report.ID)
+application.add_route('/api/account', Account)
+application.add_route('/api/account/{id}', Account.ID)
+application.add_route('/api/account_product', AccountProduct)
+application.add_route('/api/bank', Bank)
+application.add_route('/api/bank/{bank_id}', Bank.ID)
+application.add_route('/api/partner', Partner)
+application.add_route('/api/partner/{id}', Partner.ID)
+application.add_route('/api/time_unit', TimeUnit)
+application.add_route('/api/currency_unit', CurrencyUnit)
+application.add_route('/api/number_to_word', NumberToWord)
+application.add_route('/api/report/{entity}/{entity_id}', Report.ID)
 
 
-for static_dir in config['server']['static_dirs']:
-    api.add_static_route('/static', static_dir)
+for static_dir in environment['server']['static_dirs']:
+    application.add_static_route('/static', static_dir)

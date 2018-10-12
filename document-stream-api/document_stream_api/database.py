@@ -1,10 +1,11 @@
-import pymysql
 import sqlite3
 
 from sqlbuilder.smartsql import Q, T, Result
-from sqlbuilder.smartsql.dialects import mysql
 from sqlbuilder.smartsql.dialects import sqlite
 from contextlib import contextmanager
+
+# NOTE: make `_atom_camel_to_snake` more independent, move from `.addon.falcon`
+from .addon.falcon import _atom_camel_to_snake
 
 
 class Service:
@@ -12,7 +13,7 @@ class Service:
     def __init__(self, database=None, queryclass=None):
         self._database = database
         self._queryclass = queryclass
-        self._table = _Table(self, self.__class__.__name__.lower(), 'id')
+        self._table = _Table(self, _atom_camel_to_snake(self.__class__.__name__), 'id')
 
     @property
     def table(self):
@@ -34,7 +35,7 @@ class _Table:
         self._table_name = table_name
         self._id_column_name = id_column_name
 
-    def selectone(self, id_column_value):
+    def selectone(self, id_column_value, column_names=None):
 
         with self._service.query() as Q:
             return Q().tables(self._table) \
@@ -43,13 +44,22 @@ class _Table:
                 .crud() \
                 .selectone()
 
-    def selectall(self):
+    def selectall(self, column_names=None):
 
         with self._service.query() as Q:
             return Q().tables(self._table) \
                 .fields('*') \
                 .crud() \
                 .selectall()
+
+    def selectfields(self, column_name):
+        with self._service.query() as Q:
+            records = Q().tables(self._table) \
+                .fields([column_name]) \
+                .crud() \
+                .selectall()
+
+        return [record[column_name] for record in records]
 
     @property
     def _table(self):

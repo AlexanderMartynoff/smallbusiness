@@ -28,10 +28,11 @@
                 </li>
 
                 <li class="nav-item" v-if="isExist">
-                    <a href="#" class="nav-link" :href="printHref" target="_blank">
-                        <i class="fas fa-print"></i> Print
+                    <a href="#" class="nav-link" @click.prevent.stop="openPrintAlert()">
+                        <i class="fas fa-file-signature"></i> Report
                     </a>
                 </li>
+
 
                 <h4 class="application-sidebar-header">PRODUCTS</h4>
 
@@ -51,17 +52,50 @@
 
         <div class="application-content pl-3 pt-3 pr-3 blur-container">
 
+            <b-modal v-if="reportsViewing"
+                     v-model="reportsViewing"
+                     size="lg"
+                     :hide-header="true">
+                <b-embed v-for="report in selectedReports"
+                         :src="computeReportUrl(report, 'inline')"
+                         type="iframe"
+                         aspect="4by3"
+                         allowfullscreen>
+                </b-embed>
+            </b-modal>
+
             <b-modal v-model="deleting"
-                :hide-header="true"
-                @ok="deleteAccount(id)"
-                @cancel="closeDeleteAlert()">
+                     :hide-header="true"
+                     @ok="deleteAccount(id)"
+                     @cancel="closeDeleteAlert()">
                 <h4>Delete account?</h4>
             </b-modal>
 
+            <b-modal v-model="reportPrinting" button-size="sm" title="Select reports for action">
+
+                <b-form-group class="mb-0">
+                    <b-form-checkbox-group stacked v-model="selectedReports" :options="reports">
+                    </b-form-checkbox-group>
+                </b-form-group>
+
+                <div slot="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="closePrintAlert()">Cancel</button>
+
+                    <button class="btn btn-primary" type="button" :disabled="selectedReportNoOne()" @click="printReports('inline')">
+                        View
+                    </button>
+
+                    <button type="button" class="btn btn-primary" :disabled="selectedReportExists()">Mail</button>
+
+                    <button type="button" class="btn btn-primary" :disabled="selectedReportExists()" @click="downloadReports()">Download</button>
+                </div>
+
+            </b-modal>
+
             <b-modal v-model="deletingAccountProduct"
-                :hide-header="true"
-                @ok="deleteAccountProductFromAlert(id)"
-                @cancel="closeDeleteAccountProductAlert()">
+                     :hide-header="true"
+                     @ok="deleteAccountProductFromAlert(id)"
+                     @cancel="closeDeleteAccountProductAlert()">
                 <h4>Delete account product?</h4>
             </b-modal>
 
@@ -76,24 +110,25 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Provider bank attributes</h5>
-                                    <dl class="row">
-                                        <dt class="col-sm-3">Name</dt>
-                                        <dd class="col-sm-9 text-monospace">{{providerBank.name || '-'}}</dd>
+                                <dl class="row">
+                                    <dt class="col-sm-3">Name</dt>
+                                    <dd class="col-sm-9 text-monospace">{{providerBank.name || '-'}}</dd>
 
-                                        <dt class="col-sm-3">Taxpayer number</dt>
-                                        <dd class="col-sm-9 text-monospace">{{providerBank.taxpayerNumber || '-'}}</dd>
+                                    <dt class="col-sm-3">Taxpayer number</dt>
+                                    <dd class="col-sm-9 text-monospace">{{providerBank.taxpayerNumber || '-'}}</dd>
 
-                                        <dt class="col-sm-3 text-truncate">Reason code</dt>
-                                        <dd class="col-sm-9 text-monospace">{{providerBank.reasonCode || '-'}}</dd>
-                                        
-                                        <dt class="col-sm-3 text-truncate">Identity code</dt>
-                                        <dd class="col-sm-9 text-monospace">{{providerBank.identityCode || '-'}}</dd>
-                                        
-                                        <dt class="col-sm-3 text-truncate">Correspondent account</dt>
-                                        <dd class="col-sm-9 text-monospace">{{providerBank.correspondentAccount || '-'}}</dd>
-                                    </dl>
+                                    <dt class="col-sm-3 text-truncate">Reason code</dt>
+                                    <dd class="col-sm-9 text-monospace">{{providerBank.reasonCode || '-'}}</dd>
+
+                                    <dt class="col-sm-3 text-truncate">Identity code</dt>
+                                    <dd class="col-sm-9 text-monospace">{{providerBank.identityCode || '-'}}</dd>
+
+                                    <dt class="col-sm-3 text-truncate">Correspondent account</dt>
+                                    <dd class="col-sm-9 text-monospace">{{providerBank.correspondentAccount || '-'}}
+                                    </dd>
+                                </dl>
                             </div>
-                        </div>    
+                        </div>
                     </div>
 
                 </div>
@@ -118,8 +153,11 @@
                     <div class="form-group col-md-6">
 
                         <label>Currency</label>
-                        <select class="form-control text-monospace" v-model="account.currencyUnitId" :disabled="readonly">
-                            <option :value="currencyUnit.id" v-for="currencyUnit in currencyUnits">{{currencyUnit.name}}</option>
+                        <select class="form-control text-monospace" v-model="account.currencyUnitId"
+                                :disabled="readonly">
+                            <option :value="currencyUnit.id" v-for="currencyUnit in currencyUnits">
+                                {{currencyUnit.name}}
+                            </option>
                         </select>
                     </div>
 
@@ -170,7 +208,7 @@
                         </tr>
                     </tbody>
                 </table>
-                
+
                 <div class="form-row">
                     <div class="form-group col-md-6 offset-md-4">
 
@@ -197,7 +235,6 @@
 
 <script type="text/javascript">
     import _ from 'lodash'
-    import Vue from 'vue'
 
 
     export default {
@@ -205,6 +242,14 @@
 
         data() {
             return {
+                reports: [
+                    {text: 'Account', value: 'account'},
+                    {text: 'Act', value: 'act'},
+                    {text: 'Invoice', value: 'invoice'},
+                ],
+                reportsViewing: false,
+                selectedReports: [],
+                reportPrinting: false,
                 totalAmountAsWords: null,
                 providerBank: {},
                 deleting: false,
@@ -222,12 +267,31 @@
                     currencyUnitId: null,
                     products: [],
                     reason: Date.now(),
-                    _selected: false,
                 }
             }
         },
 
         methods: {
+
+            selectedReportNoOne() {
+                return _.size(this.selectedReports) !== 1
+            },
+
+            selectedReportExists() {
+                return _.size(this.selectedReports) === 0
+            },
+
+            computeReportUrl(report, disposition) {
+                return `/api/report/${report}/${this.id}?disposition=${disposition}`
+            },
+
+            printReports(disposition) {
+                _.each(this.selectedReports, report => {
+                    window.open(this.computeReportUrl(report, disposition), '_blank')
+                })
+                this.closePrintAlert()
+            },
+
             saveAccount(id) {
                 if (this.isExist) {
                     this.$axios.put(`/api/account/${id}`, this.account).then(() => {
@@ -287,8 +351,8 @@
 
             deleteAccountProduct(products) {
                 _.each(products, product => {
-                    this.$set(product, '_crud', 'delete')
                     this.$delete(product, '_selected')
+                    this.$set(product, '_crud', 'delete')
                 })
             },
 
@@ -304,12 +368,24 @@
                 this.readonly = !this.readonly
             },
 
+            openReportsAlert() {
+                this.reportsViewing = true
+            },
+
             openDeleteAlert() {
                 this.deleting = true
             },
 
             closeDeleteAlert() {
                 this.deleting = false
+            },
+
+            openPrintAlert() {
+                this.reportPrinting = true
+            },
+
+            closePrintAlert() {
+                this.reportPrinting = false
             },
 
             onProductChange(product) {
@@ -335,14 +411,10 @@
             totalAmount() {
                 return _.chain(this.account.products).map(product => product.price * product.value).sum().value()
             },
-
-            printHref() {
-                return `/api/report/account/${this.id}/none/pdf`
-            }
         },
 
         watch: {
-            'account.providerId' (value) {
+            'account.providerId'(value) {
 
                 if (_.isNumber(value)) {
                     this.$axios.get(`/api/partner/${value}`).then(partner => {

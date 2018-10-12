@@ -6,7 +6,7 @@ from . import account
 
 class AccountProduct(Service):
 
-    def selectall(self, account_id):
+    def selectall(self, where):
         with self.query() as Q:
             return Q().tables(
                     T.account_product +
@@ -20,7 +20,7 @@ class AccountProduct(Service):
                     T.account_product.value,
                     T.account_product.price,
                 ) \
-                .where(T.account_product.account_id == account_id) \
+                .where(where) \
                 .crud() \
                 .selectall()
 

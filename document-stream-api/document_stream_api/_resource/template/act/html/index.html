@@ -8,82 +8,8 @@
     </head>
     
     <body>
-        <table class="head bordered-table" cellspacing="0" cellpadding="0">
-            <tr>
-                <td>
-                    <table class="inner-table">
-                        <tr>
-                            <td class="height-50">{{account.provider_bank_name}}</td>
-                        </tr>
 
-                        <tr class="inner-table-row-last">
-                            <td>Банк получателя</td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td>
-                    <table class="inner-table">
-                        <tr>
-                            <td>БИК</td>
-                        </tr>
-
-                        <tr class="inner-table-row-last">
-                            <td class="height-50">Сч. №</td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td>
-                    <table class="inner-table">
-                        <tr>
-                            <td>{{account.provider_bank_identity_code}}</td>
-                        </tr>
-
-                        <tr class="inner-table-row-last">
-                            <td class="height-50">{{account.provider_bank_correspondent_account}}</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-
-            <tr class="head-bank-client-attribute">
-                <td>
-                    <table class="inner-table">
-                        <tr>
-                            <td>ИНН {{account.provider_bank_taxpayer_number}} КПП</td>
-                        </tr>
-
-                        <tr>
-                            <td class="height-30">{{account.provider_name}}</td>
-                        </tr>
-
-                        <tr class="inner-table-row-last">
-                            <td>Получатель</td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td>
-                    <table class="inner-table">
-                        <tr class="inner-table-row-last">
-                            <td>Сч. №</td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td>
-                    <table class="inner-table">
-                        <tr class="inner-table-row-last">
-                            <td>{{account.provider_bank_checking_account}}</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-           
-        </table>
-
-        <h1>Счет на оплату № 001  от 15.05. 2018 г.</h1>
+        <h1>Акт № 001 от 03.04.2018 г.</h1>
 
         <div class="horizont-line"></div>
 
@@ -170,10 +96,6 @@
                 <td class="width-80-per text-right"><strong>В том числе НДС:</strong></td>
                 <td class="text-right"><strong>Без НДС</strong></td>
             </tr>
-            <tr>
-                <td class="width-80-per text-right"><strong>Всего к оплате:</strong></td>
-                <td class="text-right"><strong>{{account['total_price']}}</strong></td>
-            </tr>
         </table>
 
         <p>
@@ -182,18 +104,29 @@
         </p>
 
         <p>
-            Внимание!<br/>
-            Оплата данного счета означает согласие с условиями поставки товара.
+            Вышеперечисленные услуги выполнены полностью и в срок.
+            Заказчик претензий по объему, качеству и срокам оказания услуг не имеет.
         </p>
 
         <div class="horizont-line"></div>
 
         <table class="padding-table margin-top-30">
             <tr>
-                <td><strong>Руководитель</strong></td>
+                <td>ИСПОЛНИТЕЛЬ</td>
+                <td></td>
+                <td></td>
+                <td>ЗАКАЗЧИК</td>
+            </tr>
+            <tr>
+                <td colspan="4">Генеральный директор</td>
+            </tr>
+            <tr>
+                <td colspan="4"></td>
+            </tr>
+            <tr>
                 <td class="td-underline"></td>
                 <td></td>
-                <td><strong>Бухгалтер</strong></td>
+                <td></td>
                 <td class="td-underline"></td>
             </tr>
         </table>

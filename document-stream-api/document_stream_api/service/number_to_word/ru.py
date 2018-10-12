@@ -9,7 +9,7 @@ Functions `_1_number_to_word`, `_2_number_to_word`, `_3_number_to_word`
 
 import re
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Tuple, Dict
 
 
 class Word:
@@ -86,9 +86,10 @@ def _3_number_to_word(number):
     return words + _2_number_to_word(number[1:])
 
 
-def _number_to_group(number):
-    """ Take number and return numbers dict with group of 3 digit
-        by key that represent digit group rank. See `_ranks`.
+def _number_to_group(number) -> Tuple[Dict[int, str], Dict[int, str], str, str]:
+    """ Example:
+          >>> _number_to_group('12_345_789.12_345')
+          >>> {2: '12', 1: '345', 0: '789'}, {1: '12', 0: '345'}, '12_345_789', '12_345'
     """
 
     try:
@@ -97,8 +98,8 @@ def _number_to_group(number):
         integer, fraction = str(number), '0'
 
     def calculate_rank(groups):
-        """
-            For example::
+        """ See `_ranks` for more.
+            Example::
               >>> calculate_rank(['12', '345', '789'])
               >>> {2: '12', 1: '345', 0: '789'}
         """
@@ -110,6 +111,8 @@ def _number_to_group(number):
             Use case::
               >>> number_to_group('12_345_789')
               >>> ['12', '345', '789']
+
+
         """
 
         # TODO: replace this with `for in number[::-1]`
