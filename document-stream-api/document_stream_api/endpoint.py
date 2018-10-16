@@ -7,6 +7,10 @@ from . import api
 database = SqliteDatabase(SQLITE3_DB)
 
 bank_service = api.Bank(database)
+currency_unit_service = api.CurrencyUnit(database)
+time_unit_service = api.TimeUnit(database)
+partner_service = api.Partner(database)
+account_product_service = api.AccountProduct(database)
 account_service = api.Account(database)
 
 
@@ -36,66 +40,66 @@ class Bank:
 class CurrencyUnit:
     @staticmethod
     def on_get(request, response):
-        response.json = api.CurrencyUnit(database).selectall()
+        response.json = currency_unit_service.selectall()
 
 
 class TimeUnit:
     @staticmethod
     def on_get(request, response):
-        response.json = api.TimeUnit(database).selectall()
+        response.json = time_unit_service.selectall()
 
 
 class Partner:
     @staticmethod
     def on_get(request, response):
-        response.json = api.Partner(database).selectall()
+        response.json = partner_service.selectall()
 
     @staticmethod
     def on_post(request, response):
-        response.json = api.Partner(database).insertone(request.json)
+        response.json = partner_service.insertone(request.json)
 
     class ID:
         @staticmethod
         def on_get(request, response, id):
-            response.json = api.Partner(database).selectone(id)
+            response.json = partner_service.selectone(id)
 
         @staticmethod
         def on_put(request, response, id):
-            response.json = api.Partner(database).updateone(id, request.json)
+            response.json = partner_service.updateone(id, request.json)
 
         @staticmethod
         def on_delete(request, response, id):
-            response.json = api.Partner(database).deleteone(id)
+            response.json = partner_service.deleteone(id)
 
 
 class AccountProduct:
     @staticmethod
     def on_get(request, response, id=None):
-        response.json = api.AccountProduct(database).selectall(request.params['account_id'])
+        response.json = account_product_service.selectall(request.params['account_id'])
 
 
 class Account:
 
     @staticmethod
     def on_get(request, response):
-        response.json = api.Account(database).table.selectall()
+        response.json = account_service.selectall()
 
     @staticmethod
     def on_post(request, response):
-        response.json = api.Account(database).insertone(request.json)
+        response.json = account_service.insertone(request.json)
 
     class ID:
         @staticmethod
         def on_get(request, response, id):
-            response.json = api.Account(database).selectone(id)
+            response.json = account_service.selectone(id)
 
         @staticmethod
         def on_put(request, response, id):
-            response.json = api.Account(database).updateone(id, request.json)
+            response.json = account_service.updateone(id, request.json)
 
         @staticmethod
         def on_delete(request, response, id):
-            response.json = api.Account(database).deleteone(id)
+            response.json = account_service.deleteone(id)
 
 
 class NumberToWord:
@@ -122,7 +126,7 @@ class Report:
             else:
                 raise NotImplementedError(f'Unknown report type - {entity}')
 
-            if request.params.get('disposition', 'inline') == 'attachment':
+            if request.params.get('disposition', None) == 'attachment':
                 response.append_header('Content-Disposition', f'attachment; filename="{entity}.pdf"')
             else:
                 response.append_header('Content-Disposition', 'inline')

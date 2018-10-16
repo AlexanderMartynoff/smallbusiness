@@ -12,32 +12,34 @@ CONTENT_TYPE_HTML = 'text/html'
 ENCODING = 'utf-8'
 
 
-re_camel_to_snake = re.compile(r'(?!^)(?<!_)([A-Z])')
-re_snake_to_camel = re.compile(r'(?:_)(.)')
+_re_camel_to_snake = re.compile(r'(?!^)(?<!_)([A-Z])')
+_re_snake_to_camel = re.compile(r'(?:_)(.)')
 
 
 def _atom_snake_to_camel(string: str) -> str:
-    return re_snake_to_camel.sub(lambda match: match.group(1).upper(), string)
+    return _re_snake_to_camel.sub(lambda match: match.group(1).upper(), string)
 
 
 def _atom_camel_to_snake(string: str) -> str:
-    return re_camel_to_snake.sub(r'_\1', string).lower()
+    return _re_camel_to_snake.sub(r'_\1', string).lower()
 
 
-def convert_notation(data: Any, atom_mapper: Callable[[str], str], ignore_if_atom: bool = False) -> Any:
+def convert_notation(data: Any,
+                     atom_converter: Callable[[str], str],
+                     ignore_if_atom: bool = False) -> Any:
 
     if isinstance(data, dict):
-        return {convert_notation(key, atom_mapper): convert_notation(
+        return {convert_notation(key, atom_converter): convert_notation(
             value,
-            atom_mapper,
+            atom_converter,
             True
         ) for key, value in data.items()}
 
     elif isinstance(data, list):
-        return [convert_notation(value, atom_mapper, True) for value in data]
+        return [convert_notation(value, atom_converter, True) for value in data]
 
     elif not ignore_if_atom and isinstance(data, str):
-        return atom_mapper(data)
+        return atom_converter(data)
 
     return data
 

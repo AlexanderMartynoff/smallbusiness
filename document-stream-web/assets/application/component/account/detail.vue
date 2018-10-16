@@ -33,7 +33,6 @@
                     </a>
                 </li>
 
-
                 <h4 class="application-sidebar-header">PRODUCTS</h4>
 
                 <li class="nav-item">
@@ -52,18 +51,6 @@
 
         <div class="application-content pl-3 pt-3 pr-3 blur-container">
 
-            <b-modal v-if="reportsViewing"
-                     v-model="reportsViewing"
-                     size="lg"
-                     :hide-header="true">
-                <b-embed v-for="report in selectedReports"
-                         :src="computeReportUrl(report, 'inline')"
-                         type="iframe"
-                         aspect="4by3"
-                         allowfullscreen>
-                </b-embed>
-            </b-modal>
-
             <b-modal v-model="deleting"
                      :hide-header="true"
                      @ok="deleteAccount(id)"
@@ -79,15 +66,22 @@
                 </b-form-group>
 
                 <div slot="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="closePrintAlert()">Cancel</button>
 
-                    <button class="btn btn-primary" type="button" :disabled="selectedReportNoOne()" @click="printReports('inline')">
+                    <button type="button" class="btn btn-secondary" @click="closePrintAlert()">
+                        Cancel
+                    </button>
+
+                    <button class="btn btn-primary" type="button" :disabled="selectedReportNoOne()" @click="openReports()">
                         View
                     </button>
 
-                    <button type="button" class="btn btn-primary" :disabled="selectedReportExists()">Mail</button>
+                    <button type="button" class="btn btn-primary" :disabled="selectedReportExists()">
+                        Mail
+                    </button>
 
-                    <button type="button" class="btn btn-primary" :disabled="selectedReportExists()" @click="downloadReports()">Download</button>
+                    <download :urls="selectedReportUrls" :disabled="selectedReportExists()" tag="button" class="btn btn-primary">
+                        Dowload
+                    </download>
                 </div>
 
             </b-modal>
@@ -285,12 +279,13 @@
                 return `/api/report/${report}/${this.id}?disposition=${disposition}`
             },
 
-            printReports(disposition) {
+            openReports() {
                 _.each(this.selectedReports, report => {
-                    window.open(this.computeReportUrl(report, disposition), '_blank')
+                    window.open(this.computeReportUrl(report, 'inline'), '_blank')
                 })
-                this.closePrintAlert()
             },
+
+            downloadReports() {},
 
             saveAccount(id) {
                 if (this.isExist) {
@@ -406,6 +401,10 @@
 
             selectedProducts() {
                 return _.filter(this.account.products, product => product._selected === true)
+            },
+
+            selectedReportUrls() {
+                return _.map(this.selectedReports, report => this.computeReportUrl(report, 'attachment'))
             },
 
             totalAmount() {

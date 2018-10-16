@@ -6,6 +6,8 @@ import router from '@/application/router'
 
 import MainMenu from '@/application/component/main-menu/index'
 import Checkbox from '@/application/component/checkbox/index'
+import Download from '@/application/component/download'
+
 
 import ApplicationContainer from '@/application/component/application/application-container'
 import ApplicationContent from '@/application/component/application/application-content'
@@ -14,6 +16,7 @@ import ApplicationBody from '@/application/component/application/application-bod
 import ApplicationToolbar from '@/application/component/application/application-toolbar'
 
 import Axios from '@/application/plugin/axios'
+
 
 import '@style/layout.scss'
 import '@style/style.scss'
@@ -25,6 +28,7 @@ Vue.use(Axios)
 
 Vue.component('main-menu', MainMenu)
 Vue.component('checkbox', Checkbox)
+Vue.component('download', Download)
 
 Vue.component('application-container', ApplicationContainer)
 Vue.component('application-content', ApplicationContent)

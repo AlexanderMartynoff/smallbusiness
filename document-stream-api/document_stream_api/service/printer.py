@@ -1,5 +1,6 @@
 from os.path import join
 from functools import partial
+import copy
 
 import weasyprint
 import jinja2
@@ -8,7 +9,8 @@ from .. environment import RESOURCE_DIR
 from . import number_to_word
 
 
-environment = jinja2.Environment(loader=jinja2.FileSystemLoader(join(RESOURCE_DIR, 'template')))
+environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
+    join(RESOURCE_DIR, 'template')))
 
 environment.filters.update(
     number_to_word_ru=partial(
@@ -19,18 +21,26 @@ environment.filters.update(
 )
 
 
-def _compute_account_properties(account: dict) -> dict:
+def _reportify_account(account: dict) -> dict:
+    """ Compute additional properties for account.
+        Return new dict.
+    """
+
+    account = copy.deepcopy(account)
+
     for product in account['products']:
-        product['total_price'] = product['value'] * product['price']
+        product['total_price'] = int(product['value'] * product['price'])
+        product['value'] = int(product['value'])
+        product['price'] = int(product['price'])
 
     account['total_price'] = \
-        sum(product['total_price'] for product in account['products'])
+        int(sum(product['total_price'] for product in account['products']))
 
     return account
 
 
-def _generate_account_based_report(account: dict, template_path: str):
-    _compute_account_properties(account)
+def _generate_account_based_report(account: dict, template_path: str) -> bytes:
+    account = _reportify_account(account)
 
     return weasyprint.HTML(
         string=environment.get_template(template_path).render(account=account)
@@ -43,3 +53,7 @@ def account_as_pdf(account: dict) -> bytes:
 
 def act_as_pdf(account: dict) -> bytes:
     return _generate_account_based_report(account, 'act/html/index.html')
+
+
+def invoice_as_pdf(account: dict) -> bytes:
+    return _generate_account_based_report(account, 'invoice/html/index.html')

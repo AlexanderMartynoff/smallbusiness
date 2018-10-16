@@ -8,80 +8,31 @@
     </head>
     
     <body>
-        <table class="head bordered-table" cellspacing="0" cellpadding="0">
+
+        <table class="bordered-table padding-table" cellspacing="0" cellpadding="0">
             <tr>
-                <td>
-                    <table class="inner-table">
-                        <tr>
-                            <td class="height-50">{{account.provider_bank_name}}</td>
-                        </tr>
-
-                        <tr class="inner-table-row-last">
-                            <td>Банк получателя</td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td>
-                    <table class="inner-table">
-                        <tr>
-                            <td>БИК</td>
-                        </tr>
-
-                        <tr class="inner-table-row-last">
-                            <td class="height-50">Сч. №</td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td>
-                    <table class="inner-table">
-                        <tr>
-                            <td>{{account.provider_bank_identity_code}}</td>
-                        </tr>
-
-                        <tr class="inner-table-row-last">
-                            <td class="height-50">{{account.provider_bank_correspondent_account}}</td>
-                        </tr>
-                    </table>
-                </td>
+                <td>{{account.provider_bank_name}}</td>
+                <td>БИК</td>
+                <td>{{account.provider_bank_identity_code}}</td>
             </tr>
-
-            <tr class="head-bank-client-attribute">
-                <td>
-                    <table class="inner-table">
-                        <tr>
-                            <td>ИНН {{account.provider_bank_taxpayer_number}} КПП</td>
-                        </tr>
-
-                        <tr>
-                            <td class="height-30">{{account.provider_name}}</td>
-                        </tr>
-
-                        <tr class="inner-table-row-last">
-                            <td>Получатель</td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td>
-                    <table class="inner-table">
-                        <tr class="inner-table-row-last">
-                            <td>Сч. №</td>
-                        </tr>
-                    </table>
-                </td>
-
-                <td>
-                    <table class="inner-table">
-                        <tr class="inner-table-row-last">
-                            <td>{{account.provider_bank_checking_account}}</td>
-                        </tr>
-                    </table>
-                </td>
+            <tr>
+                <td>Банк получателя</td>
+                <td>Сч. №</td>
+                <td>{{account.provider_bank_correspondent_account}}</td>
             </tr>
-           
+            <tr>
+                <td>ИНН {{account.provider_bank_taxpayer_number}} КПП</td>
+                <td rowspan="3">Сч. №</td>
+                <td rowspan="3">{{account.provider_bank_checking_account}}</td>
+            </tr>
+            <tr>
+                <td>{{account.provider_name}}</td>
+            </tr>
+            <tr>
+                <td>Получатель</td>
+            </tr>
         </table>
+
 
         <h1>Счет на оплату № 001  от 15.05. 2018 г.</h1>
 
@@ -90,8 +41,7 @@
         <table class="bordered-table padding-table margin-top-30">
             <tr>
                 <td>
-                    Поставщик
-                    (Исполнитель):
+                    Поставщик (Исполнитель):
                 </td>
                 
                 <td>

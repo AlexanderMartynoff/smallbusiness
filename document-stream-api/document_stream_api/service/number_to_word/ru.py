@@ -1,5 +1,5 @@
 """
-Base idea is split number to groups by 3 digits.
+Base idea is split number to groups by 3 chars.
 For example 12_345_789 will split as ['12', '345', '789']
 or 1_234_567 will split as ['1', '234', '567'].
 
@@ -9,7 +9,8 @@ Functions `_1_number_to_word`, `_2_number_to_word`, `_3_number_to_word`
 
 import re
 from dataclasses import dataclass
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Union, Any
+from logging import getLogger
 
 
 class Word:
@@ -44,6 +45,13 @@ class WordCase(Word):
 
     def _resolve_case(self, number, after):
         return after[2 if (4 < number % 100 < 20) else [2, 0, 1, 1, 1, 2][min(number % 10, 5)]]
+
+
+def _force_str_length(string, length, placeholder='0'):
+    if len(string) < length:
+        return placeholder * (length - len(string)) + string
+
+    return string
 
 
 def _1_number_to_word(number):
@@ -86,7 +94,7 @@ def _3_number_to_word(number):
     return words + _2_number_to_word(number[1:])
 
 
-def _number_to_group(number) -> Tuple[Dict[int, str], Dict[int, str], str, str]:
+def _number_to_group(number: Union[int, float, str]) -> Tuple[Dict[int, str], Dict[int, str], str, str]:
     """ Example:
           >>> _number_to_group('12_345_789.12_345')
           >>> {2: '12', 1: '345', 0: '789'}, {1: '12', 0: '345'}, '12_345_789', '12_345'
@@ -111,8 +119,6 @@ def _number_to_group(number) -> Tuple[Dict[int, str], Dict[int, str], str, str]:
             Use case::
               >>> number_to_group('12_345_789')
               >>> ['12', '345', '789']
-
-
         """
 
         # TODO: replace this with `for in number[::-1]`
@@ -131,10 +137,12 @@ def _number_to_group(number) -> Tuple[Dict[int, str], Dict[int, str], str, str]:
     )
 
 
-def number_to_word(number, uom_integer, uom_fraction):
+def number_to_word(number: Any,
+                   uom_integer: WordCase,
+                   uom_fraction: WordCase) -> str:
 
     words = []
-    integers, fractions, integer_value, fraction_value = _number_to_group(number)
+    integers, fractions, integer_part, fraction_part = _number_to_group(number)
 
     for rank, integer in integers.items():
         _words = []
@@ -159,9 +167,9 @@ def number_to_word(number, uom_integer, uom_fraction):
 
     return ' '.join(
         words +
-        [uom_integer.resolve(int(integer_value), None)] +
-        [fraction_value] +
-        [uom_fraction.resolve(int(fraction_value), None)]
+        [uom_integer.resolve(int(integer_part), None)] +
+        [fraction_part] +
+        [uom_fraction.resolve(int(fraction_part), None)]
     ).capitalize()
 
 
@@ -223,6 +231,3 @@ _ranks = {
 
 ruble = WordCase(first='рубль', second='рубля', third='рублей')
 kopeck = WordCase(first='копейка', second='копейки', third='копеек')
-
-if __name__ == '__main__':
-    print(number_to_word(96000.12, ruble, kopeck))

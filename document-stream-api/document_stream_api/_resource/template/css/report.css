@@ -1,10 +1,10 @@
 @page {
-    width: 1300px;
+    width: 1400px;
 }
 
 body {
     font-family: monospace;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 table {
@@ -22,7 +22,7 @@ table.bordered-table td, table.bordered-table th {
     border: solid 1px black;
 }
 
-table.padding-table td, table.padding-table th {
+table.padding-table td, table.padding-table th, .padding-td {
     padding: 5px;
 }
 
@@ -39,6 +39,10 @@ table.inner-table .inner-table-row-last td {
     border-bottom: none !important;
 }
 
+table.inner-table .border-right {
+    border-right: solid 1px black !important;
+}
+
 .height-50  {
     height: 50px;
 }
@@ -46,7 +50,12 @@ table.inner-table .inner-table-row-last td {
 .height-30  {
     height: 30px;
 }
-
+.padding-5 {
+    padding: 5px;
+}
+.border-bottom {
+    border-bottom: solid 1px black;
+}
 .horizont-line {
     background: black;
     height: 3px;
@@ -60,10 +69,56 @@ table.inner-table .inner-table-row-last td {
     width: 85%;
 }
 
+.width-200-px {
+    width: 200px;
+}
+
 .text-right {
     text-align: right;
 }
 
+.text-center {
+    text-align: center;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+.vertical-align-bottom {
+    vertical-align: bottom;
+}
+
 .td-underline {
     border-bottom: solid 1px black;
+}
+
+.inline-underline {
+    display: inline;
+    border-bottom: solid 1px black;
+}
+
+.block-underline {
+    display: block;
+    border-bottom: solid 1px black;
+}
+
+.name-td {
+    width: 300px;
+}
+
+.vartical-align-bottom {
+    vertical-align: bottom;
+}
+
+.no-border {
+    border: none !important;
 }

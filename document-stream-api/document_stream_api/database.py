@@ -8,68 +8,6 @@ from contextlib import contextmanager
 from .addon.falcon import _atom_camel_to_snake
 
 
-class Service:
-
-    def __init__(self, database=None, queryclass=None):
-        self._database = database
-        self._queryclass = queryclass
-        self._table = _Table(self, _atom_camel_to_snake(self.__class__.__name__), 'id')
-
-    @property
-    def table(self):
-        return self._table
-
-    @contextmanager
-    def query(self):
-        if self._queryclass is not None:
-            yield self._queryclass
-        else:
-            with self._database.query() as _Q:
-                yield _Q
-
-
-class _Table:
-
-    def __init__(self, service, table_name, id_column_name):
-        self._service = service
-        self._table_name = table_name
-        self._id_column_name = id_column_name
-
-    def selectone(self, id_column_value, column_names=None):
-
-        with self._service.query() as Q:
-            return Q().tables(self._table) \
-                .fields('*') \
-                .where(self._id_column == id_column_value) \
-                .crud() \
-                .selectone()
-
-    def selectall(self, column_names=None):
-
-        with self._service.query() as Q:
-            return Q().tables(self._table) \
-                .fields('*') \
-                .crud() \
-                .selectall()
-
-    def selectfields(self, column_name):
-        with self._service.query() as Q:
-            records = Q().tables(self._table) \
-                .fields([column_name]) \
-                .crud() \
-                .selectall()
-
-        return [record[column_name] for record in records]
-
-    @property
-    def _table(self):
-        return getattr(T, self._table_name)
-
-    @property
-    def _id_column(self):
-        return getattr(self._table, self._id_column_name)
-
-
 class _Database:
     def __init__(self, compile):
         self._compile = compile
@@ -180,3 +118,19 @@ class SqliteCRUD(CRUD):
     def last_insert_id(self):
         self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ROWID() as id').select())
         return self._cursor.fetchone()
+
+
+class Service:
+
+    def __init__(self, database: _Database=None,
+                 queryclass: _Query=None):
+        self._database = database
+        self._queryclass = queryclass
+
+    @contextmanager
+    def query(self):
+        if self._queryclass is not None:
+            yield self._queryclass
+        else:
+            with self._database.query() as _Q:
+                yield _Q
