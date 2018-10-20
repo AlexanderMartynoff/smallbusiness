@@ -1,7 +1,7 @@
 <template>
     <component @click="download()" :is="tag">
         <slot></slot>
-        <iframe :key="source.key" v-for="source in sources" :src="source.url" :class="classes"></iframe>
+        <iframe :key="source.key" v-for="source in sources" :src="source.url" class="d-none"></iframe>
     </component>
 </template>
 
@@ -11,20 +11,17 @@
     function forceArray(arrayMaybe) {
         if (_.isArray(arrayMaybe)) {
             return arrayMaybe
+        } else if (_.isNull(arrayMaybe) || _.isUndefined(arrayMaybe)) {
+            return []
         }
-        return []
+        return [arrayMaybe]
     }
 
     export default {
-        props: [
-            'tag',
-            'urls',
-            'url',
-        ],
+        props: ['tag', 'urls', 'url'],
 
         data() {
             return {
-                classes: ['d-none'],
                 sources: [],
             }
         },

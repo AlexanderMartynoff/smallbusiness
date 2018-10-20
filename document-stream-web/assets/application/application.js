@@ -7,6 +7,8 @@ import router from '@/application/router'
 import MainMenu from '@/application/component/main-menu/index'
 import Checkbox from '@/application/component/checkbox/index'
 import Download from '@/application/component/download'
+import MailForm from '@/application/component/mail/form'
+import MailModal from '@/application/component/mail/modal'
 
 
 import ApplicationContainer from '@/application/component/application/application-container'
@@ -29,6 +31,8 @@ Vue.use(Axios)
 Vue.component('main-menu', MainMenu)
 Vue.component('checkbox', Checkbox)
 Vue.component('download', Download)
+Vue.component('mail-form', MailForm)
+Vue.component('mail-modal', MailModal)
 
 Vue.component('application-container', ApplicationContainer)
 Vue.component('application-content', ApplicationContent)

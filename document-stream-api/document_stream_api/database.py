@@ -8,7 +8,7 @@ from contextlib import contextmanager
 from .addon.falcon import _atom_camel_to_snake
 
 
-class _Database:
+class Database:
     def __init__(self, compile):
         self._compile = compile
 
@@ -25,7 +25,7 @@ class _Database:
         raise NotImplementedError
 
 
-class SqliteDatabase(_Database):
+class SqliteDatabase(Database):
     def __init__(self, database, timeout=None):
         super().__init__(compile=sqlite.compile)
 
@@ -122,7 +122,7 @@ class SqliteCRUD(CRUD):
 
 class Service:
 
-    def __init__(self, database: _Database=None,
+    def __init__(self, database: Database=None,
                  queryclass: _Query=None):
         self._database = database
         self._queryclass = queryclass

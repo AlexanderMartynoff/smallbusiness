@@ -13,6 +13,7 @@ class Partner(Service):
                     T.partner.id,
                     T.partner.name,
                     T.partner.address,
+                    T.partner.mail,
                     T.partner.taxpayer_number,
                     T.partner.reason_code,
                     T.partner.bank_id,
@@ -24,11 +25,12 @@ class Partner(Service):
     def selectone(self, partner_id):
 
         with self.query() as Q:
-            return Q().tables((T.partner & T.bank).on(T.partner.bank_id == T.bank.id)) \
+            return Q().tables((T.partner + T.bank).on(T.partner.bank_id == T.bank.id)) \
                 .fields(
                     T.partner.id,
                     T.partner.name,
                     T.partner.address,
+                    T.partner.mail,
                     T.partner.taxpayer_number,
                     T.partner.reason_code,
                     T.partner.bank_id,
@@ -54,6 +56,7 @@ class Partner(Service):
                 .update({
                     T.partner.name: partner['name'],
                     T.partner.address: partner['address'],
+                    T.partner.mail: partner['mail'],
                     T.partner.taxpayer_number: partner['taxpayer_number'],
                     T.partner.reason_code: partner['reason_code'],
                     T.partner.bank_id: partner['bank_id'],
@@ -75,6 +78,7 @@ class Partner(Service):
                     .insert({
                         T.partner.name: partner['name'],
                         T.partner.address: partner['address'],
+                        T.partner.mail: partner['mail'],
                         T.partner.taxpayer_number: partner['taxpayer_number'],
                         T.partner.reason_code: partner['reason_code'],
                         T.partner.bank_id: partner['bank_id'],

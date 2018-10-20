@@ -1,7 +1,8 @@
 import falcon
 
+from .database import SqliteDatabase
 from .addon.falcon import Request, Response
-from .environment import APPLICATION_DIR, RESOURCE_DIR, Environment
+from .environment import APPLICATION_DIR, RESOURCE_DIR, SQLITE3_DB, Environment
 from .endpoint import (
     Account,
     AccountProduct,
@@ -11,12 +12,15 @@ from .endpoint import (
     Bank,
     Report,
     NumberToWord,
+    Mail,
 )
-
 
 environment = Environment.get().setup(
     working_dir=RESOURCE_DIR,
     parameter_path='./parameters.yaml',
+    register_services={
+        'database': SqliteDatabase(SQLITE3_DB)
+    }
 )
 
 application = falcon.API(
@@ -35,6 +39,7 @@ application.add_route('/api/partner/{id}', Partner.ID)
 application.add_route('/api/time_unit', TimeUnit)
 application.add_route('/api/currency_unit', CurrencyUnit)
 application.add_route('/api/number_to_word', NumberToWord)
+application.add_route('/api/mail', Mail)
 application.add_route('/api/report/{entity}/{entity_id}', Report.ID)
 
 

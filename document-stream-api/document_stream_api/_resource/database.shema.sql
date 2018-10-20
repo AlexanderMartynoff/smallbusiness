@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS bank;
 
+
 CREATE TABLE bank (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
@@ -22,6 +23,7 @@ CREATE TABLE partner (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     address TEXT,
+    mail TEXT,
     taxpayer_number TEXT,
     reason_code TEXT,
     bank_id INTEGER,
@@ -29,8 +31,8 @@ CREATE TABLE partner (
     bank_checking_account TEXT
 );
 
-INSERT INTO partner VALUES (1, 'First demo partner', 'Moskov City', '1', '1', 0, '1');
-INSERT INTO partner VALUES (2, 'Second demo partner', 'New York City', '1', '1', 0, '1');
+INSERT INTO partner VALUES (1, 'First demo partner', 'Moskov City', 'triplustri@mail.ru', '1', '1', 0, '1');
+INSERT INTO partner VALUES (2, 'Second demo partner', 'New York City', 'triplustri@mail.ru', '1', '1', 0, '1');
 
 
 DROP TABLE IF EXISTS account;

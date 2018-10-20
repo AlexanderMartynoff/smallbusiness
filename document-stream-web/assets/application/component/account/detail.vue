@@ -51,6 +51,11 @@
 
         <div class="application-content pl-3 pt-3 pr-3 blur-container">
 
+            <mail-modal ref="mailModal"
+                        :recipients="mailReportRecipients"
+                        :attachments="mailReportAttachments">
+            </mail-modal>
+
             <b-modal v-model="deleting"
                      :hide-header="true"
                      @ok="deleteAccount(id)"
@@ -75,7 +80,7 @@
                         View
                     </button>
 
-                    <button type="button" class="btn btn-primary" :disabled="selectedReportExists()">
+                    <button type="button" class="btn btn-primary" :disabled="selectedReportExists()" @click="openMailAlert()">
                         Mail
                     </button>
 
@@ -131,14 +136,14 @@
                     <div class="form-group col-md-6">
                         <label>Purchaser</label>
                         <select class="form-control text-monospace" v-model="account.purchaserId" :disabled="readonly">
-                            <option :value="purchaser.id" v-for="purchaser in purchasers">{{purchaser.name}}</option>
+                            <option :value="partner.id" v-for="partner in partners">{{partner.name}}</option>
                         </select>
                     </div>
 
                     <div class="form-group col-md-6">
                         <label>Provider</label>
                         <select class="form-control text-monospace" v-model="account.providerId" :disabled="readonly">
-                            <option :value="provider.id" v-for="provider in providers">{{provider.name}}</option>
+                            <option :value="partner.id" v-for="partner in partners">{{partner.name}}</option>
                         </select>
                     </div>
                 </div>
@@ -249,8 +254,7 @@
                 deleting: false,
                 deletingAccountProduct: false,
                 readonly: false,
-                providers: [],
-                purchasers: [],
+                partners: [],
                 currencyUnits: [],
                 timeUnits: [],
                 account: {
@@ -308,7 +312,7 @@
 
             loadPartners() {
                 return this.$axios.get(`/api/partner`).then(partners => {
-                    this.purchasers = this.providers = partners
+                    this.partners = partners
                 })
             },
 
@@ -383,6 +387,14 @@
                 this.reportPrinting = false
             },
 
+            openMailAlert() {
+                this.$refs.mailModal.show()
+            },
+
+            closeMailAlert() {
+                this.$refs.mailModal.hide()
+            },
+
             onProductChange(product) {
                 if (!_.includes(['delete', 'insert'], product._crud)) {
                     this.$set(product, '_crud', 'update')
@@ -393,6 +405,26 @@
         computed: {
             isExist() {
                 return !_.chain(this.id).toNumber().isNaN().value()
+            },
+
+            mailReportRecipients() {
+                return _.map(this.partners, partner => ({
+                    text: `${partner.name} (${partner.mail})`,
+                    value: partner,
+                }))
+            },
+
+            mailReportAttachments() {
+                return _.map(this.reports, report => ({
+                    text: report.text,
+                    value: {
+                        type: 'report',
+                        arguments: {
+                            entity: report.value,
+                            id: this.id,
+                        }
+                    },
+                }))
             },
 
             visibleProducts() {

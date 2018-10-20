@@ -1,10 +1,14 @@
-from .environment import SQLITE3_DB
-from .database import SqliteDatabase
-from .service import printer, number_to_word
+from typing import cast
+
+from .database import SqliteDatabase, Database
+from .service import printer, number_to_word, mail
+from .environment import Environment, SQLITE3_DB
 from . import api
 
 
-database = SqliteDatabase(SQLITE3_DB)
+environment = Environment.get()
+database = environment.register.get('database')
+
 
 bank_service = api.Bank(database)
 currency_unit_service = api.CurrencyUnit(database)
@@ -112,6 +116,25 @@ class NumberToWord:
         )
 
 
+class Mail:
+    @staticmethod
+    def on_post(request, response):
+
+        with mail.Sender(
+            environment['smtp']['host'],
+            environment['smtp']['port'],
+            environment['smtp']['user'],
+            environment['smtp']['password'],
+            environment['smtp']['ssl'],
+        ) as sender:
+            sender.send(
+                from_address=environment['smtp']['from'],
+                to_addresses=request.json['recipients'],
+                attachments=mail.Attachment.parse(request.json.get('attachments', [])),
+                body='Hello'
+            )
+
+
 class Report:
 
     class ID:
@@ -124,7 +147,7 @@ class Report:
             elif entity == 'invoice':
                 response.body = printer.invoice_as_pdf(account_service.selectone_filled(entity_id))
             else:
-                raise NotImplementedError(f'Unknown report type - {entity}')
+                raise NotImplementedError(f'Unknown report type `{entity}`')
 
             if request.params.get('disposition', None) == 'attachment':
                 response.append_header('Content-Disposition', f'attachment; filename="{entity}.pdf"')

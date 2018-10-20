@@ -53,9 +53,14 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-3">
                         <label>Reason code</label>
                         <input class="form-control" v-model="partner.reasonCode" :readonly="readonly" type="text"/>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label>Mail</label>
+                        <input class="form-control" v-model="partner.mail" :readonly="readonly" type="text"/>
                     </div>
 
                     <div class="form-group col-md-3">
@@ -92,6 +97,7 @@
                     id: null,
                     name: null,
                     address: null,
+                    mail: null,
                     bankCheckingAccount: null,
                     reasonCode: null,
                     taxpayerNumber: null,

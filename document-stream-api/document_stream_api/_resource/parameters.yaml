@@ -2,3 +2,10 @@ server:
     static_dirs: [
         '/home/alexander/projects/document-stream/document-stream-web/static'
     ]
+smtp:
+    ssl: true,
+    host: 'smtp.mail.ru'
+    port: 465
+    user: 'triplustri@mail.ru'
+    password: '99@marmazetka'
+    from: 'triplustri@mail.ru'
