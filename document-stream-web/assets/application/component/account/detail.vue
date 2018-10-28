@@ -21,13 +21,13 @@
                     </a>
                 </li>
 
-                <li class="nav-item" v-if="isExist">
+                <li class="nav-item" v-if="isExist()">
                     <a href="#" class="nav-link" @click.prevent.stop="openDeleteAlert()">
                         <i class="fas fa-trash"></i> Delete
                     </a>
                 </li>
 
-                <li class="nav-item" v-if="isExist">
+                <li class="nav-item" v-if="isExist()">
                     <a href="#" class="nav-link" @click.prevent.stop="openPrintAlert()">
                         <i class="fas fa-file-signature"></i> Report
                     </a>
@@ -52,7 +52,10 @@
         <div class="application-content pl-3 pt-3 pr-3 blur-container">
 
             <mail-modal ref="mailModal"
+                        subject="Account reports"
                         :recipients="mailReportRecipients"
+                        :initRecipientsSelection="initMailReportRecipients"
+                        :initAttachmentsSelection="initMailReportAttachments"
                         :attachments="mailReportAttachments">
             </mail-modal>
 
@@ -63,10 +66,14 @@
                 <h4>Delete account?</h4>
             </b-modal>
 
-            <b-modal v-model="reportPrinting" button-size="sm" title="Select reports for action">
+            <b-modal ref="reportPrintingModal" button-size="sm" title="Select reports for action">
 
                 <b-form-group class="mb-0">
-                    <b-form-checkbox-group stacked v-model="selectedReports" :options="reports">
+                    <b-form-checkbox-group stacked
+                                           v-model="selectedReports"
+                                           :options="reports"
+                                           text-field="label"
+                                           value-field="entity">
                     </b-form-checkbox-group>
                 </b-form-group>
 
@@ -99,11 +106,10 @@
             </b-modal>
 
             <application-toolbar>
-                <h1>#{{id}}</h1>
+                Account ({{id}}) from {{providerBank.name}}
             </application-toolbar>
 
             <form>
-
                 <div class="form-row mb-2">
                     <div class="col-md-12">
                         <div class="card">
@@ -242,13 +248,12 @@
         data() {
             return {
                 reports: [
-                    {text: 'Account', value: 'account'},
-                    {text: 'Act', value: 'act'},
-                    {text: 'Invoice', value: 'invoice'},
+                    {label: 'Account', entity: 'account'},
+                    {label: 'Act', entity: 'act'},
+                    {label: 'Invoice', entity: 'invoice'},
                 ],
                 reportsViewing: false,
                 selectedReports: [],
-                reportPrinting: false,
                 totalAmountAsWords: null,
                 providerBank: {},
                 deleting: false,
@@ -289,10 +294,8 @@
                 })
             },
 
-            downloadReports() {},
-
             saveAccount(id) {
-                if (this.isExist) {
+                if (this.isExist()) {
                     this.$axios.put(`/api/account/${id}`, this.account).then(() => {
                         this.loadAccount(this.id)
                     })
@@ -380,11 +383,11 @@
             },
 
             openPrintAlert() {
-                this.reportPrinting = true
+                this.$refs.reportPrintingModal.show()
             },
 
             closePrintAlert() {
-                this.reportPrinting = false
+                this.$refs.reportPrintingModal.hide()
             },
 
             openMailAlert() {
@@ -399,32 +402,55 @@
                 if (!_.includes(['delete', 'insert'], product._crud)) {
                     this.$set(product, '_crud', 'update')
                 }
-            }
-        },
+            },
 
-        computed: {
             isExist() {
                 return !_.chain(this.id).toNumber().isNaN().value()
             },
 
-            mailReportRecipients() {
-                return _.map(this.partners, partner => ({
+            partnerToRecipient(partner) {
+                return {
                     text: `${partner.name} (${partner.mail})`,
                     value: partner,
-                }))
+                }
             },
 
-            mailReportAttachments() {
-                return _.map(this.reports, report => ({
-                    text: report.text,
+            reportToAttachment(report) {
+                return {
+                    text: report.label,
                     value: {
                         type: 'report',
                         arguments: {
-                            entity: report.value,
+                            entity: report.entity,
                             id: this.id,
                         }
                     },
-                }))
+                }
+            },
+        },
+
+        computed: {
+
+            mailReportRecipients() {
+                return _.map(this.partners, partner => this.partnerToRecipient(partner))
+            },
+
+            initMailReportRecipients() {
+                return _.chain(this.partners)
+                    .filter({id: this.account.purchaserId})
+                    .map(partner => this.partnerToRecipient(partner).value)
+                    .value()
+            },
+
+            mailReportAttachments() {
+                return _.map(this.reports, report => this.reportToAttachment(report))
+            },
+
+            initMailReportAttachments() {
+                return _.chain(this.reports)
+                    .filter(report => _.includes(this.selectedReports, report.entity))
+                    .map(report => this.reportToAttachment(report).value)
+                    .value()
             },
 
             visibleProducts() {
@@ -479,7 +505,7 @@
             this.loadTimeUnit()
             this.loadCurrencyUnit()
 
-            if (this.isExist) {
+            if (this.isExist()) {
                 this.loadAccount(this.id)
             }
         }

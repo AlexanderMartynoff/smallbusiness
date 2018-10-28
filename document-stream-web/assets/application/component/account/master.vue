@@ -14,7 +14,7 @@
         <div class="application-content pl-3 pt-3 pr-3">
 
             <application-toolbar>
-                <h1>ACCOUNTS</h1>
+                Accounts ({{accounts.length}})
             </application-toolbar>
 
             <table class="table table-striped table-hover">

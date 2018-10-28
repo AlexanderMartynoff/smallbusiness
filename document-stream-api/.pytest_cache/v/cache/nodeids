@@ -1,0 +1,7 @@
+[
+  "tests/test_database.py::test_crud_selectone",
+  "tests/test_database.py::test_crud_selectall",
+  "tests/test_database.py::test_crud_count",
+  "tests/test_database.py::test_crud_sqlite_insert",
+  "tests/test_database.py::test_query"
+]

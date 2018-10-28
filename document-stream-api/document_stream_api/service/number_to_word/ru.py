@@ -137,7 +137,7 @@ def _number_to_group(number: Union[int, float, str]) -> Tuple[Dict[int, str], Di
     )
 
 
-def number_to_word(number: Any,
+def number_to_word(number: Union[int, float, str],
                    uom_integer: WordCase,
                    uom_fraction: WordCase) -> str:
 

@@ -1,10 +1,10 @@
-from typing import List, Dict, Optional, AnyStr
+from typing import List, Dict, Optional, AnyStr, Any
 from itertools import groupby
 from collections import defaultdict
 
 
-def group_by_operations(source_items: List[Dict],
-                        update: Optional[Dict] = None,
+def group_by_operations(source_items: List[Dict[Any, Any]],
+                        update: Optional[Dict[Any, Any]] = None,
                         key: AnyStr = '_crud'):
 
     groups = defaultdict(list)

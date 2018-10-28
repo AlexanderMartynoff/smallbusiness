@@ -1,6 +1,6 @@
 <template>
     <i :class="[checked ? 'fa-check-square' : 'fa-square']"
-       @click="$emit('change', !checked)"
+       @click="onClick()"
        class="text-primary checkbox far pointer"></i>
 </template>
 
@@ -13,6 +13,12 @@
 
         props: {
             checked: Boolean
-        }
+        },
+
+        methods: {
+            onClick() {
+                this.$emit('change', !this.checked)
+            },
+        },
     }
 </script>

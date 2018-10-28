@@ -1,71 +1,33 @@
+from typing import Type, TypeVar, Generic
+from contextlib import contextmanager
 import sqlite3
 
-from sqlbuilder.smartsql import Q, T, Result
+from sqlbuilder.smartsql import Q, T, Result, compile
 from sqlbuilder.smartsql.dialects import sqlite
-from contextlib import contextmanager
 
 # NOTE: make `_atom_camel_to_snake` more independent, move from `.addon.falcon`
 from .addon.falcon import _atom_camel_to_snake
 
 
-class Database:
-    def __init__(self, compile):
-        self._compile = compile
-
-    @contextmanager
-    def connection(self):
-        raise NotImplementedError
-
-    @contextmanager
-    def cursor(self):
-        raise NotImplementedError
-
-    @contextmanager
-    def query(self):
-        raise NotImplementedError
+QueryT = TypeVar('QueryT', bound='Query')
+BaseQueryT = TypeVar('BaseQueryT', bound='Q')
 
 
-class SqliteDatabase(Database):
-    def __init__(self, database, timeout=None):
-        super().__init__(compile=sqlite.compile)
-
-        self._database = database
-        self._timeout = timeout
-
-    @contextmanager
-    def query(self):
-
-        def row_factory(cursor, row):
-            return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}
-
-        with sqlite3.connect(self._database) as connection:
-            connection.row_factory = row_factory
-            cursor = connection.cursor()
-
-            yield _Query.with_context(
-                compile=self._compile,
-                cursor=cursor,
-                crudclass=SqliteCRUD,
-                database=self,
-            )
-            cursor.close()
-
-
-class _Query(Q):
+class Query(Q):
     def __init__(self, tables=None):
         super().__init__(tables=tables, result=Result(compile=self._compile))
+
+    @property
+    def _compile(self):
+        raise NotImplementedError('It is necessary to get the class using `implement` method')
 
     def crud(self):
         raise NotImplementedError
 
-    @property
-    def _compile(self):
-        raise NotImplementedError('It is necessary to get the class using `with_context` method')
-
     @staticmethod
-    def with_context(compile, cursor, crudclass, database):
+    def implement(compile, cursor, crudclass, database) -> Type[QueryT]:
 
-        class Query(_Query):
+        class ContextQuery(Query):
 
             @property
             def _compile(self):
@@ -78,11 +40,46 @@ class _Query(Q):
             def crud(self):
                 return crudclass(self, cursor)
 
-        return Query
+        return ContextQuery
 
 
-class CRUD:
-    def __init__(self, query, cursor):
+class Database:
+    def __init__(self, compile):
+        self._compile = compile
+
+    @contextmanager
+    def query(self) -> QueryT:
+        raise NotImplementedError
+
+
+class SqliteDatabase(Database):
+    def __init__(self, database, timeout=None):
+        super().__init__(compile=sqlite.compile)
+
+        self._database = database
+        self._timeout = timeout
+
+    @contextmanager
+    def query(self) -> QueryT:
+
+        def row_factory(cursor, row):
+            return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}
+
+        with sqlite3.connect(self._database) as connection:
+            connection.row_factory = row_factory
+            cursor = connection.cursor()
+
+            yield Query.implement(
+                compile=self._compile,
+                cursor=cursor,
+                crudclass=SqliteCrud,
+                database=self,
+            )
+            cursor.close()
+
+
+class Crud:
+    def __init__(self, query: BaseQueryT, cursor):
         self._query = query
         self._cursor = cursor
 
@@ -114,7 +111,7 @@ class CRUD:
         raise NotImplementedError
 
 
-class SqliteCRUD(CRUD):
+class SqliteCrud(Crud):
     def last_insert_id(self):
         self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ROWID() as id').select())
         return self._cursor.fetchone()
@@ -122,8 +119,8 @@ class SqliteCRUD(CRUD):
 
 class Service:
 
-    def __init__(self, database: Database=None,
-                 queryclass: _Query=None):
+    def __init__(self, database: Database = None,
+                 queryclass: Type[QueryT] = None):
         self._database = database
         self._queryclass = queryclass
 
@@ -132,5 +129,5 @@ class Service:
         if self._queryclass is not None:
             yield self._queryclass
         else:
-            with self._database.query() as _Q:
-                yield _Q
+            with self._database.query() as ContextQuery:
+                yield ContextQuery

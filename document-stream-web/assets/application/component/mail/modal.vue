@@ -2,7 +2,14 @@
     <div class="form-modal">
         <b-modal ref="formModal" title="Send mail">
             <div slot="default">
-                <mail-form ref="form" :recipients="recipients" :attachments="attachments" @response="onSend()"></mail-form>
+                <mail-form ref="form"
+                           :initRecipientsSelection="initRecipientsSelection"
+                           :initAttachmentsSelection="initAttachmentsSelection"
+                           :subject="subject"
+                           :recipients="recipients"
+                           :attachments="attachments"
+                           @send="onSend()">
+                </mail-form>
             </div>
 
             <div slot="modal-footer">
@@ -21,12 +28,14 @@
 
 <script type="text/javascript">
     export default {
-        props: [
-            'recipients',
-            'initSelectedRecipients',
-            'attachments',
-            'initSelectedAttachments',
-        ],
+        props: {
+            subject: {type: String},
+            recipients: {type: Array},
+            attachments: {type: Array},
+            subject: {type: String},
+            initRecipientsSelection: {type: Array},
+            initAttachmentsSelection: {type: Array},
+        },
 
         data() {
             return {}
@@ -46,6 +55,8 @@
             },
 
             onSend() {
+                this.$refs.form.reset()
+                this.$emit('send')
                 this.hide()
             },
         }

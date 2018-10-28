@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional, Union, Dict, Any, Type
 import smtplib
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -28,6 +28,10 @@ class Attachment:
     def read(self):
         raise NotImplementedError
 
+    @property
+    def name(self):
+        raise NotImplementedError
+
     @classmethod
     def add_subclass(cls, subcls):
         cls._subclasses.add(cls)
@@ -37,7 +41,7 @@ class Attachment:
         return next((subcls for subcls in cls._subclasses if subcls.type == name), None)
 
     @classmethod
-    def parse(cls, attachments):
+    def parse(cls, attachments: List[Dict[str, Any]]):
         """ Parse attachments protocol data.
 
             >>> attachments
@@ -79,7 +83,7 @@ class AttachmentReport(Attachment):
         self._format = format
 
     @property
-    def name(self):
+    def name(self) -> str:
         return f'{self._entity}.{self._format}'
 
     def read(self) -> bytes:
@@ -92,7 +96,7 @@ class AttachmentReport(Attachment):
         elif self._entity == 'invoice':
             return printer.invoice_as_pdf(account)
         else:
-            raise NotImplementedError(f'Have no implementation for {self._entity}')
+            raise NotImplementedError(f'Have no implementation for `{self._entity}`')
 
 
 class Sender:
@@ -111,22 +115,29 @@ class Sender:
     def login(self):
         self._server.login(self._user, self._password)
 
-    def send(self, from_address: List[str], to_addresses: List[str], *,
-             topic=None, body=None, attachments=None):
+    def send(self, *, from_address: str, to_addresses: List[str],
+             subject: str, body: str,
+             attachments: Optional[List[Attachment]] = None):
 
         if not to_addresses:
-            return
+            raise ValueError('`to_addresses` must be not empty')
+
+        if not from_address:
+            raise ValueError('`from_address` must be not empty')
 
         message = MIMEMultipart()
 
         message['From'] = from_address
         message['To'] = COMMASPACE.join(to_addresses)
         message['Date'] = formatdate(localtime=True)
-        message['Subject'] = 'Hello, World!'
 
-        message.attach(MIMEText('Hello, World!'))
+        if subject:
+            message['Subject'] = subject
 
-        for attachment in attachments:
+        if body:
+            message.attach(MIMEText(body))
+
+        for attachment in attachments or []:
             application = MIMEApplication(attachment.read())
 
             application['Name'] = attachment.name
@@ -145,3 +156,6 @@ class Sender:
 
     def __exit__(self, exception_type, exception_value, exception_traceback):
         self.quit()
+
+        if exception_value is not None:
+            raise exception_value

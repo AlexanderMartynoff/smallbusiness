@@ -1,3 +1,4 @@
+from typing import Dict, Any
 from os.path import join
 from functools import partial
 import copy
@@ -21,9 +22,8 @@ environment.filters.update(
 )
 
 
-def _reportify_account(account: dict) -> dict:
+def _account_to_report(account: Dict[str, Any]) -> Dict[str, Any]:
     """ Compute additional properties for account.
-        Return new dict.
     """
 
     account = copy.deepcopy(account)
@@ -40,7 +40,7 @@ def _reportify_account(account: dict) -> dict:
 
 
 def _generate_account_based_report(account: dict, template_path: str) -> bytes:
-    account = _reportify_account(account)
+    account = _account_to_report(account)
 
     return weasyprint.HTML(
         string=environment.get_template(template_path).render(account=account)

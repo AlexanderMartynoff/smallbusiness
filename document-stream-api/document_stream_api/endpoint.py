@@ -130,8 +130,9 @@ class Mail:
             sender.send(
                 from_address=environment['smtp']['from'],
                 to_addresses=request.json['recipients'],
+                body=request.json['body'],
+                subject=request.json['subject'],
                 attachments=mail.Attachment.parse(request.json.get('attachments', [])),
-                body='Hello'
             )
 
 
