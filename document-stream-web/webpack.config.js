@@ -26,6 +26,7 @@ module.exports = {
             'vue$': 'vue/dist/vue.js',
             '@style': resolve('assets/scss'),
             '@application': resolve('assets/application'),
+            '@component': resolve('assets/application/component'),
             '@': resolve('assets')
         }
     },

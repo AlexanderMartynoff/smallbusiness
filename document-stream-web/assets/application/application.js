@@ -9,6 +9,7 @@ import Checkbox from '@/application/component/checkbox/index'
 import Download from '@/application/component/download'
 import MailForm from '@/application/component/mail/form'
 import MailModal from '@/application/component/mail/modal'
+import DatePicker from '@/application/component/datepicker/datepicker'
 
 
 import ApplicationContainer from '@/application/component/application/application-container'
@@ -23,6 +24,7 @@ import Axios from '@/application/plugin/axios'
 import '@style/layout.scss'
 import '@style/style.scss'
 import '@style/override.scss'
+import '@style/datepicker.scss'
 
 Vue.use(VueRouter)
 Vue.use(BootstrapVue)
@@ -33,6 +35,7 @@ Vue.component('checkbox', Checkbox)
 Vue.component('download', Download)
 Vue.component('mail-form', MailForm)
 Vue.component('mail-modal', MailModal)
+Vue.component('datepicker', DatePicker)
 
 Vue.component('application-container', ApplicationContainer)
 Vue.component('application-content', ApplicationContent)

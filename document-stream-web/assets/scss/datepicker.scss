@@ -1,0 +1,13 @@
+.datepicker {
+    &-dropdown {
+        position: absolute;
+        z-index: 10000;
+    }
+    &-calendar {
+        &-table {
+            td, th {
+                text-align: center;
+            }
+        }
+    }
+}

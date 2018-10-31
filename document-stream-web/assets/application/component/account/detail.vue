@@ -155,7 +155,7 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
 
                         <label>Currency</label>
                         <select class="form-control text-monospace" v-model="account.currencyUnitId"
@@ -166,10 +166,16 @@
                         </select>
                     </div>
 
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-4">
                         <label>Reason</label>
                         <input class="form-control text-monospace" v-model="account.reason" :readonly="readonly" type="text"/>
                     </div>
+
+                    <div class="form-group col-md-4">
+                        <label>Date</label>
+                        <datepicker input-class="text-monospace"></datepicker>
+                    </div>
+                    
                 </div>
 
                 <table class="table table-light">

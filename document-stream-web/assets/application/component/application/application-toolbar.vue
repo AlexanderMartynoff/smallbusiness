@@ -7,7 +7,7 @@
             <ul class="navbar-nav mr-auto"></ul>
             <form class="form-inline">
                 <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                  <input type="text" class="form-control">
                   <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="button">Search</button>
                     <button class="btn btn-outline-secondary" type="button">
