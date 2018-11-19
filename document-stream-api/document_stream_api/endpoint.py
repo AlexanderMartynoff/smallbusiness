@@ -141,12 +141,14 @@ class Report:
     class ID:
         @staticmethod
         def on_get(request, response, entity, entity_id):
+            account = account_service.selectone_filled(entity_id)
+
             if entity == 'account':
-                response.body = printer.account_as_pdf(account_service.selectone_filled(entity_id))
+                response.body = printer.account_as_pdf(account)
             elif entity == 'act':
-                response.body = printer.act_as_pdf(account_service.selectone_filled(entity_id))
+                response.body = printer.act_as_pdf(account)
             elif entity == 'invoice':
-                response.body = printer.invoice_as_pdf(account_service.selectone_filled(entity_id))
+                response.body = printer.invoice_as_pdf(account)
             else:
                 raise NotImplementedError(f'Unknown report type `{entity}`')
 

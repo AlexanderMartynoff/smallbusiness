@@ -9,7 +9,7 @@ import Checkbox from '@/application/component/checkbox/index'
 import Download from '@/application/component/download'
 import MailForm from '@/application/component/mail/form'
 import MailModal from '@/application/component/mail/modal'
-import DatePicker from '@/application/component/datepicker/datepicker'
+import DatepickerInput from '@/application/component/datepicker/datepicker-input'
 
 
 import ApplicationContainer from '@/application/component/application/application-container'
@@ -35,7 +35,7 @@ Vue.component('checkbox', Checkbox)
 Vue.component('download', Download)
 Vue.component('mail-form', MailForm)
 Vue.component('mail-modal', MailModal)
-Vue.component('datepicker', DatePicker)
+Vue.component('datepicker-input', DatepickerInput)
 
 Vue.component('application-container', ApplicationContainer)
 Vue.component('application-content', ApplicationContent)

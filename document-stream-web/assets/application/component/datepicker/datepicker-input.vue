@@ -1,14 +1,24 @@
 <template>
     <div class="datepicker input-group" ref="datepickerEl">
         <input ref="datepickerInputEl"
-               type="text" :class="inputClasses"
-               v-model="date"
-               @focus="showDatepickerDropdownEl()"
-               @click.stop>
+               type="text"
+               :class="inputClasses"
+               v-model="displayDate"
+               @change="onDisplayDateChange"
+               @click="showDatepickerDropdownEl"
+               @click.stop/>
 
-            <b-card class="datepicker-dropdown" ref="datepickerDropdownEl" v-show="datepickerDropdownElVisible" @click.stop>
-                <datepicker-calendar v-model="date" @dayclick="onDayClick"></datepicker-calendar>
-            </b-card>
+            <div class="card datepicker-dropdown"
+                 ref="datepickerDropdownEl"
+                 v-show="datepickerDropdownElVisible"
+                 @click.stop>
+                <div class="card-header p-2">
+                    {{calendarTitle}}
+                </div>
+                <div class="card-body p-2">
+                    <datepicker-calendar v-model="date"></datepicker-calendar>
+                </div>
+            </div>
 
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="button" @click.stop="doFocus()">
@@ -21,43 +31,40 @@
 <script type="text/javascript">
     import _ from 'lodash'
     import Popper from 'popper.js'
+    import datefns from 'date-fns'
 
-    import DatePickerCalendar from '@component/datepicker/datepicker-calendar'
+    import DatepickerCalendar from './datepicker-calendar'
+
 
     export default {
         components: {
-            'datepicker-calendar': DatePickerCalendar,
+            'datepicker-calendar': DatepickerCalendar,
         },
         props: {
+            value: {type: Date},
+            format: {
+                type: String,
+                default: 'YYYY/MM/DD',
+            },
             inputClass: {type: String},
-            autoClose: {
-                type: Boolean,
-                default: true,
-            }
         },
         data() {
             return {
                 date: null,
-                weeks: [
-                    [1, 2, 3, 4, 5, 6, 7],
-                    [1, 2, 3, 4, 5, 6, 7],
-                    [1, 2, 3, 4, 5, 6, 7],
-                    [1, 2, 3, 4, 5, 6, 7],
-                    [1, 2, 3, 4, 5, 6, 7],
-                    [1, 2, 3, 4, 5, 6, 7],
-                ],
-                attachment: "top left",
-                targetAttachment: "bottom left",
+                displayDate: null,
                 datepickerDropdownElVisible: false,
             }
         },
         computed: {
             inputClasses() {
                 return _.chain(this.inputClass).split(' ').concat('form-control').value()
-            }
+            },
+
+            calendarTitle() {
+                return datefns.format(this.value || new Date(), 'dddd, Do MMMM, YYYY')
+            },
         },
         methods: {
-
             initPopper() {
                 this.$popper = new Popper(this.$refs.datepickerEl, this.$refs.datepickerDropdownEl, {
                     placement: 'bottom-start',
@@ -67,7 +74,7 @@
                             offset: '0, 5'
                         },
                     }
-                });
+                })
             },
 
             doFocus() {
@@ -94,12 +101,39 @@
                 document.removeEventListener('click', this.bodyClickEventListener)
             },
 
-            onDayClick($event) {
-                this.date = $event.date
+            onDisplayDateChange() {
+                const displayDate = datefns.parse(this.displayDate, this.format)
 
-                if (this.autoClose) {
+                if (datefns.isDate(displayDate) && datefns.isValid(displayDate)) {
+                    this.$emit('input', displayDate)
+                } else {
+                    this.$emit('input', null)
+                }
+            },
+
+            onCalendarDateChange(value) {
+                this.$emit('input', value)
+            },
+
+
+            onDateMouseover(date) {
+
+            },
+        },
+
+        watch: {
+            value: {
+                immediate: true,
+                handler(value) {
+                    this.date = value
+                    this.displayDate = datefns.isDate(value) ? datefns.format(value, this.format) : null
+
                     this.hideDatepickerDropdownEl()
                 }
+            },
+
+            date(value) {
+                this.$emit('input', value)
             }
         },
 

@@ -53,7 +53,7 @@ class Attachment:
             >>> ]
 
             Each attachment record (aka dict) have next properties:
-            - type (str) - name that was used while defining concrete implementation
+            - type (str) - name that was used for defining concrete attachment implementation
             - arguments (dict) - dict that will passed to __init__ method of concrete implementation
               >>> concrete_attachment = ConcreteAttachment(**attachment.get('arguments', {})
         """

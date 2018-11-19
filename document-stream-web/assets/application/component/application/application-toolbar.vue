@@ -1,5 +1,5 @@
 <template>
-    <nav class="application-toolbar sticky-top navbar navbar-expand-lg rounded navbar-light bg-light p-1 mb-3 border">
+    <nav class="application-toolbar sticky-top navbar navbar-expand-lg rounded navbar-light bg-light mb-3 border">
         <a class="navbar-brand" href="#" @click.prevent>
           <slot></slot>
         </a>

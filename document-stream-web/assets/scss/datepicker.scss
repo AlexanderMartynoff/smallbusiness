@@ -4,10 +4,17 @@
         z-index: 10000;
     }
     &-calendar {
+        &-display-month-btn {
+            min-width: 90px;
+        }
         &-table {
             td, th {
                 text-align: center;
             }
+            .btn {
+                box-shadow: none;
+            }
         }
     }
 }
+

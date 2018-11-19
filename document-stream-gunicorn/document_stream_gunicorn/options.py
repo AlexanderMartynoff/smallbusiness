@@ -6,4 +6,4 @@ def pre_request(worker, request):
 threads = 1
 worker_class = 'sync'
 workers = 1
-bind = '127.0.0.1:8001'
+bind = '127.0.0.1:8000'

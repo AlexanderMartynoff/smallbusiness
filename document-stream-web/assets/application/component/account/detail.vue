@@ -173,7 +173,7 @@
 
                     <div class="form-group col-md-4">
                         <label>Date</label>
-                        <datepicker input-class="text-monospace"></datepicker>
+                        <datepicker-input input-class="text-monospace" v-model="date"></datepicker-input>
                     </div>
                     
                 </div>
@@ -253,6 +253,7 @@
 
         data() {
             return {
+                date: null,
                 reports: [
                     {label: 'Account', entity: 'account'},
                     {label: 'Act', entity: 'act'},

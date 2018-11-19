@@ -9,6 +9,7 @@
     "axios": "^0.15.3",
     "bootstrap": "^4.0.0",
     "bootstrap-vue": "^2.0.0-rc.2",
+    "date-fns": "^1.29.0",
     "lodash": "^4.17.10",
     "mini.css": "^3.0.0",
     "moment": "^2.22.2",
