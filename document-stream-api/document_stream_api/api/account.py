@@ -107,9 +107,10 @@ class Account(Service):
                 .update({
                     T.account.currency_unit_id: account['currency_unit_id'],
                     T.account.reason: account['reason'],
+                    T.account.date: account['date'],
                     T.account.provider_id: account['provider_id'],
                     T.account.purchaser_id: account['purchaser_id'],
-                })
+                })account_product_api
 
             account_product_api = AccountProduct(queryclass=Q)
 

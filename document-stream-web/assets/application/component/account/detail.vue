@@ -92,7 +92,7 @@
                     </button>
 
                     <download :urls="selectedReportUrls" :disabled="selectedReportExists()" tag="button" class="btn btn-primary">
-                        Dowload
+                        Download
                     </download>
                 </div>
 
@@ -173,7 +173,7 @@
 
                     <div class="form-group col-md-4">
                         <label>Date</label>
-                        <datepicker-input input-class="text-monospace" v-model="date"></datepicker-input>
+                        <datepicker-input input-class="text-monospace" v-model="account.date"></datepicker-input>
                     </div>
                     
                 </div>
@@ -253,7 +253,6 @@
 
         data() {
             return {
-                date: null,
                 reports: [
                     {label: 'Account', entity: 'account'},
                     {label: 'Act', entity: 'act'},
@@ -272,6 +271,7 @@
                 account: {
                     id: null,
                     name: null,
+                    date: null,
                     providerId: null,
                     purchaserId: null,
                     currencyUnitId: null,

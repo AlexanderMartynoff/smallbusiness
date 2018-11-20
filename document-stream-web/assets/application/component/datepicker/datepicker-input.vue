@@ -5,7 +5,7 @@
                :class="inputClasses"
                v-model="displayDate"
                @change="onDisplayDateChange"
-               @click="showDatepickerDropdownEl"
+               @focus="showDatepickerDropdownEl"
                @click.stop/>
 
             <div class="card datepicker-dropdown"
@@ -16,7 +16,7 @@
                     {{calendarTitle}}
                 </div>
                 <div class="card-body p-2">
-                    <datepicker-calendar v-model="date"></datepicker-calendar>
+                    <datepicker-calendar v-model="localValue"></datepicker-calendar>
                 </div>
             </div>
 
@@ -41,7 +41,13 @@
             'datepicker-calendar': DatepickerCalendar,
         },
         props: {
-            value: {type: Date},
+            value: {
+                type: [Date, Number]
+            },
+            mode: {
+                type: String,
+                default: 'timestamp'
+            },
             format: {
                 type: String,
                 default: 'YYYY/MM/DD',
@@ -50,7 +56,7 @@
         },
         data() {
             return {
-                date: null,
+                localValue: null,
                 displayDate: null,
                 datepickerDropdownElVisible: false,
             }
@@ -114,25 +120,20 @@
             onCalendarDateChange(value) {
                 this.$emit('input', value)
             },
-
-
-            onDateMouseover(date) {
-
-            },
         },
 
         watch: {
             value: {
                 immediate: true,
                 handler(value) {
-                    this.date = value
+                    this.localValue = value
                     this.displayDate = datefns.isDate(value) ? datefns.format(value, this.format) : null
 
                     this.hideDatepickerDropdownEl()
                 }
             },
 
-            date(value) {
+            localValue(value) {
                 this.$emit('input', value)
             }
         },

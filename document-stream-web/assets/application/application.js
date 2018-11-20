@@ -19,6 +19,7 @@ import ApplicationBody from '@/application/component/application/application-bod
 import ApplicationToolbar from '@/application/component/application/application-toolbar'
 
 import Axios from '@/application/plugin/axios'
+import {registry} from '@/application/modifer'
 
 
 import '@style/layout.scss'
@@ -70,9 +71,26 @@ const vue = new Vue({
         },
 
         interceptor: {
+            request(request) {
+
+                if (_.has(request, 'data')) {
+                    registry.modify({
+                        url: request.url,
+                        method: request.method,
+                        direction: 'request',
+                    }, request.data)
+                }
+
+                return request
+            },
+
             response(response) {
-                return response.data
+                return registry.modify({
+                        url: response.config.url,
+                        method: response.config.method,
+                        direction: 'response',
+                    }, response.data)
             }
-        },
+        }
     }
 })

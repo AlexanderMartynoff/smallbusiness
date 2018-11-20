@@ -1,10 +1,14 @@
 import { Axios } from 'axios'
+import axios from 'axios'
 import _ from 'lodash'
 
 
 export default class AxiosPlugin extends Axios {
-    constructor({ scope, event, interceptor, ...options }) {
-        super(options)
+    constructor({scope, event, interceptor, transform, ...options}) {
+        super(_.merge(options, {
+            transformRequest: _.concat(axios.defaults.transformRequest, transform.request),
+            transformResponse: _.concat(axios.defaults.transformResponse, transform.response),
+        }))
 
         this._scope = scope
         this._event = event
@@ -25,10 +29,13 @@ export default class AxiosPlugin extends Axios {
             this._event.error.call(this._scope, {})
             return error
         })
+
     }
 
     static defaultsOptions(options) {
+
         return _.defaultsDeep(options, {
+
             event: {
                 request() {},
                 response() {},
@@ -37,6 +44,7 @@ export default class AxiosPlugin extends Axios {
 
             interceptor: {
                 request(options) {
+                    alert('axios')
                     return options
                 },
 
@@ -44,6 +52,20 @@ export default class AxiosPlugin extends Axios {
                     return response
                 },
             },
+
+            transform: {
+                request: [
+                    (data, headers) => {
+                        return data
+                    }
+                ],
+
+                response: [
+                    (data) => {
+                        return data
+                    }
+                ],
+            }
         })
     }
 

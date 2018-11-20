@@ -52,7 +52,7 @@
     export default {
         props: {
             value: {
-                type: Date
+                type: [Date, Number]
             }
         },
 
