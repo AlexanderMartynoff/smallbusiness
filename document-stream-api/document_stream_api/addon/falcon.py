@@ -12,8 +12,8 @@ CONTENT_TYPE_HTML = 'text/html'
 ENCODING = 'utf-8'
 
 
-_re_camel_to_snake = re.compile(r'(?!^)(?<!_)([A-Z])')
 _re_snake_to_camel = re.compile(r'(?:_)(.)')
+_re_camel_to_snake = re.compile(r'(?!^)(?<!_)([A-Z])')
 
 
 def _atom_snake_to_camel(string: str) -> str:

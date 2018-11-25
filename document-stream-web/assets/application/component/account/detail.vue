@@ -53,6 +53,7 @@
 
             <mail-modal ref="mailModal"
                         subject="Account reports"
+                        :no-fade="true"
                         :recipients="mailReportRecipients"
                         :initRecipientsSelection="initMailReportRecipients"
                         :initAttachmentsSelection="initMailReportAttachments"
@@ -61,12 +62,16 @@
 
             <b-modal v-model="deleting"
                      :hide-header="true"
+                     :no-fade="true"
                      @ok="deleteAccount(id)"
                      @cancel="closeDeleteAlert()">
                 <h4>Delete account?</h4>
             </b-modal>
 
-            <b-modal ref="reportPrintingModal" button-size="sm" title="Select reports for action">
+            <b-modal ref="reportPrintingModal"
+                     button-size="sm"
+                     :no-fade="true"
+                     title="Select reports for action">
 
                 <b-form-group class="mb-0">
                     <b-form-checkbox-group stacked
@@ -100,13 +105,21 @@
 
             <b-modal v-model="deletingAccountProduct"
                      :hide-header="true"
+                     :no-fade="true"
                      @ok="deleteAccountProductFromAlert(id)"
                      @cancel="closeDeleteAccountProductAlert()">
                 <h4>Delete account product?</h4>
             </b-modal>
 
             <application-toolbar>
-                Account ({{id}}) from {{providerBank.name}}
+
+                <span v-if="isExist()">
+                    Document № {{id}} from {{formatTimestamp(account.date)}}
+                </span>
+                <span v-else>
+                    Unsaved document
+                </span>
+                
             </application-toolbar>
 
             <form>
@@ -246,6 +259,7 @@
 
 <script type="text/javascript">
     import _ from 'lodash'
+    import {formatTimestamp} from '@/application/instrument'
 
 
     export default {
@@ -282,7 +296,8 @@
         },
 
         methods: {
-
+            formatTimestamp: formatTimestamp,
+            
             selectedReportNoOne() {
                 return _.size(this.selectedReports) !== 1
             },

@@ -1,6 +1,6 @@
 <template>
     <div class="form-modal">
-        <b-modal ref="formModal" title="Send mail">
+        <b-modal ref="formModal" title="Send mail" :no-fade="true">
             <div slot="default">
                 <mail-form ref="form"
                            :initRecipientsSelection="initRecipientsSelection"

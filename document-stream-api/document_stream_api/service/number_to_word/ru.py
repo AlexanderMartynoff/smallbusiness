@@ -13,6 +13,16 @@ from typing import Tuple, Dict, Union, Any
 from logging import getLogger
 
 
+class AbstractWordStrategy:
+    def __call__(self):
+        raise NotImplementedError
+
+
+class IntegerWordStrategy(AbstractWordStrategy):
+    def __init__(self):
+        pass
+
+
 class Word:
     def resolve(self, *args, **kwargs):
         raise NotImplementedError
@@ -139,7 +149,8 @@ def _number_to_group(number: Union[int, float, str]) -> Tuple[Dict[int, str], Di
 
 def number_to_word(number: Union[int, float, str],
                    uom_integer: WordCase,
-                   uom_fraction: WordCase) -> str:
+                   uom_fraction: WordCase,
+                   uom_fraction_strategy=None) -> str:
 
     words = []
     integers, fractions, integer_part, fraction_part = _number_to_group(number)

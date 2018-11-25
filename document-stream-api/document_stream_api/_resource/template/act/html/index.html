@@ -1,3 +1,4 @@
+{% set account_total_price = get_account_total_price(account) %}
 <!doctype html>
 
 <html>
@@ -9,7 +10,7 @@
     
     <body>
 
-        <h1>Акт № 001 от 03.04.2018 г.</h1>
+        <h1>Акт № {{account.id}} от {{strftimestamp(account.date)}}.</h1>
 
         <div class="horizont-line"></div>
 
@@ -79,7 +80,7 @@
                         {{product['price']}}
                     </td>
                     <td>
-                        {{product['total_price']}}
+                        {{get_account_product_total_price(product)}}
                     </td>
                 </tr>
             {% endfor %}
@@ -89,7 +90,7 @@
         <table class="padding-table margin-top-30">
             <tr>
                 <td class="width-80-per text-right"><strong>Итого:</strong></td>
-                <td class="text-right"><strong>{{account['total_price']}}</strong></td>
+                <td class="text-right"><strong>{{account_total_price}}</strong></td>
             </tr>
             <tr>
                 <td class="width-80-per text-right"><strong>В том числе НДС:</strong></td>
@@ -98,8 +99,8 @@
         </table>
 
         <p>
-            Всего наименований {{account['products'] | length}}, на сумму {{account['total_price']}} руб.<br/>
-            <strong>{{account['total_price'] | number_to_word_ru}}</strong>
+            Всего наименований {{account['products'] | length}}, на сумму {{account_total_price}} руб.<br/>
+            <strong>{{convert_number_to_word(account_total_price)}}</strong>
         </p>
 
         <p>

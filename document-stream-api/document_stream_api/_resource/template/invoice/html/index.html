@@ -1,3 +1,5 @@
+{% set account_total_price = get_account_total_price(account) %}
+
 <!doctype html>
 
 <html>
@@ -21,77 +23,77 @@
             <tr>
                 <td class="width-200-px">СЧЕТ-ФАКТУРА №</td>
                 <td class="vartical-align-bottom">
-                    <span class="inline-underline">002 от "01.05.2018"</span>
+                    <span class="block-underline">{{account.id}} от {{strftimestamp(account.date)}}</span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(1)</td>
             </tr>
             <tr>
                 <td class="width-200-px">ИСПРАВЛЕНИЕ №</td>
                 <td class="vartical-align-bottom">
-                    <span class="inline-underline">002 от "01.05.2018"</span>
+                    <span class="block-underline"></span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(1а)</td>
             </tr>
             <tr>
                 <td class="width-200-px">Продавец</td>
                 <td class="vartical-align-bottom">
-                    <span class="block-underline">Мартынов Александр</span>
+                    <span class="block-underline">{{account.provider_name}}</span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(2)</td>
             </tr>
             <tr>
                 <td class="width-200-px">Адрес</td>
                 <td class="vartical-align-bottom">
-                    <span class="block-underline">413864, Саратовская область, Балаковский, Балаково, Проспект Героев, 54, 71</span>
+                    <span class="block-underline">{{account.provider_address}}</span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(2а)</td>
             </tr>
             <tr>
                 <td class="width-200-px">ИНН/КПП продавца</td>
                 <td class="vartical-align-bottom">
-                    <span class="block-underline">002 от "01.05.2018"</span>
+                    <span class="block-underline">{{account.provider_taxpayer_number}}</span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(2б)</td>
             </tr>
             <tr>
                 <td class="width-200-px">Грузоотправитель и его адрес</td>
                 <td class="vartical-align-bottom">
-                    <span class="block-underline">Общество с ограниченной ответственностью "Айкрафт оптикал Нью-Йорк", 105064, г. Москва, Земляной Вал ул, дом № 1/4, строение 1</span>
+                    <span class="block-underline">{{account.provider_name}}, {{account.provider_address}}</span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(3)</td>
             </tr>
             <tr>
                 <td class="width-200-px">Грузополучатель и его адрес</td>
                 <td class="vartical-align-bottom">
-                    <span class="block-underline">Общество с ограниченной ответственностью "Айкрафт оптикал Нью-Йорк", 105064, г. Москва, Земляной Вал ул, дом № 1/4, строение 1</span>
+                    <span class="block-underline">{{account.purchaser_name}}, {{account.purchaser_address}}</span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(4)</td>
             </tr>
             <tr>
                 <td class="width-200-px">К платежно-расчетному документу №</td>
                 <td class="vartical-align-bottom">
-                    <span class="block-underline">002 от "01.05.2018"</span>
+                    <span class="block-underline">{{account.id}} от {{strftimestamp(account.date)}}</span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(5)</td>
             </tr>
             <tr>
                 <td class="width-200-px">Покупатель</td>
                 <td class="vartical-align-bottom">
-                    <span class="block-underline">Общество с ограниченной ответственностью "Айкрафт оптикал Нью-Йорк"</span>
+                    <span class="block-underline">{{account.purchaser_name}}</span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(6)</td>
             </tr>
             <tr>
                 <td class="width-200-px">Адрес</td>
                 <td class="vartical-align-bottom">
-                    <span class="block-underline">105064, г. Москва, Земляной Вал ул, дом № 1/4, строение 1</span>
+                    <span class="block-underline">{{account.purchaser_address}}</span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(6а)</td>
             </tr>
             <tr>
                 <td class="width-200-px">ИНН/КПП покупателя</td>
                 <td class="vartical-align-bottom">
-                    <span class="block-underline">7701733880 / 770101001</span>
+                    <span class="block-underline">{{account.purchaser_taxpayer_number}}/{{account.purchaser_reason_code}}</span>
                 </td>
                 <td class="vartical-align-bottom width-200-px">(6б)</td>
             </tr>
@@ -181,21 +183,21 @@
                 <td>10а</td>
                 <td>11</td>
             </tr>
-            {% for product in account['products'] %}
+            {% for product in account.products %}
             <tr>
                 <td>
-                    {{product['name']}}
+                    {{product.name}}
                 </td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>{{product['value']}}</td>
-                <td>{{product['price']}}</td>
-                <td>{{product['total_price']}}</td>
+                <td>{{product.value}}</td>
+                <td>{{product.price}}</td>
+                <td>{{get_account_product_total_price(product)}}</td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>{{product['total_price']}}</td>
+                <td>{{get_account_product_total_price(product)}}</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -204,14 +206,14 @@
             <tr>
                 <td colspan="6">Всего к оплате</td>
                 <td>
-                    {{account['total_price']}}
+                    {{account_total_price}}
                 </td>
                 <td colspan="2">
                     
                 </td>
                 <td></td>
                 <td>
-                    {{account['total_price']}}
+                    {{account_total_price}}
                 </td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>

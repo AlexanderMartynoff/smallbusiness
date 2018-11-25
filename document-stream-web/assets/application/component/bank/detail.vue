@@ -29,7 +29,7 @@
             </b-modal>
 
             <application-toolbar>
-                <h1>#{{bank.id || 'NEW'}}</h1>
+                {{bank.name || 'Unsaved bank'}}
             </application-toolbar>
 
             <form>

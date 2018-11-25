@@ -14,20 +14,20 @@
         <div class="application-content pl-3 pt-3 pr-3">
 
             <application-toolbar>
-                Accounts ({{accounts.length}})
+                Accounts
             </application-toolbar>
 
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
+                        <th scope="col">№</th>
+                        <th scope="col">Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="account in accounts" @click="openAccount(account)">
                         <th scope="row">{{account.id}}</th>
-                        <td>Mark</td>
+                        <td>{{formatTimestamp(account.date)}}</td>
                     </tr>
                     <tr v-if="accounts.length === 0">
                         <td colspan="3">Records not found</td>
@@ -42,6 +42,7 @@
 
 <script type="text/javascript">
     import axios from 'axios'
+    import {formatTimestamp} from '@/application/instrument'
 
     export default {
         data: () => {
@@ -51,6 +52,8 @@
         },
 
         methods: {
+            formatTimestamp: formatTimestamp,
+
             loadAccounts: function() {
                 this.$axios.get('/api/account').then(accounts => {
                     this.accounts = accounts

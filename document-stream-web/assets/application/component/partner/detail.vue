@@ -29,7 +29,7 @@
             </b-modal>
 
             <application-toolbar>
-                <h1>#{{partner.id || 'NEW'}}</h1>
+                {{partner.name || 'Jhon Dow'}}
             </application-toolbar>
 
             <form>

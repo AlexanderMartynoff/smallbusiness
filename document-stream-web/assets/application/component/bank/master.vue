@@ -13,19 +13,17 @@
 
         <div class="application-content pl-3 pt-3 pr-3">
             <application-toolbar>
-                <h1>BANKS</h1>
+                Banks
             </application-toolbar>
 
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
                         <th scope="col">Name</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="bank in banks" @click="openBank(bank)">
-                        <th scope="row">{{bank.id}}</th>
                         <td>{{bank.name}}</td>
                     </tr>
                     <tr v-if="banks.length === 0">

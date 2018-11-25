@@ -77,7 +77,7 @@
                     modifiers: {
                         offset: {
                             enabled: true,
-                            offset: '0, 5'
+                            offset: '0, 5',
                         },
                     }
                 })

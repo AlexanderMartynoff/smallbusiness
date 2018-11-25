@@ -3,20 +3,7 @@
         <a class="navbar-brand" href="#" @click.prevent>
           <slot></slot>
         </a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mr-auto"></ul>
-            <form class="form-inline">
-                <div class="input-group">
-                  <input type="text" class="form-control">
-                  <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button">Search</button>
-                    <button class="btn btn-outline-secondary" type="button">
-                        <i class="far fa-question-circle"></i>
-                    </button>
-                  </div>
-                </div>
-            </form>
-        </div>
+        <div class="collapse navbar-collapse"></div>
     </nav>
 </template>
 <script type="text/javascript">

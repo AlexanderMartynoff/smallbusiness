@@ -8,6 +8,22 @@
 
     .application-menu {
         width: 70px;
+        display: flex;
+        flex-direction: column;
+
+        &-section-top, &-section-bottom {
+            display: flex;
+        } 
+
+        &-section-top {
+            flex: 1;
+            flex-direction: column;
+        }
+
+        &-section-bottom {
+            flex: 1;
+            flex-direction: column-reverse;
+        }
 
         &-item {
             color: white;
@@ -27,7 +43,7 @@
     }
 
     .application-sidebar {
-        width: 250px;
+        width: 210px;
         overflow: auto;
 
         &-header {

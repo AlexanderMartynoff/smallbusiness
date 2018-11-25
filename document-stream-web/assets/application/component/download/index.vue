@@ -1,5 +1,5 @@
 <template>
-    <component @click="download()" :is="tag">
+    <component @click="download" :is="tag">
         <slot></slot>
         <iframe :key="source.key" v-for="source in sources" :src="source.url" class="d-none"></iframe>
     </component>
@@ -30,7 +30,7 @@
             download() {
                 this.sources = _.chain(forceArray(this.urls)).concat(forceArray(this.url)).map((source, index) => ({
                     key: Date.now() + index,
-                    url: source
+                    url: source,
                 })).value()
             }
         }

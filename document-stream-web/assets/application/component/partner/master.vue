@@ -14,20 +14,20 @@
         <div class="application-content pl-3 pt-3 pr-3">
 
             <application-toolbar>
-                <h1>PARTNERS</h1>
+                Partners
             </application-toolbar>
 
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
                         <th scope="col">Name</th>
+                        <th scope="col">Mail</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="partner in partners" @click="openPartner(partner)">
-                        <td scope="row">{{partner.id}}</td>
-                        <td>{{partner.name}}</td>
+                        <td scope="row">{{partner.name}}</td>
+                        <td>{{partner.mail}}</td>
                     </tr>
                     <tr v-if="partners.length === 0">
                         <td colspan="2">Records not found</td>
