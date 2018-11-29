@@ -30,26 +30,35 @@ const registry = new ModiferRegistry()
 
 
 registry.register(({direction, url, method}) => {
-    return direction === 'request' && /\/api\/account\/\d/.test(url) && _.includes(['put', 'post'], method)
-}, account => {
-    
-    if (_.isDate(account.date)) {
-        account.date = account.date.getTime()
+    return direction === 'request' && /\/api\/account/.test(url) && _.includes(['put', 'post'], method)
+}, request => {
+    if (_.isDate(request.date)) {
+        request.date = request.date.getTime()
     }
     
-    return account
+    return request
 })
 
 
 registry.register(({direction, url, method}) => {
-    return direction === 'response' && /\/api\/account\/\d/.test(url) && _.includes(['get'], method)
-}, account => {
-    
-    if (_.isNumber(account.date)) {
-        account.date = new Date(account.date)
+    return direction === 'response' && /\/api\/account/.test(url) && method === 'get'
+}, response => {
+
+    function setupDate(account) {
+        if (_.isNumber(account.date)) {
+            account.date = new Date(account.date)
+        }
+    }
+
+    if (_.isArray(response)) {
+        _.each(response, account => {
+            setupDate(account)
+        })
+    } else {
+        setupDate(response)
     }
     
-    return account
+    return response
 })
 
 export {registry}

@@ -1,4 +1,5 @@
-from sqlbuilder.smartsql import T
+from sqlbuilder.smartsql import T, Q as Query
+from sqlbuilder.smartsql.expressions import func
 
 from ..database import Service
 from ..shortcut import group_by_operations
@@ -54,9 +55,10 @@ class Account(Service):
 
     def selectone(self, account_id):
 
-        with self.query() as Q:
+        with self.result() as result:
 
-            account = Q().tables(T.account) \
+            account = Query(result=result) \
+                .tables(T.account) \
                 .fields(
                     T.account.id,
                     T.account.currency_unit_id,
@@ -66,8 +68,8 @@ class Account(Service):
                     T.account.purchaser_id,
                 ) \
                 .where(T.account.id == account_id) \
-                .crud() \
-                .selectone()
+                .select() \
+                .one()
 
             if account:
                 account.update(products=AccountProduct(queryclass=Q).selectall(
@@ -77,11 +79,15 @@ class Account(Service):
             return account
 
     def selectall(self):
-        with self.query() as Q:
-            accounts = Q().tables(T.account) \
-                .fields('*') \
-                .crud() \
-                .selectall()
+        with self.result() as result:
+            accounts = Query(result=result) \
+                .tables(T.account) \
+                .fields(
+                    T.account.id,
+                    T.account.date,
+                ) \
+                .select() \
+                .all()
 
             return accounts
 
@@ -92,6 +98,7 @@ class Account(Service):
                 .insert({
                     T.account.currency_unit_id: account['currency_unit_id'],
                     T.account.reason: account['reason'],
+                    T.account.date: account['date'],
                     T.account.provider_id: account['provider_id'],
                     T.account.purchaser_id: account['purchaser_id'],
                 })

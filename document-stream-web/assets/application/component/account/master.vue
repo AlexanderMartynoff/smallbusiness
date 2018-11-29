@@ -27,14 +27,13 @@
                 <tbody>
                     <tr v-for="account in accounts" @click="openAccount(account)">
                         <th scope="row">{{account.id}}</th>
-                        <td>{{formatTimestamp(account.date)}}</td>
+                        <td>{{formatDate(account.date)}}</td>
                     </tr>
                     <tr v-if="accounts.length === 0">
                         <td colspan="3">Records not found</td>
                     </tr>
                 </tbody>
             </table>
-
         </div>
     </div>
 </template>
@@ -42,7 +41,11 @@
 
 <script type="text/javascript">
     import axios from 'axios'
+    import datefns from 'date-fns'
+
     import {formatTimestamp} from '@/application/instrument'
+
+    const format = 'YYYY/MM/DD'
 
     export default {
         data: () => {
@@ -52,7 +55,9 @@
         },
 
         methods: {
-            formatTimestamp: formatTimestamp,
+            formatDate(date) {
+                return date ? datefns.format(date, format) : null
+            },
 
             loadAccounts: function() {
                 this.$axios.get('/api/account').then(accounts => {

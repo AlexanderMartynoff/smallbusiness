@@ -13,16 +13,16 @@
 
         &-section-top, &-section-bottom {
             display: flex;
+            flex-direction: column;
         } 
 
         &-section-top {
             flex: 1;
-            flex-direction: column;
         }
 
         &-section-bottom {
             flex: 1;
-            flex-direction: column-reverse;
+            justify-content: flex-end;
         }
 
         &-item {
@@ -43,7 +43,7 @@
     }
 
     .application-sidebar {
-        width: 210px;
+        width: 280px;
         overflow: auto;
 
         &-header {

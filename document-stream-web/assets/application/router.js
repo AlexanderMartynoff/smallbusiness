@@ -10,16 +10,16 @@ import PartnerDetail from '@/application/component/partner/detail'
 
 export default new VueRouter({
     routes: [
-        {path: "/", component: AccountMaster},
+        {path: '/', component: AccountMaster},
 
-        {path: "/account/:id", component: AccountDetail, props: true},
-        {path: "/account", component: AccountMaster},
+        {path: '/account/:id', component: AccountDetail, props: true},
+        {path: '/account', component: AccountMaster},
 
-        {path: "/bank", component: BankMaster},
-        {path: "/bank/:id", component: BankDetail, props: true},
+        {path: '/bank', component: BankMaster},
+        {path: '/bank/:id', component: BankDetail, props: true},
 
-        {path: "/partners", component: PartnerMaster},
-        {path: "/partner", component: PartnerDetail},
-        {path: "/partner/:id", component: PartnerDetail, props: true},
+        {path: '/partner', component: PartnerMaster},
+        {path: '/partner', component: PartnerDetail},
+        {path: '/partner/:id', component: PartnerDetail, props: true},
     ]
 });

@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 from contextlib import contextmanager
 
-from ..environment import Environment
+from ..environment import Environment, RESOURCE_DIR
 from ..api.account import Account
 from ..service import printer
 

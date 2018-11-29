@@ -3,7 +3,8 @@ from contextlib import contextmanager
 import sqlite3
 
 from sqlbuilder.smartsql import Q, T, Result, compile
-from sqlbuilder.smartsql.dialects import sqlite
+from sqlbuilder.smartsql.dialects import sqlite, mysql
+from sqlbuilder.smartsql.factory import factory
 
 # NOTE: make `_atom_camel_to_snake` more independent, move from `.addon.falcon`
 from .addon.falcon import _atom_camel_to_snake
@@ -13,54 +14,75 @@ QueryT = TypeVar('QueryT', bound='Query')
 BaseQueryT = TypeVar('BaseQueryT', bound='Q')
 
 
-class Query(Q):
-    def __init__(self, tables=None):
-        super().__init__(tables=tables, result=Result(compile=self._compile))
+class DbResultOperation:
 
-    @property
-    def _compile(self):
-        raise NotImplementedError('It is necessary to get the class using `implement` method')
+    def __init__(self, cursor, result):
+        self._cursor = cursor
+        self._result = result
 
-    def crud(self):
+    def one(self):
         raise NotImplementedError
 
-    @staticmethod
-    def implement(compile, cursor, crudclass, database) -> Type[QueryT]:
+    def all(self):
+        raise NotImplementedError
 
-        class ContextQuery(Query):
 
-            @property
-            def _compile(self):
-                return compile
+class DbResult(Result):
+    def __init__(self, cursor, compile):
+        super().__init__(compile)
+        self.cursor = cursor
 
-            @property
-            def database(self):
-                return database
 
-            def crud(self):
-                return crudclass(self, cursor)
+class SqliteDbResultOperation:
 
-        return ContextQuery
+    def one(self):
+        raise NotImplementedError
+
+    def all(self):
+        raise NotImplementedError
+
+
+class SqliteDbResult(DbResult):
+
+    compile = sqlite.compile
+
+    def select(self):
+        return SqliteDbResultOperation(self._cursor, self)
+
+    def count(self):
+        return self.execute()
+
+    def insert(self):
+        return self.execute()
+
+    def update(self):
+        return self.execute()
+
+    def delete(self):
+        return self.execute()
+
+
+class SqliteCrudOperation(AbstractCrudOperation):
+
+    def one(self):
+        self._cursor.execute(*self._result.execute())
+        return self._cursor.fetchone()
 
 
 class Database:
-    def __init__(self, compile):
-        self._compile = compile
 
     @contextmanager
-    def query(self) -> QueryT:
+    def result(self) -> Result:
         raise NotImplementedError
 
 
 class SqliteDatabase(Database):
-    def __init__(self, database, timeout=None):
-        super().__init__(compile=sqlite.compile)
 
+    def __init__(self, database):
         self._database = database
-        self._timeout = timeout
 
     @contextmanager
-    def query(self) -> QueryT:
+    def result(self) -> Result:
 
         def row_factory(cursor, row):
             return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}
@@ -69,65 +91,18 @@ class SqliteDatabase(Database):
             connection.row_factory = row_factory
             cursor = connection.cursor()
 
-            yield Query.implement(
-                compile=self._compile,
-                cursor=cursor,
-                crudclass=SqliteCrud,
-                database=self,
-            )
+            yield SqliteDbResult(cursor=cursor)
+
             cursor.close()
-
-
-class Crud:
-    def __init__(self, query: BaseQueryT, cursor):
-        self._query = query
-        self._cursor = cursor
-
-    def selectone(self):
-        self._cursor.execute(*self._query.select())
-        return self._cursor.fetchone()
-
-    def selectall(self):
-        self._cursor.execute(*self._query.select())
-        return self._cursor.fetchall()
-
-    def count(self):
-        self._cursor.execute(*self._query.count())
-        return self._cursor.fetchone()
-
-    def insert(self, *args, **kwargs):
-        self._cursor.execute(*self._query.insert(*args, **kwargs))
-        return self.last_insert_id()
-
-    def update(self, *args, **kwargs):
-        self._cursor.execute(*self._query.update(*args, **kwargs))
-        return self._cursor.fetchone()
-
-    def delete(self):
-        self._cursor.execute(*self._query.delete())
-        return self._cursor.fetchone()
-
-    def last_insert_id(self):
-        raise NotImplementedError
-
-
-class SqliteCrud(Crud):
-    def last_insert_id(self):
-        self._cursor.execute(*self._query.raw('SELECT LAST_INSERT_ROWID() as id').select())
-        return self._cursor.fetchone()
 
 
 class Service:
 
-    def __init__(self, database: Database = None,
-                 queryclass: Type[QueryT] = None):
+    def __init__(self, database: Database = None, result: Result = None):
         self._database = database
-        self._queryclass = queryclass
+        self._result = result
 
     @contextmanager
-    def query(self):
-        if self._queryclass is not None:
-            yield self._queryclass
-        else:
-            with self._database.query() as ContextQuery:
-                yield ContextQuery
+    def result(self):
+        with self._database.result() as result:
+            yield result

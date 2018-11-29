@@ -4,28 +4,30 @@
         <div class="application-menu-section-top">
             <b-dropdown class="application-menu-item" variant="link" v-b-tooltip.hover.auto title="Applications" no-caret>
                 <template slot="button-content">
-                    <i class="fas fa-ellipsis-v"></i>
+                    <i class="fas fa-bars"></i>
                 </template>
-                <b-dropdown-item @click.prevent="$router.push('/account')">
+
+                <b-dropdown-item @click.prevent="$router.push('/account')" :active="isActive('/account')">
                     Accounts
                 </b-dropdown-item>
 
-                <b-dropdown-item @click.prevent="$router.push('/partners')">
+                <b-dropdown-item @click.prevent="$router.push('/partner')" :active="isActive('/partner')">
                     Partners
                 </b-dropdown-item>
 
-                <b-dropdown-item @click.prevent="$router.push('/bank')">
+                <b-dropdown-item @click.prevent="$router.push('/bank')" :active="isActive('/bank')">
                     Banks
                 </b-dropdown-item>
 
-                <b-dropdown-item @click.prevent="$router.push('/task')">
+                <b-dropdown-item @click.prevent="$router.push('/task')" :active="isActive('/task')">
                     Tasks
                 </b-dropdown-item>
 
-                <b-dropdown-item @click.prevent="$router.push('/contract')">
+                <b-dropdown-item @click.prevent="$router.push('/contract')" :active="isActive('/contract')">
                     Contracts
                 </b-dropdown-item>
             </b-dropdown>
+
         </div>
 
         <div class="application-menu-section-bottom">
@@ -51,5 +53,20 @@
 </template>
 
 <script type="text/javascript">
-    export default {}
+    import _ from 'lodash'
+
+    export default {
+
+        data() {
+            return {
+                path: null
+            }
+        },
+
+        methods: {
+            isActive(path) {
+                return _.includes(this.$route.path, path)
+            }
+        }
+    }
 </script>

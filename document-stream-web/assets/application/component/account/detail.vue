@@ -290,7 +290,7 @@
                     purchaserId: null,
                     currencyUnitId: null,
                     products: [],
-                    reason: Date.now(),
+                    reason: null,
                 }
             }
         },
