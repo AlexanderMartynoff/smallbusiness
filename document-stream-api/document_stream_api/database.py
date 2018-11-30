@@ -14,59 +14,24 @@ QueryT = TypeVar('QueryT', bound='Query')
 BaseQueryT = TypeVar('BaseQueryT', bound='Q')
 
 
-class DbResultOperation:
+class Executor:
 
-    def __init__(self, cursor, result):
-        self._cursor = cursor
-        self._result = result
-
-    def one(self):
-        raise NotImplementedError
-
-    def all(self):
-        raise NotImplementedError
-
-
-class DbResult(Result):
     def __init__(self, cursor, compile):
-        super().__init__(compile)
-        self.cursor = cursor
+        self._cursor = cursor
+        self._compile = compile
 
-
-class SqliteDbResultOperation:
-
-    def one(self):
-        raise NotImplementedError
-
-    def all(self):
-        raise NotImplementedError
-
-
-class SqliteDbResult(DbResult):
-
-    compile = sqlite.compile
-
-    def select(self):
-        return SqliteDbResultOperation(self._cursor, self)
-
-    def count(self):
-        return self.execute()
-
-    def insert(self):
-        return self.execute()
-
-    def update(self):
-        return self.execute()
-
-    def delete(self):
-        return self.execute()
-
-
-class SqliteCrudOperation(AbstractCrudOperation):
-
-    def one(self):
-        self._cursor.execute(*self._result.execute())
+    def fetchone(self):
         return self._cursor.fetchone()
+
+    def fetchall(self):
+        return self._cursor.fetchall()
+
+    def fetchall(self):
+        return self._cursor.fetchall()
+
+    @property
+    def result(self):
+        return Result(compile=self._compile)
 
 
 class Database:
@@ -82,7 +47,7 @@ class SqliteDatabase(Database):
         self._database = database
 
     @contextmanager
-    def result(self) -> Result:
+    def executor(self) -> Executor:
 
         def row_factory(cursor, row):
             return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}
@@ -91,7 +56,7 @@ class SqliteDatabase(Database):
             connection.row_factory = row_factory
             cursor = connection.cursor()
 
-            yield SqliteDbResult(cursor=cursor)
+            yield Executor(cursor=cursor, compile=sqlite.compile)
 
             cursor.close()
 
@@ -103,6 +68,6 @@ class Service:
         self._result = result
 
     @contextmanager
-    def result(self):
-        with self._database.result() as result:
-            yield result
+    def executor(self):
+        with self._database.executor() as executor:
+            yield executor

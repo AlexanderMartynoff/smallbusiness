@@ -55,9 +55,9 @@ class Account(Service):
 
     def selectone(self, account_id):
 
-        with self.result() as result:
+        with self.executor() as executor:
 
-            account = Query(result=result) \
+            query = Query(result=executor.result) \
                 .tables(T.account) \
                 .fields(
                     T.account.id,
@@ -68,8 +68,9 @@ class Account(Service):
                     T.account.purchaser_id,
                 ) \
                 .where(T.account.id == account_id) \
-                .select() \
-                .one()
+                .select()
+
+            account = executor.fetchone(query)
 
             if account:
                 account.update(products=AccountProduct(queryclass=Q).selectall(
@@ -79,17 +80,14 @@ class Account(Service):
             return account
 
     def selectall(self):
-        with self.result() as result:
-            accounts = Query(result=result) \
+        with self.executor() as executor:
+            return Query(result=executor.result) \
                 .tables(T.account) \
                 .fields(
                     T.account.id,
                     T.account.date,
                 ) \
-                .select() \
-                .all()
-
-            return accounts
+                .select()
 
     def insertone(self, account):
         with self.query() as Q:
