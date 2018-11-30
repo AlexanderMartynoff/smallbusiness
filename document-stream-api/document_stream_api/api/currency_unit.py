@@ -1,4 +1,4 @@
-from sqlbuilder.smartsql import T
+from sqlbuilder.smartsql import T, Q
 
 from ..database import Service
 
@@ -6,12 +6,12 @@ from ..database import Service
 class CurrencyUnit(Service):
 
     def selectall(self):
-        with self.query() as Q:
-            return Q().tables(T.currency_unit) \
+        with self.result() as result:
+            return Q(result=result).tables(T.currency_unit) \
                 .fields(
                     T.currency_unit.id,
                     T.currency_unit.name,
                     T.currency_unit.code,
                 ) \
-                .crud() \
-                .selectall()
+                .select() \
+                .fetchall()

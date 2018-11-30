@@ -1,4 +1,4 @@
-from sqlbuilder.smartsql import T
+from sqlbuilder.smartsql import T, Q
 
 from ..database import Service
 
@@ -7,8 +7,8 @@ class Partner(Service):
 
     def selectall(self):
 
-        with self.query() as Q:
-            return Q().tables(T.partner) \
+        with self.result() as result:
+            return Q(result=result).tables(T.partner) \
                 .fields(
                     T.partner.id,
                     T.partner.name,
@@ -19,13 +19,13 @@ class Partner(Service):
                     T.partner.bank_id,
                     T.partner.bank_checking_account,
                 ) \
-                .crud() \
-                .selectall()
+                .select() \
+                .fetchall()
 
     def selectone(self, partner_id):
 
-        with self.query() as Q:
-            return Q().tables((T.partner + T.bank).on(T.partner.bank_id == T.bank.id)) \
+        with self.result() as result:
+            return Q(result=result).tables((T.partner + T.bank).on(T.partner.bank_id == T.bank.id)) \
                 .fields(
                     T.partner.id,
                     T.partner.name,
@@ -44,15 +44,14 @@ class Partner(Service):
                     T.bank.correspondent_account.as_('bank_correspondent_account'),
                 ) \
                 .where(T.partner.id == partner_id) \
-                .crud() \
-                .selectone()
+                .select() \
+                .fetchone()
 
     def updateone(self, partner_id, partner):
 
-        with self.query() as Q:
-            Q().tables(T.partner) \
+        with self.result() as result:
+            Q(result=result).tables(T.partner) \
                 .where(T.partner.id == partner_id) \
-                .crud() \
                 .update({
                     T.partner.name: partner['name'],
                     T.partner.address: partner['address'],
@@ -61,20 +60,19 @@ class Partner(Service):
                     T.partner.reason_code: partner['reason_code'],
                     T.partner.bank_id: partner['bank_id'],
                     T.partner.bank_checking_account: partner['bank_checking_account'],
-                })
+                }) \
+                .execute()
 
     def deleteone(self, partner_id):
 
-        with self.query() as Q:
-            Q().tables(T.partner) \
+        with self.result() as result:
+            Q(result=result).tables(T.partner) \
                 .where(T.partner.id == partner_id) \
-                .crud() \
                 .delete()
 
     def insertone(self, partner):
-        with self.query() as Q:
-            return Q().tables(T.partner) \
-                    .crud() \
+        with self.result() as result:
+            return Q(result=result).tables(T.partner) \
                     .insert({
                         T.partner.name: partner['name'],
                         T.partner.address: partner['address'],
@@ -83,4 +81,5 @@ class Partner(Service):
                         T.partner.reason_code: partner['reason_code'],
                         T.partner.bank_id: partner['bank_id'],
                         T.partner.bank_checking_account: partner['bank_checking_account'],
-                    })
+                    }) \
+                    .execute()

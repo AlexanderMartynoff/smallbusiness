@@ -1,4 +1,4 @@
-from sqlbuilder.smartsql import T, Q as Query
+from sqlbuilder.smartsql import T, Q
 from sqlbuilder.smartsql.expressions import func
 
 from ..database import Service
@@ -9,8 +9,8 @@ from .account_product import AccountProduct
 class Account(Service):
 
     def selectone_filled(self, account_id):
-        with self.query() as Q:
-            account = Q().tables(
+        with self.result() as result:
+            account = Q(result=result).tables(
                     T.account +
                     T.partner.as_('provider').on(T.account.provider_id == T.provider.id) +
                     T.partner.as_('purchaser').on(T.account.purchaser_id == T.purchaser.id) +
@@ -43,8 +43,8 @@ class Account(Service):
                     T.provider_bank.reason_code.as_('provider_bank_reason_code'),
                 ) \
                 .where(T.account.id == account_id) \
-                .crud() \
-                .selectone()
+                .select() \
+                .fetchone()
 
             if account:
                 account.update(products=AccountProduct(queryclass=Q).selectall(
@@ -55,9 +55,9 @@ class Account(Service):
 
     def selectone(self, account_id):
 
-        with self.executor() as executor:
+        with self.result() as result:
 
-            query = Query(result=executor.result) \
+            account = Q(result=result) \
                 .tables(T.account) \
                 .fields(
                     T.account.id,
@@ -68,56 +68,55 @@ class Account(Service):
                     T.account.purchaser_id,
                 ) \
                 .where(T.account.id == account_id) \
-                .select()
-
-            account = executor.fetchone(query)
+                .select() \
+                .fetchone()
 
             if account:
-                account.update(products=AccountProduct(queryclass=Q).selectall(
+                account.update(products=AccountProduct(result=result).selectall(
                     T.account_product.account_id == account_id
                 ))
 
             return account
 
     def selectall(self):
-        with self.executor() as executor:
-            return Query(result=executor.result) \
+        with self.result() as result:
+            return Q(result=result) \
                 .tables(T.account) \
                 .fields(
                     T.account.id,
                     T.account.date,
                 ) \
-                .select()
+                .select() \
+                .fetchall()
 
     def insertone(self, account):
-        with self.query() as Q:
-            account_id = Q().tables(T.account) \
-                .crud() \
+        with self.result() as result:
+            return Q(result=result) \
+                .tables(T.account) \
                 .insert({
                     T.account.currency_unit_id: account['currency_unit_id'],
                     T.account.reason: account['reason'],
                     T.account.date: account['date'],
                     T.account.provider_id: account['provider_id'],
                     T.account.purchaser_id: account['purchaser_id'],
-                })
-
-            return account_id
+                }) \
+                .fetchinsertid()
 
     def updateone(self, account_id, account):
 
-        with self.query() as Q:
-            Q().tables(T.account) \
+        with self.result() as result:
+            Q(result=result).tables(T.account) \
                 .where(T.account.id == account_id) \
-                .crud() \
                 .update({
                     T.account.currency_unit_id: account['currency_unit_id'],
                     T.account.reason: account['reason'],
                     T.account.date: account['date'],
                     T.account.provider_id: account['provider_id'],
                     T.account.purchaser_id: account['purchaser_id'],
-                })
+                }) \
+                .execute()
 
-            account_product_api = AccountProduct(queryclass=Q)
+            account_product_api = AccountProduct(result=result)
 
             insert_products, update_products, delete_products = \
                 group_by_operations(account['products'], {'account_id': account_id})
@@ -132,8 +131,8 @@ class Account(Service):
                 account_product_api.deletemany(delete_products)
 
     def deleteone(self, account_id):
-        with self.query() as Q:
-            return Q().tables(T.account) \
+        with self.result() as result:
+            return Q(result=result).tables(T.account) \
                 .where(T.account.id == account_id) \
-                .crud() \
-                .delete()
+                .delete() \
+                .execute()

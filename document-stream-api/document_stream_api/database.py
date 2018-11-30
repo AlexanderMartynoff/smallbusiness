@@ -14,25 +14,78 @@ QueryT = TypeVar('QueryT', bound='Query')
 BaseQueryT = TypeVar('BaseQueryT', bound='Q')
 
 
-class Executor:
-
-    def __init__(self, cursor, compile):
+class CursorResult(Result):
+    def __init__(self, compile, cursor):
+        super().__init__(compile)
         self._cursor = cursor
-        self._compile = compile
 
-    def fetchone(self):
+    def select(self):
+        return self.terminal()
+
+    def insert(self):
+        return self.terminal()
+
+    def count(self):
+        return self.terminal()
+
+    def update(self):
+        return self.terminal()
+
+    def delete(self):
+        return self.terminal()
+
+    def terminal(self):
+        return CursorResultTeminalOperation(self)
+
+    def execute_fetchnone(self):
+        self._cursor.execute(*self.execute())
         return self._cursor.fetchone()
 
-    def fetchall(self, query):
+    def execute_fetchone(self):
+        self._cursor.execute(*self.execute())
+        return self._cursor.fetchone()
+
+    def execute_fetchall(self):
+        self._cursor.execute(*self.execute())
         return self._cursor.fetchall()
 
-    def execute(self, query):
-        return self._cursor.execute(*query)
+    def execute_fetchinsertid(self):
+        raise NotImplementedError
 
 
-    @property
-    def result(self):
-        return Result(compile=self._compile)
+class SqliteCursorResult(CursorResult):
+
+    def execute_fetchinsertid(self):
+        self._cursor.execute(*self.execute())
+
+        sql = Q(self.clone()).raw('SELECT LAST_INSERT_ROWID() as id').select()
+
+        print(sql)
+
+        self._cursor.execute(*sql)
+
+        _ = self._cursor.fetchone()
+
+        print(_)
+
+        return _
+
+
+class CursorResultTeminalOperation:
+    def __init__(self, result: CursorResult):
+        self._result = result
+
+    def execute(self):
+        return self._result.execute_fetchnone()
+
+    def fetchone(self):
+        return self._result.execute_fetchone()
+
+    def fetchall(self):
+        return self._result.execute_fetchall()
+
+    def fetchinsertid(self):
+        return self._result.execute_fetchinsertid()
 
 
 class Database:
@@ -48,7 +101,7 @@ class SqliteDatabase(Database):
         self._database = database
 
     @contextmanager
-    def executor(self) -> Executor:
+    def result(self) -> CursorResult:
 
         def row_factory(cursor, row):
             return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}
@@ -57,7 +110,7 @@ class SqliteDatabase(Database):
             connection.row_factory = row_factory
             cursor = connection.cursor()
 
-            yield Executor(cursor=cursor, compile=sqlite.compile)
+            yield SqliteCursorResult(compile=sqlite.compile, cursor=cursor)
 
             cursor.close()
 
@@ -69,6 +122,9 @@ class Service:
         self._result = result
 
     @contextmanager
-    def executor(self):
-        with self._database.executor() as executor:
-            yield executor
+    def result(self):
+        if self._result is None:
+            with self._database.result() as result:
+                yield result
+        else:
+            yield self._result
