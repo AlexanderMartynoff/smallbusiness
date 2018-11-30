@@ -23,11 +23,12 @@ class Executor:
     def fetchone(self):
         return self._cursor.fetchone()
 
-    def fetchall(self):
+    def fetchall(self, query):
         return self._cursor.fetchall()
 
-    def fetchall(self):
-        return self._cursor.fetchall()
+    def execute(self, query):
+        return self._cursor.execute(*query)
+
 
     @property
     def result(self):
