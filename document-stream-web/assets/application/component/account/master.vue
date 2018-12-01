@@ -22,6 +22,7 @@
                     <tr>
                         <th scope="col">№</th>
                         <th scope="col">Date</th>
+                        <th scope="col">Purchaser</th>
                         <th scope="col">Price</th>
                     </tr>
                 </thead>
@@ -29,6 +30,7 @@
                     <tr v-for="account in accounts" @click="openAccount(account)">
                         <th scope="row">{{account.id}}</th>
                         <td>{{formatDate(account.date)}}</td>
+                        <td>{{account.purchaserName}}</td>
                         <td>{{account.price}}</td>
                     </tr>
                     <tr v-if="accounts.length === 0">

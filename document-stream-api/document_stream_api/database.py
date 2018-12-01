@@ -98,6 +98,9 @@ class SqliteDatabase(Database):
 class Service:
 
     def __init__(self, database: Database = None, result: Result = None):
+        if database is None and result is None:
+            raise ValueError('`database` or `result` must be provide')
+
         self._database = database
         self._result = result
 

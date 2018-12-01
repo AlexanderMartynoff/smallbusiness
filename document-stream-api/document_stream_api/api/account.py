@@ -3,7 +3,7 @@ from sqlbuilder.smartsql.expressions import func
 
 from .account_product import AccountProduct
 from ..database import Service
-from ..shortcut import group_by_operations
+from ..instrument import group_by_operations
 
 
 class Account(Service):
@@ -82,15 +82,21 @@ class Account(Service):
         with self.result() as result:
 
             return Q(result=result) \
-                .tables(T.account) \
+                .tables(
+                    T.account +
+                    T.partner.as_('purchaser').on(T.account.purchaser_id == T.purchaser.id)
+                ) \
                 .fields(
                     T.account.id,
                     T.account.date,
-                    Q().tables(T.account_product)
-                       .fields(func.Sum(T.account_product.value * T.account_product.price))
-                       .where(T.account_product.account_id == T.account.id)
-                       .group_by(T.account_product.account_id)
-                       .as_('price')
+                    T.purchaser.name.as_('purchaser_name'),
+                    (Q().tables(T.account_product)
+                        .fields(func.sum(
+                            T.account_product.value * T.account_product.price
+                         ))
+                        .where(T.account_product.account_id == T.account.id)
+                        .group_by(T.account_product.account_id)
+                        .as_('price'))
                 ) \
                 .select() \
                 .fetchall()

@@ -1,7 +1,7 @@
 from sqlbuilder.smartsql import T, Q
 
-from ..database import Service
 from . import account
+from ..database import Service
 
 
 class AccountProduct(Service):
