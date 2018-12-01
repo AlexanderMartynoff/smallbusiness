@@ -22,12 +22,14 @@
                     <tr>
                         <th scope="col">№</th>
                         <th scope="col">Date</th>
+                        <th scope="col">Price</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="account in accounts" @click="openAccount(account)">
                         <th scope="row">{{account.id}}</th>
                         <td>{{formatDate(account.date)}}</td>
+                        <td>{{account.price}}</td>
                     </tr>
                     <tr v-if="accounts.length === 0">
                         <td colspan="3">Records not found</td>

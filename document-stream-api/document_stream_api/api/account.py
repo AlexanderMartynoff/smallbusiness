@@ -1,9 +1,9 @@
-from sqlbuilder.smartsql import T, Q
+from sqlbuilder.smartsql import expressions, T, Q
 from sqlbuilder.smartsql.expressions import func
 
+from .account_product import AccountProduct
 from ..database import Service
 from ..shortcut import group_by_operations
-from .account_product import AccountProduct
 
 
 class Account(Service):
@@ -80,11 +80,17 @@ class Account(Service):
 
     def selectall(self):
         with self.result() as result:
+
             return Q(result=result) \
                 .tables(T.account) \
                 .fields(
                     T.account.id,
                     T.account.date,
+                    Q().tables(T.account_product)
+                       .fields(func.Sum(T.account_product.value * T.account_product.price))
+                       .where(T.account_product.account_id == T.account.id)
+                       .group_by(T.account_product.account_id)
+                       .as_('price')
                 ) \
                 .select() \
                 .fetchall()
@@ -105,7 +111,8 @@ class Account(Service):
     def updateone(self, account_id, account):
 
         with self.result() as result:
-            Q(result=result).tables(T.account) \
+            Q(result=result) \
+                .tables(T.account) \
                 .where(T.account.id == account_id) \
                 .update({
                     T.account.currency_unit_id: account['currency_unit_id'],
