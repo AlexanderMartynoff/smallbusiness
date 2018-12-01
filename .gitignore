@@ -10,3 +10,4 @@
 **/.eggs
 **/node_modules
 **/bundle
+**/*.sqlite3
