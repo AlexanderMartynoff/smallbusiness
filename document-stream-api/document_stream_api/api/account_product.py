@@ -8,7 +8,8 @@ class AccountProduct(Service):
 
     def selectall(self, where):
         with self.result() as result:
-            return Q(result=result).tables(
+            return Q(result=result) \
+                .tables(
                     T.account_product +
                     T.time_unit.on(T.time_unit.id == T.account_product.time_unit_id)
                 ) \
@@ -27,7 +28,8 @@ class AccountProduct(Service):
     def updatemany(self, products):
         with self.result() as result:
             for product in products:
-                Q(result=result).tables(T.account_product) \
+                Q(result=result) \
+                    .tables(T.account_product) \
                     .where(T.account_product.id == product['id']) \
                     .update({
                         T.account_product.name: product['name'],
@@ -40,7 +42,8 @@ class AccountProduct(Service):
     def deletemany(self, products):
         with self.result() as result:
             for product in products:
-                Q(result=result).tables(T.account_product) \
+                Q(result=result) \
+                    .tables(T.account_product) \
                     .where(T.account_product.id == product['id']) \
                     .delete() \
                     .execute()

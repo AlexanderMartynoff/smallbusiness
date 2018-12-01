@@ -18,12 +18,10 @@ account_service = Account(database)
 
 class Attachment:
     _subclasses = set()
+    type: Optional[str] = None
 
     def __init_subclass__(cls):
         cls.add_subclass(cls)
-
-    def __init__(self, type):
-        self._type = type
 
     def read(self):
         raise NotImplementedError

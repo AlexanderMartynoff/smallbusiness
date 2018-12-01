@@ -47,7 +47,7 @@ class Account(Service):
                 .fetchone()
 
             if account:
-                account.update(products=AccountProduct(queryclass=Q).selectall(
+                account.update(products=AccountProduct(result=result).selectall(
                     T.account_product.account_id == account_id
                 ))
 
@@ -132,7 +132,8 @@ class Account(Service):
 
     def deleteone(self, account_id):
         with self.result() as result:
-            return Q(result=result).tables(T.account) \
+            return Q(result=result) \
+                .tables(T.account) \
                 .where(T.account.id == account_id) \
                 .delete() \
                 .execute()

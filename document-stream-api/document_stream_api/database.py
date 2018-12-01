@@ -1,4 +1,4 @@
-from typing import Type, TypeVar, Generic
+from typing import Type, TypeVar, Generic, ContextManager
 from contextlib import contextmanager
 import sqlite3
 
@@ -19,23 +19,10 @@ class CursorResult(Result):
         super().__init__(compile)
         self._cursor = cursor
 
-    def select(self):
-        return self.terminal()
-
-    def insert(self):
-        return self.terminal()
-
-    def count(self):
-        return self.terminal()
-
-    def update(self):
-        return self.terminal()
-
-    def delete(self):
-        return self.terminal()
-
     def terminal(self):
         return CursorResultTeminalOperation(self)
+
+    delete = update = count = insert = select = terminal
 
     def execute_fetchnone(self):
         self._cursor.execute(*self.execute())
@@ -58,17 +45,10 @@ class SqliteCursorResult(CursorResult):
     def execute_fetchinsertid(self):
         self._cursor.execute(*self.execute())
 
-        sql = Q(self.clone()).raw('SELECT LAST_INSERT_ROWID() as id').select()
-
-        print(sql)
-
-        self._cursor.execute(*sql)
-
-        _ = self._cursor.fetchone()
-
-        print(_)
-
-        return _
+        return factory.get(self) \
+            .Raw('SELECT LAST_INSERT_ROWID() as id', (), result=self) \
+            .select() \
+            .fetchone()
 
 
 class CursorResultTeminalOperation:
@@ -91,7 +71,7 @@ class CursorResultTeminalOperation:
 class Database:
 
     @contextmanager
-    def result(self) -> Result:
+    def result(self) -> ContextManager[CursorResult]:
         raise NotImplementedError
 
 
@@ -101,7 +81,7 @@ class SqliteDatabase(Database):
         self._database = database
 
     @contextmanager
-    def result(self) -> CursorResult:
+    def result(self) -> ContextManager[CursorResult]:
 
         def row_factory(cursor, row):
             return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}

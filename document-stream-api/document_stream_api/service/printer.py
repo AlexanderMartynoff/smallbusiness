@@ -24,15 +24,15 @@ def _generate_account_based_report(account: dict, template_path: str) -> bytes:
 
 
 def account_as_pdf(account: dict) -> bytes:
-    return _generate_account_based_report(account, 'account/html/index.html')
+    return _generate_account_based_report(account, 'html/account.html')
 
 
 def act_as_pdf(account: dict) -> bytes:
-    return _generate_account_based_report(account, 'act/html/index.html')
+    return _generate_account_based_report(account, 'html/act.html')
 
 
 def invoice_as_pdf(account: dict) -> bytes:
-    return _generate_account_based_report(account, 'invoice/html/index.html')
+    return _generate_account_based_report(account, 'html/invoice.html')
 
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
