@@ -1,5 +1,0 @@
-{
-  "tests/test_database.py::test_crud": true,
-  "tests/test_database.py::test_crud_insert": true,
-  "tests/test_environment.py::test_register": true
-}

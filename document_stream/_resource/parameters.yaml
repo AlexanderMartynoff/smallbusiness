@@ -1,6 +1,6 @@
 server:
     static_dirs: [
-        '/home/alexander/projects/document-stream/document-stream-web/static'
+        '/home/alexander/projects/document-stream/document_stream/static'
     ]
 smtp:
     ssl: true,
