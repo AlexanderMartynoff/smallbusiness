@@ -1,3 +1,4 @@
+from os.path import join
 import falcon
 
 from .database import SqliteDatabase
@@ -44,4 +45,4 @@ application.add_route('/api/report/{entity}/{entity_id}', Report.ID)
 
 
 for static_dir in environment['server']['static_dirs']:
-    application.add_static_route('/static', static_dir)
+    application.add_static_route('/static', join(APPLICATION_DIR, static_dir))

@@ -1,6 +1,6 @@
 server:
     static_dirs: [
-        '/home/alexander/projects/homebusiness/homebusiness/homebusiness/static'
+        './static'
     ]
 smtp:
     ssl: true,
