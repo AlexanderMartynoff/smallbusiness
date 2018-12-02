@@ -12,7 +12,7 @@ class Test(TestCommand):
 
 setup(
     name='homebusiness',
-    requirements=[
+    requires=[
         'pymysql',
         'sqlbuilder',
         'cached_property',
