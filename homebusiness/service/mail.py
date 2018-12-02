@@ -152,8 +152,8 @@ class Sender:
         self.login()
         return self
 
-    def __exit__(self, exception_type, exception_value, exception_traceback):
+    def __exit__(self, etype, evalue, etraceback):
         self.quit()
 
-        if exception_value is not None:
-            raise exception_value
+        if evalue is not None:
+            raise evalue
