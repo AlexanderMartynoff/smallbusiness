@@ -11,7 +11,7 @@ class Test(TestCommand):
 
 
 setup(
-    name='document_stream_api',
+    name='homebusiness',
     requirements=[
         'pymysql',
         'sqlbuilder',
