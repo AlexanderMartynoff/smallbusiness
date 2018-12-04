@@ -6,6 +6,7 @@
         <div class="collapse navbar-collapse"></div>
     </nav>
 </template>
+
 <script type="text/javascript">
-export default {}
+    export default {}
 </script>

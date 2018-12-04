@@ -102,10 +102,10 @@
                     </td>
 
                     <td>
-                        {{product.price}}
+                        {{format_currency(product.price)}}
                     </td>
                     <td>
-                        {{get_account_product_total_price(product)}}
+                        {{format_currency(get_account_product_total_price(product))}}
                     </td>
                 </tr>
             {% endfor %}
@@ -115,7 +115,7 @@
         <table class="padding-table margin-top-30">
             <tr>
                 <td class="width-80-per text-right"><strong>Итого:</strong></td>
-                <td class="text-right"><strong>{{account_total_price}}</strong></td>
+                <td class="text-right"><strong>{{format_currency(account_total_price)}}</strong></td>
             </tr>
             <tr>
                 <td class="width-80-per text-right"><strong>В том числе НДС:</strong></td>
@@ -123,12 +123,12 @@
             </tr>
             <tr>
                 <td class="width-80-per text-right"><strong>Всего к оплате:</strong></td>
-                <td class="text-right"><strong>{{account_total_price}}</strong></td>
+                <td class="text-right"><strong>{{format_currency(account_total_price)}}</strong></td>
             </tr>
         </table>
 
         <p>
-            Всего наименований {{account.products | length}}, на сумму {{account_total_price}} руб.<br/>
+            Всего наименований {{account.products | length}}, на сумму {{format_currency(account_total_price)}} руб.<br/>
             <strong>{{convert_number_to_word(account_total_price)}}</strong>
         </p>
 

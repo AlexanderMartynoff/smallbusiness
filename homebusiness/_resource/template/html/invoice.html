@@ -192,12 +192,12 @@
                 <td></td>
                 <td></td>
                 <td>{{product.value}}</td>
-                <td>{{product.price}}</td>
-                <td>{{get_account_product_total_price(product)}}</td>
+                <td>{{format_currency(product.price)}}</td>
+                <td>{{format_currency(get_account_product_total_price(product))}}</td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>{{get_account_product_total_price(product)}}</td>
+                <td>{{format_currency(get_account_product_total_price(product))}}</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -206,14 +206,14 @@
             <tr>
                 <td colspan="6">Всего к оплате</td>
                 <td>
-                    {{account_total_price}}
+                    {{format_currency(account_total_price)}}
                 </td>
                 <td colspan="2">
                     
                 </td>
                 <td></td>
                 <td>
-                    {{account_total_price}}
+                    {{format_currency(account_total_price)}}
                 </td>
                 <td class="no-border"></td>
                 <td class="no-border"></td>

@@ -13,14 +13,8 @@ from typing import Tuple, Dict, Union, Any
 from logging import getLogger
 
 
-class AbstractWordStrategy:
-    def __call__(self):
-        raise NotImplementedError
-
-
-class IntegerWordStrategy(AbstractWordStrategy):
-    def __init__(self):
-        pass
+def normal_fraction(number, size):
+    pass
 
 
 class Word:
@@ -50,7 +44,7 @@ class WordCase(Word):
     second: str = None
     third: str = None
 
-    def resolve(self, number, rank):
+    def resolve(self, number, _rank=None):
         return self._resolve_case(number, [self.first, self.second, self.third])
 
     def _resolve_case(self, number, after):
@@ -150,7 +144,7 @@ def _number_to_group(number: Union[int, float, str]) -> Tuple[Dict[int, str], Di
 def number_to_word(number: Union[int, float, str],
                    uom_integer: WordCase,
                    uom_fraction: WordCase,
-                   uom_fraction_strategy=None) -> str:
+                   uom_fraction_size=2) -> str:
 
     words = []
     integers, fractions, integer_part, fraction_part = _number_to_group(number)
@@ -176,11 +170,16 @@ def number_to_word(number: Union[int, float, str],
 
         words += [word.resolve(int(integer), rank) for word in _words]
 
+    if len(fraction_part) > uom_fraction_size:
+        fraction_part = fraction_part[:uom_fraction_size]
+    elif len(fraction_part) < uom_fraction_size:
+        fraction_part = fraction_part + '0' * (uom_fraction_size - len(fraction_part))
+
     return ' '.join(
         words +
-        [uom_integer.resolve(int(integer_part), None)] +
+        [uom_integer.resolve(int(integer_part))] +
         [fraction_part] +
-        [uom_fraction.resolve(int(fraction_part), None)]
+        [uom_fraction.resolve(int(fraction_part))]
     ).capitalize()
 
 

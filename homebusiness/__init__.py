@@ -1,3 +1,4 @@
+import locale
 from os.path import join
 import falcon
 
@@ -22,6 +23,11 @@ environment = Environment.get().setup(
     register_services={
         'database': SqliteDatabase(SQLITE3_DB)
     }
+)
+
+locale.setlocale(
+    locale.LC_ALL,
+    locale.normalize(environment['server']['locale'])
 )
 
 application = falcon.API(

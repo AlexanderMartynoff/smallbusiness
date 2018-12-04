@@ -1,4 +1,5 @@
 from typing import Dict, Any, List
+import locale
 from os.path import join
 from functools import partial
 from datetime import datetime
@@ -48,4 +49,5 @@ environment.globals.update(
         uom_fraction=number_to_word.kopeck,
     ),
     strftimestamp=lambda ts, format='%Y/%m/%d': datetime.fromtimestamp(ts / 1000).strftime(format),
+    format_currency=lambda number: locale.format('%.2f', number, grouping=True)
 )

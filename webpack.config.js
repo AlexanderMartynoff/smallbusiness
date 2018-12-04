@@ -9,8 +9,8 @@ module.exports = {
     mode: 'none',
 
     entry: {
-        'document_stream/static/_build/application': resolve('assets/application/application.js'),
-        'document_stream/static/_build/css': resolve('assets/scss/layout.scss')
+        'homebusiness/static/_build/application': resolve('assets/application/application.js'),
+        'homebusiness/static/_build/css': resolve('assets/scss/layout.scss')
     },
 
     devtool: 'source-map',
@@ -59,9 +59,9 @@ module.exports = {
 
     plugins: [
         new CopyWebpackPlugin([
-            { from: resolve('node_modules/bootstrap/dist/css/bootstrap.css'), to: './document_stream/static/_build/css' },
-            { from: resolve('node_modules/bootstrap-vue/dist/bootstrap-vue.css'), to: './document_stream/static/_build/css' },
-            { from: resolve('node_modules/@fortawesome/fontawesome-free'), to: "./document_stream/static/_build/css/font-awesome" }
+            { from: resolve('node_modules/bootstrap/dist/css/bootstrap.css'), to: './homebusiness/static/_build/css' },
+            { from: resolve('node_modules/bootstrap-vue/dist/bootstrap-vue.css'), to: './homebusiness/static/_build/css' },
+            { from: resolve('node_modules/@fortawesome/fontawesome-free'), to: "./homebusiness/static/_build/css/font-awesome" }
         ])
     ]
 }

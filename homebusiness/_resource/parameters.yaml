@@ -2,8 +2,9 @@ server:
     static_dirs: [
         './static'
     ]
+    locale: 'ru_RU'
 smtp:
-    ssl: true,
+    ssl: true
     host: 'smtp.mail.ru'
     port: 465
     user: 'triplustri@mail.ru'
