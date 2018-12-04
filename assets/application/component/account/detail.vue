@@ -73,13 +73,19 @@
                      :no-fade="true"
                      title="Select reports for action">
 
-                <b-form-group class="mb-0">
+                <b-form-group>
                     <b-form-checkbox-group stacked
                                            v-model="selectedReports"
                                            :options="reports"
                                            text-field="label"
                                            value-field="entity">
                     </b-form-checkbox-group>
+
+                </b-form-group>
+
+                <b-form-group class="mb-0">
+                    <label>Format</label>
+                    <b-form-select v-model="reportFormat" :options="reportFormats"/>
                 </b-form-group>
 
                 <div slot="modal-footer">
@@ -271,6 +277,17 @@
                     {label: 'Account', entity: 'account'},
                     {label: 'Act', entity: 'act'},
                     {label: 'Invoice', entity: 'invoice'},
+                ],
+                reportFormat: 'pdf',
+                reportFormats: [
+                    {
+                        text: 'PDF',
+                        value: 'pdf',
+                    },
+                    {
+                        text: 'Excel',
+                        value: 'excel',
+                    },
                 ],
                 reportsViewing: false,
                 selectedReports: [],

@@ -1,5 +1,6 @@
-import locale
 from os.path import join
+import locale
+
 import falcon
 
 from .database import SqliteDatabase
@@ -34,7 +35,6 @@ application = falcon.API(
     request_type=Request,
     response_type=Response,
 )
-
 
 application.add_route('/api/account', Account)
 application.add_route('/api/account/{id}', Account.ID)

@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 
 APPLICATION_DIR = dirname(abspath(__file__))
-RESOURCE_DIR = f'{APPLICATION_DIR}/_resource'
+RESOURCE_DIR = f'{APPLICATION_DIR}/resource'
 SQLITE3_DB = f'{RESOURCE_DIR}/database.sqlite3'
 
 
@@ -41,7 +41,7 @@ class _Register:
 
 
 class _Proxy:
-    _implementation = None
+    _implementation: Any = None
 
     def __getattr__(self, name):
         if self._implementation is None:
@@ -49,7 +49,7 @@ class _Proxy:
 
         return getattr(self._implementation, name)
 
-    def _set_implementation(self, implementation):
+    def _set_implementation(self, implementation: Any):
         self._implementation = implementation
 
     @property
