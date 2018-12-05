@@ -3,6 +3,8 @@ server:
         './static'
     ]
     locale: 'ru_RU'
+gunicorn:
+    bind: '127.0.0.1:8001'
 smtp:
     ssl: true
     host: 'smtp.mail.ru'

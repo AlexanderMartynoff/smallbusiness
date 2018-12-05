@@ -2,12 +2,12 @@ from setuptools import setup
 
 
 setup(
-    name='homebusiness-module-company',
+    name='smallbusiness-module-company',
     install_requires=[
-        'homebusiness-framework',
+        'smallbusiness-framework',
     ],
     package_data={
-        'homebusiness.module.company': [
+        'smallbusiness.module.company': [
             'static/build/*',
             'static/build/css/font-awesome/css/*',
             'static/build/css/font-awesome/webfonts/*',
@@ -17,7 +17,7 @@ setup(
         'dev': ['pytest']
     },
     packages=[
-        'homebusiness.module.company'
+        'smallbusiness.module.company'
     ],
     include_package_data=True,
 )

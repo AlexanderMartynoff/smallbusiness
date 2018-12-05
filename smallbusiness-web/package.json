@@ -1,5 +1,5 @@
 {
-  "name": "document-stream",
+  "name": "smallbusiness",
   "scripts": {
     "build": "./node_modules/.bin/webpack",
     "watch": "./node_modules/.bin/webpack --watch"

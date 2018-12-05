@@ -1,18 +1,17 @@
-from os.path import join
 from os.path import dirname, abspath, join, exists
 import locale
 
 import falcon
 
-from homebusiness.framework.database import SqliteDatabase
-from homebusiness.framework.plugin.falcon import Request, Response
-from homebusiness.framework.environment import (
+from smallbusiness.framework.database import SqliteDatabase
+from smallbusiness.framework.plugin.falcon import Request, Response
+from smallbusiness.framework.environment import (
     FRAMEWORK_DIR,
     FRAMEWORK_RESOURCE_DIR,
     SQLITE_DB,
     Environment
 )
-from homebusiness.framework.endpoint import (
+from smallbusiness.framework.endpoint import (
     Account,
     AccountProduct,
     Partner,
