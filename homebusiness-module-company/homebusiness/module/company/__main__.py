@@ -1,4 +1,4 @@
-from homebusiness.framework import application
+from homebusiness.module.company import application
 from homebusiness.framework.gunicorn import StandaloneApplication, options
 
 

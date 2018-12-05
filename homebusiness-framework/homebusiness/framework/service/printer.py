@@ -6,7 +6,7 @@ from datetime import datetime
 import weasyprint
 import jinja2
 
-from .. environment import RESOURCE_DIR
+from .. environment import FRAMEWORK_RESOURCE_DIR
 from . import number_to_word
 
 
@@ -37,7 +37,7 @@ def invoice_as_pdf(account: dict) -> bytes:
 
 
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
-    join(RESOURCE_DIR, 'template')))
+    join(FRAMEWORK_RESOURCE_DIR, 'template')))
 
 
 environment.globals.update(

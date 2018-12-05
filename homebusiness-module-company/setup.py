@@ -11,14 +11,13 @@ class Test(TestCommand):
 
 
 setup(
-    name='homebusiness-company',
+    name='homebusiness-module-company',
     requires=[
         'pymysql',
         'sqlbuilder',
         'cached_property',
         'openpyxl',
         'weasyprint',
-
         'homebusiness.framework',
     ],
     extras_require={
@@ -28,6 +27,6 @@ setup(
         'test': Test
     },
     packages=[
-        'homebusiness.company'
+        'homebusiness.module.company'
     ]
 )

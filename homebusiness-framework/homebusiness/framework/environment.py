@@ -1,11 +1,12 @@
-from os.path import dirname, abspath, join
+from os.path import dirname, abspath, join, exists
 from ruamel import yaml
 from typing import Any, Dict, List, Optional
+from contextlib import contextmanager
 
 
-APPLICATION_DIR = dirname(abspath(__file__))
-RESOURCE_DIR = f'{APPLICATION_DIR}/resource'
-SQLITE3_DB = f'{RESOURCE_DIR}/database.sqlite3'
+FRAMEWORK_DIR = dirname(abspath(__file__))
+FRAMEWORK_RESOURCE_DIR = FRAMEWORK_DIR + '/resource'
+SQLITE_DB = FRAMEWORK_RESOURCE_DIR + '/database.sqlite3'
 
 
 class _Register:
@@ -62,7 +63,7 @@ class Environment:
 
     def __init__(self, key):
         self._key = key
-        self._working_dir = None
+        self._working_dirs = None
         self._parameter_path = None
         self._force_paths = None
         self._register = _Register()
@@ -75,12 +76,12 @@ class Environment:
         return cls._cache[key]
 
     def setup(self, *,
-              working_dir: str,
+              working_dirs: List[str],
               parameter_path: str,
               force_paths: Optional[List[str]] = None,
               register_services: Optional[Dict[str, Any]] = None):
 
-        self._working_dir = working_dir
+        self._working_dirs = working_dirs
         self._parameter_path = parameter_path
         self._force_paths = force_paths
         self._register_services = register_services
@@ -98,8 +99,21 @@ class Environment:
     def _setup_parameter(self, path):
         """ It should be call first """
 
-        with open(join(self._working_dir, path), 'rt') as file:
+        with self.open_resource(path) as file:
             self._parameter = yaml.load(file.read(), yaml.RoundTripLoader)
+
+    @contextmanager
+    def open_resource(self, path, mode='rt'):
+        for working_dir in self._working_dirs:
+            try:
+                with open(join(working_dir, path), mode) as file:
+                    yield file
+            except FileNotFoundError:
+                pass
+            else:
+                return
+
+        raise FileNotFoundError
 
     def _setup_register(self, services):
         for key, value in services.items():

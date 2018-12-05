@@ -2,7 +2,7 @@ from typing import cast
 
 from .database import SqliteDatabase, Database
 from .service import printer, number_to_word, mail
-from .environment import Environment, SQLITE3_DB
+from .environment import Environment
 from . import api
 
 

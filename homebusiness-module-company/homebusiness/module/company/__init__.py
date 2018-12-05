@@ -1,10 +1,17 @@
 from os.path import join
+from os.path import dirname, abspath, join, exists
 import locale
+
 import falcon
 
 from homebusiness.framework.database import SqliteDatabase
 from homebusiness.framework.addon.falcon import Request, Response
-from homebusiness.framework.environment import APPLICATION_DIR, RESOURCE_DIR, SQLITE3_DB, Environment
+from homebusiness.framework.environment import (
+    FRAMEWORK_DIR,
+    FRAMEWORK_RESOURCE_DIR,
+    SQLITE_DB,
+    Environment
+)
 from homebusiness.framework.endpoint import (
     Account,
     AccountProduct,
@@ -17,11 +24,17 @@ from homebusiness.framework.endpoint import (
     Mail,
 )
 
+MODULE_DIR = dirname(abspath(__file__))
+MODULE_RESOURCE_DIR = MODULE_DIR + '/resource'
+
 environment = Environment.get().setup(
-    working_dir=RESOURCE_DIR,
+    working_dirs=[
+        FRAMEWORK_RESOURCE_DIR,
+        MODULE_RESOURCE_DIR,
+    ],
     parameter_path='./parameters.yaml',
     register_services={
-        'database': SqliteDatabase(SQLITE3_DB)
+        'database': SqliteDatabase(SQLITE_DB)
     }
 )
 
@@ -50,4 +63,4 @@ application.add_route('/api/report/{entity}/{entity_id}', Report.ID)
 
 
 for static_dir in environment['server']['static_dirs']:
-    application.add_static_route('/static', join(APPLICATION_DIR, static_dir))
+    application.add_static_route('/static', join(MODULE_DIR, static_dir))
