@@ -9,8 +9,8 @@ module.exports = {
     mode: 'none',
 
     entry: {
-        '../homebusiness-module-company/homebusiness/module/company/static/_build/application': resolve('./application/application.js'),
-        '../homebusiness-module-company/homebusiness/module/company/static/_build/css': resolve('./application/style/scss/layout.scss')
+        '../homebusiness-module-company/homebusiness/module/company/static/build/application': resolve('./application/application.js'),
+        '../homebusiness-module-company/homebusiness/module/company/static/build/css': resolve('./application/style/scss/layout.scss')
     },
 
     devtool: 'source-map',
@@ -59,9 +59,9 @@ module.exports = {
 
     plugins: [
         new CopyWebpackPlugin([
-            { from: resolve('node_modules/bootstrap/dist/css/bootstrap.css'), to: '../homebusiness-module-company/homebusiness/module/company/static/_build/css' },
-            { from: resolve('node_modules/bootstrap-vue/dist/bootstrap-vue.css'), to: '../homebusiness-module-company/homebusiness/module/company/static/_build/css' },
-            { from: resolve('node_modules/@fortawesome/fontawesome-free'), to: "../homebusiness-module-company/homebusiness/module/company/static/_build/css/font-awesome" }
+            { from: resolve('node_modules/bootstrap/dist/css/bootstrap.css'), to: '../homebusiness-module-company/homebusiness/module/company/static/build/css' },
+            { from: resolve('node_modules/bootstrap-vue/dist/bootstrap-vue.css'), to: '../homebusiness-module-company/homebusiness/module/company/static/build/css' },
+            { from: resolve('node_modules/@fortawesome/fontawesome-free'), to: "../homebusiness-module-company/homebusiness/module/company/static/build/css/font-awesome" }
         ])
     ]
 }

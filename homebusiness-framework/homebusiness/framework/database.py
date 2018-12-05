@@ -6,9 +6,6 @@ from sqlbuilder.smartsql import Q, T, Result, compile
 from sqlbuilder.smartsql.dialects import sqlite, mysql
 from sqlbuilder.smartsql.factory import factory
 
-# NOTE: make `_atom_camel_to_snake` more independent, move from `.addon.falcon`
-from .addon.falcon import _atom_camel_to_snake
-
 
 QueryT = TypeVar('QueryT', bound='Query')
 BaseQueryT = TypeVar('BaseQueryT', bound='Q')

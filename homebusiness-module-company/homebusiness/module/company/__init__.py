@@ -5,7 +5,7 @@ import locale
 import falcon
 
 from homebusiness.framework.database import SqliteDatabase
-from homebusiness.framework.addon.falcon import Request, Response
+from homebusiness.framework.plugin.falcon import Request, Response
 from homebusiness.framework.environment import (
     FRAMEWORK_DIR,
     FRAMEWORK_RESOURCE_DIR,

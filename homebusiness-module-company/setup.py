@@ -1,32 +1,23 @@
 from setuptools import setup
-import subprocess
-import sys
-from setuptools.command.test import test as TestCommand
-
-
-class Test(TestCommand):
-
-    def run_tests(self):
-        raise SystemExit(subprocess.call([sys.executable, '-m', 'pytest', 'tests', '-v', '-s']))
 
 
 setup(
     name='homebusiness-module-company',
-    requires=[
-        'pymysql',
-        'sqlbuilder',
-        'cached_property',
-        'openpyxl',
-        'weasyprint',
-        'homebusiness.framework',
+    install_requires=[
+        'homebusiness-framework',
     ],
+    package_data={
+        'homebusiness.module.company': [
+            'static/build/*',
+            'static/build/css/font-awesome/css/*',
+            'static/build/css/font-awesome/webfonts/*',
+        ]
+    },
     extras_require={
         'dev': ['pytest']
     },
-    cmdclass={
-        'test': Test
-    },
     packages=[
         'homebusiness.module.company'
-    ]
+    ],
+    include_package_data=True,
 )

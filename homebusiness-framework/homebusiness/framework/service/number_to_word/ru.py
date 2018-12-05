@@ -7,10 +7,10 @@ Functions `_1_number_to_word`, `_2_number_to_word`, `_3_number_to_word`
 """
 
 
-import re
-from dataclasses import dataclass
 from typing import Tuple, Dict, Union, Any
+from dataclasses import dataclass
 from logging import getLogger
+import re
 
 
 def normal_fraction(number, size):
