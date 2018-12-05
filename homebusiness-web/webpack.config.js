@@ -9,8 +9,8 @@ module.exports = {
     mode: 'none',
 
     entry: {
-        'homebusiness/static/_build/application': resolve('assets/application/application.js'),
-        'homebusiness/static/_build/css': resolve('assets/scss/layout.scss')
+        '../homebusiness-company/homebusiness/company/static/_build/application': resolve('./application/application.js'),
+        '../homebusiness-company/homebusiness/company/static/_build/css': resolve('./application/style/scss/layout.scss')
     },
 
     devtool: 'source-map',
@@ -24,10 +24,10 @@ module.exports = {
         extensions: ['.js', '.vue'],
         alias: {
             'vue$': 'vue/dist/vue.js',
-            '@style': resolve('assets/scss'),
-            '@application': resolve('assets/application'),
-            '@component': resolve('assets/application/component'),
-            '@': resolve('assets')
+            '@style': resolve('./application/style/scss'),
+            '@application': resolve('./application'),
+            '@component': resolve('./application/component'),
+            '@': resolve('.')
         }
     },
 
@@ -59,9 +59,9 @@ module.exports = {
 
     plugins: [
         new CopyWebpackPlugin([
-            { from: resolve('node_modules/bootstrap/dist/css/bootstrap.css'), to: './homebusiness/static/_build/css' },
-            { from: resolve('node_modules/bootstrap-vue/dist/bootstrap-vue.css'), to: './homebusiness/static/_build/css' },
-            { from: resolve('node_modules/@fortawesome/fontawesome-free'), to: "./homebusiness/static/_build/css/font-awesome" }
+            { from: resolve('node_modules/bootstrap/dist/css/bootstrap.css'), to: '../homebusiness-company/homebusiness/company/static/_build/css' },
+            { from: resolve('node_modules/bootstrap-vue/dist/bootstrap-vue.css'), to: '../homebusiness-company/homebusiness/company/static/_build/css' },
+            { from: resolve('node_modules/@fortawesome/fontawesome-free'), to: "../homebusiness-company/homebusiness/company/static/_build/css/font-awesome" }
         ])
     ]
 }

@@ -11,7 +11,7 @@ class Test(TestCommand):
 
 
 setup(
-    name='homebusiness',
+    name='homebusiness-framework',
     requires=[
         'pymysql',
         'sqlbuilder',
@@ -24,5 +24,8 @@ setup(
     },
     cmdclass={
         'test': Test
-    }
+    },
+    packages=[
+        'homebusiness.framework'
+    ]
 )

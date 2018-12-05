@@ -1,5 +1,5 @@
 sqlite database.sqlite3
 
-.read schema.sql
+.read database.shema.sql
 .schema `table-name`
 
