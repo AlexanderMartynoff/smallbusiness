@@ -449,7 +449,7 @@
 
             partnerToRecipient(partner) {
                 return {
-                    text: `${partner.name} (${partner.mail})`,
+                    text: `${partner.name} - ${partner.mail}`,
                     value: partner,
                 }
             },

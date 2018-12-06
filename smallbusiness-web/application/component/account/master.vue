@@ -34,7 +34,7 @@
                         <td>{{account.price}}</td>
                     </tr>
                     <tr v-if="accounts.length === 0">
-                        <td colspan="3">Records not found</td>
+                        <td colspan="4">Records not found</td>
                     </tr>
                 </tbody>
             </table>

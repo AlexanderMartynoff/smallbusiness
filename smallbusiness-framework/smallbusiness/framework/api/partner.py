@@ -68,7 +68,8 @@ class Partner(Service):
         with self.result() as result:
             Q(result=result).tables(T.partner) \
                 .where(T.partner.id == partner_id) \
-                .delete()
+                .delete() \
+                .execute()
 
     def insertone(self, partner):
         with self.result() as result:
@@ -82,4 +83,4 @@ class Partner(Service):
                         T.partner.bank_id: partner['bank_id'],
                         T.partner.bank_checking_account: partner['bank_checking_account'],
                     }) \
-                    .execute()
+                    .fetchinsertid()

@@ -103,7 +103,7 @@ class Account(Service):
 
     def insertone(self, account):
         with self.result() as result:
-            return Q(result=result) \
+            created_account = Q(result=result) \
                 .tables(T.account) \
                 .insert({
                     T.account.currency_unit_id: account['currency_unit_id'],
@@ -113,6 +113,16 @@ class Account(Service):
                     T.account.purchaser_id: account['purchaser_id'],
                 }) \
                 .fetchinsertid()
+
+            if account['products']:
+                account_product_api = AccountProduct(result=result)
+
+                for product in account['products']:
+                    product['account_id'] = created_account['id']
+
+                account_product_api.insertmany(account['products'])
+
+            return created_account
 
     def updateone(self, account_id, account):
 

@@ -4,7 +4,7 @@
             <h4 class="application-sidebar-header">OPERATIONS</h4>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <router-link to="/partner" class="nav-link">
+                    <router-link to="/partner/new" class="nav-link">
                         <i class="fas fa-plus-circle"></i> Add
                     </router-link>
                 </li>

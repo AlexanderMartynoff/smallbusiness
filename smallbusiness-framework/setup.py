@@ -13,6 +13,7 @@ class Test(TestCommand):
 setup(
     name='smallbusiness-framework',
     requires=[
+        'yoyo',
         'pymysql',
         'sqlbuilder',
         'cached_property',
@@ -21,6 +22,14 @@ setup(
     ],
     extras_require={
         'dev': ['pytest']
+    },
+    package_data={
+        'smallbusiness.framework': [
+            'resource/*',
+            'resource/template/*',
+            'resource/template/css/*',
+            'resource/template/html/*',
+        ]
     },
     cmdclass={
         'test': Test

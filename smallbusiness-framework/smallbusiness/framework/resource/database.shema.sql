@@ -46,8 +46,8 @@ CREATE TABLE account (
     date INTEGER
 );
 
-INSERT INTO account VALUES (1, 'ruble', 'contract/100', 0, 0, 1);
-INSERT INTO account VALUES (NULL, 'ruble', 'contract/101', 0, 0, 1);
+INSERT INTO account VALUES (1, 'ruble', 'contract/100', 1, 2, 1);
+INSERT INTO account VALUES (NULL, 'ruble', 'contract/101', 2, 1, 1);
 
 
 DROP TABLE IF EXISTS account_product;

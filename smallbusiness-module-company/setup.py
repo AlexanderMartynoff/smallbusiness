@@ -11,6 +11,7 @@ setup(
             'static/build/*',
             'static/build/css/font-awesome/css/*',
             'static/build/css/font-awesome/webfonts/*',
+            'resource/*',
         ]
     },
     extras_require={

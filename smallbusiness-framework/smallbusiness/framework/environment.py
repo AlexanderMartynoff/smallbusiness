@@ -1,6 +1,6 @@
 from os.path import dirname, abspath, join, exists
 from ruamel import yaml
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TextIO, ContextManager
 from contextlib import contextmanager
 
 
@@ -103,7 +103,7 @@ class Environment:
             self._parameter = yaml.load(file.read(), yaml.RoundTripLoader)
 
     @contextmanager
-    def open_resource(self, path, mode='rt'):
+    def open_resource(self, path, mode='rt') -> ContextManager[TextIO]:
         for working_dir in self._working_dirs:
             try:
                 with open(join(working_dir, path), mode) as file:

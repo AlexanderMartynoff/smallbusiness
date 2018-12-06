@@ -107,8 +107,11 @@
         },
 
         methods: {
+            isExist() {
+                return !_.chain(this.id).toNumber().isNaN().value()
+            },
             savePartner(id) {
-                if (id) {
+                if (this.isExist()) {
                     this.$axios.put(`/api/partner/${id}`, this.partner).then(() => {
                         this.loadPartner(this.id)
                     })
@@ -128,7 +131,7 @@
 
             deletePartner(id) {
                 return this.$axios.delete(`/api/partner/${id}`).then(partner => {
-                    this.$router.push('/partners')
+                    this.$router.push('/partner')
                 })
             },
 
@@ -150,7 +153,7 @@
         mounted() {
             this.loadBanks()
             
-            if (!_.isEmpty(this.id)) {
+            if (this.isExist()) {
                 this.loadPartner(this.id)
             }
 
