@@ -25,6 +25,10 @@
 
             <div class="form-row">
                 <div class="form-group col-md-12">
+                    <label>Subject</label>
+                    <input v-model="subject" class="form-control"/>
+                </div>
+                <div class="form-group col-md-12">
                     <label>Message</label>
                     <textarea v-model="body" class="form-control"></textarea>
                 </div>
@@ -42,10 +46,9 @@
 
     export default {
         props: {
-            subject: {type: String},
             recipients: {type: Array},
             attachments: {type: Array},
-            subject: {type: String},
+            initSubject: {type: String},
             initRecipientsSelection: {type: Array},
             initAttachmentsSelection: {type: Array},
         },
@@ -55,6 +58,7 @@
                 selectedRecipients: [],
                 selectedAttachments: [],
                 body: null,
+                subject: this.initSubject
             }
         },
 

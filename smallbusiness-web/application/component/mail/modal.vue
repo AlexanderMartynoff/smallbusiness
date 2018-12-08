@@ -5,7 +5,7 @@
                 <mail-form ref="form"
                            :initRecipientsSelection="initRecipientsSelection"
                            :initAttachmentsSelection="initAttachmentsSelection"
-                           :subject="subject"
+                           :initSubject="initSubject"
                            :recipients="recipients"
                            :attachments="attachments"
                            @send="onSend()">
@@ -29,10 +29,9 @@
 <script type="text/javascript">
     export default {
         props: {
-            subject: {type: String},
+            initSubject: {type: String},
             recipients: {type: Array},
             attachments: {type: Array},
-            subject: {type: String},
             initRecipientsSelection: {type: Array},
             initAttachmentsSelection: {type: Array},
         },

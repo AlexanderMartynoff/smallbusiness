@@ -18,7 +18,7 @@
             </ul>
         </div>
 
-        <div class="application-content pl-3 pt-3 pr-3">
+        <div class="application-content pl-2 pt-2 pr-2">
 
             <b-modal v-model="deleting"
                 :hide-header="true"

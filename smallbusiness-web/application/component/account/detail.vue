@@ -49,15 +49,15 @@
             </ul>
         </div>
 
-        <div class="application-content pl-3 pt-3 pr-3 blur-container">
+        <div class="application-content pl-2 pt-2 pr-2 blur-container">
 
             <mail-modal ref="mailModal"
-                        subject="Account reports"
-                        :no-fade="true"
+                        initSubject="Account reports"
                         :recipients="mailReportRecipients"
                         :initRecipientsSelection="initMailReportRecipients"
                         :initAttachmentsSelection="initMailReportAttachments"
-                        :attachments="mailReportAttachments">
+                        :attachments="mailReportAttachments"
+                        :no-fade="true">
             </mail-modal>
 
             <b-modal v-model="deleting"
@@ -129,26 +129,26 @@
             </application-toolbar>
 
             <form>
-                <div class="form-row mb-2">
+                <div class="form-row mb-2" v-if="providerBank.name">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Provider bank attributes</h5>
                                 <dl class="row">
                                     <dt class="col-sm-3">Name</dt>
-                                    <dd class="col-sm-9 text-monospace">{{providerBank.name || '-'}}</dd>
+                                    <dd class="col-sm-9 text-monospace">{{providerBank.name || '...'}}</dd>
 
                                     <dt class="col-sm-3">Taxpayer number</dt>
-                                    <dd class="col-sm-9 text-monospace">{{providerBank.taxpayerNumber || '-'}}</dd>
+                                    <dd class="col-sm-9 text-monospace">{{providerBank.taxpayerNumber || '...'}}</dd>
 
                                     <dt class="col-sm-3 text-truncate">Reason code</dt>
-                                    <dd class="col-sm-9 text-monospace">{{providerBank.reasonCode || '-'}}</dd>
+                                    <dd class="col-sm-9 text-monospace">{{providerBank.reasonCode || '...'}}</dd>
 
                                     <dt class="col-sm-3 text-truncate">Identity code</dt>
-                                    <dd class="col-sm-9 text-monospace">{{providerBank.identityCode || '-'}}</dd>
+                                    <dd class="col-sm-9 text-monospace">{{providerBank.identityCode || '...'}}</dd>
 
                                     <dt class="col-sm-3 text-truncate">Correspondent account</dt>
-                                    <dd class="col-sm-9 text-monospace">{{providerBank.correspondentAccount || '-'}}
+                                    <dd class="col-sm-9 text-monospace">{{providerBank.correspondentAccount || '...'}}
                                     </dd>
                                 </dl>
                             </div>
@@ -198,7 +198,7 @@
                 </div>
 
                 <table class="table table-light">
-                    <thead>
+                    <thead class="bg-light">
                         <tr>
                             <th></th>
                             <th>Name</th>

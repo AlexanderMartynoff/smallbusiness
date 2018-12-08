@@ -110,7 +110,7 @@ class NumberToWord:
     @staticmethod
     def on_get(request, response):
         response.json = number_to_word.number_to_word(
-            request.params.get('number'),
+            float(request.params.get('number')),
             number_to_word.ruble,
             number_to_word.kopeck,
         )

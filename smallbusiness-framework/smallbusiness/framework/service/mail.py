@@ -123,6 +123,8 @@ class Sender:
         if not from_address:
             raise ValueError('`from_address` must be not empty')
 
+        to_addresses = self._flatten_address_list(to_addresses)
+
         message = MIMEMultipart()
 
         message['From'] = from_address
@@ -144,6 +146,15 @@ class Sender:
             message.attach(application)
 
         self._server.sendmail(from_address, to_addresses, message.as_string())
+
+    def _flatten_address_list(self, address_list: List[str]) -> List[str]:
+        flatten_address_list: List[str] = []
+
+        for address in address_list:
+            if address:
+                flatten_address_list += [_.strip() for _ in address.split(',')]
+
+        return flatten_address_list
 
     def quit(self):
         self._server.quit()

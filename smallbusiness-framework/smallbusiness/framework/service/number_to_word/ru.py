@@ -141,13 +141,13 @@ def _number_to_group(number: Union[int, float, str]) -> Tuple[Dict[int, str], Di
     )
 
 
-def number_to_word(number: Union[int, float, str],
+def number_to_word(number: Union[int, float],
                    uom_integer: WordCase,
                    uom_fraction: WordCase,
                    uom_fraction_size=2) -> str:
 
     words = []
-    integers, fractions, integer_part, fraction_part = _number_to_group(number)
+    integers, fractions, integer_part, fraction_part = _number_to_group(round(number, uom_fraction_size))
 
     for rank, integer in integers.items():
         _words = []
