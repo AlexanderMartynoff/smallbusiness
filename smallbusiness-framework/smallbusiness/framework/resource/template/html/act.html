@@ -3,14 +3,27 @@
 
 <html>
     <head>
+        <title>Акт № {{account.id}} от {{strftimestamp(account.date)}}</title>
         <style type="text/css">
+            @page {
+                @top-right{
+                    content: "Страница " counter(page) " из " counter(pages) " акта № {{account.id}} от {{strftimestamp(account.date)}}";
+                }
+            }
+
+            @page :first {
+                @top-right{
+                    content: "";
+                }
+            }
+
             {% include 'css/report.css' %}
         </style>
     </head>
     
     <body>
 
-        <h1>Акт № {{account.id}} от {{strftimestamp(account.date)}}.</h1>
+        <h1>Акт № {{account.id}} от {{strftimestamp(account.date)}}</h1>
 
         <div class="horizont-line"></div>
 

@@ -3,6 +3,7 @@ from setuptools import setup
 
 setup(
     name='smallbusiness-module-company',
+    version='0.0.1a0',
     install_requires=[
         'smallbusiness-framework',
     ],

@@ -19,15 +19,15 @@ export default class AxiosPlugin extends Axios {
             return this._interceptor.request.call(this._scope, options)
         }, error => {
             this._event.error.call(this._scope, error)
-            return error
+            throw error
         })
 
         this.interceptors.response.use(response => {
             this._event.response.call(this._scope, {})
             return this._interceptor.response.call(this._scope, response)
         }, error => {
-            this._event.error.call(this._scope, {})
-            return error
+            this._event.error.call(this._scope, error)
+            throw error
         })
 
     }

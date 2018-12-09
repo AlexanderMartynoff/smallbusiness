@@ -9,10 +9,11 @@ from contextlib import contextmanager
 from ..environment import Environment, FRAMEWORK_RESOURCE_DIR
 from ..api.account import Account
 from ..service import printer
+from ..database import Database
 
 
 environment = Environment.get()
-database = environment.register.get('database')
+database = environment.register.get('database', type=Database, proxy=True)
 account_service = Account(database)
 
 
@@ -53,7 +54,7 @@ class Attachment:
             Each attachment record (aka dict) have next properties:
             - type (str) - name that was used for defining concrete attachment implementation
             - arguments (dict) - dict that will passed to __init__ method of concrete implementation
-              >>> concrete_attachment = ConcreteAttachment(**attachment.get('arguments', {})
+              >>> concrete_attachment = Attachment(**attachment.get('arguments', {})
         """
 
         concrete_attachments = []
@@ -98,7 +99,7 @@ class AttachmentReport(Attachment):
 
 
 class Sender:
-    def __init__(self, host, port, user, password, ssl):
+    def __init__(self, host: str, port: str, user: str, password: str, ssl: bool):
         self._host = host
         self._port = port
         self._user = user

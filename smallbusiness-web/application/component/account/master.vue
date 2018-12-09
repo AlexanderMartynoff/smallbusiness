@@ -8,6 +8,12 @@
                         <i class="fas fa-plus-circle"></i> Add
                     </router-link>
                 </li>
+
+                <li class="nav-item">
+                    <a href="#" class="nav-link" @click.prevent.stop>
+                        <i class="fas fa-print"></i> Report
+                    </a>
+                </li>
             </ul>
         </div>
 

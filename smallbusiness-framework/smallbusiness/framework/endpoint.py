@@ -1,13 +1,14 @@
 from typing import cast
 
+from . instrument import number2words
 from .database import SqliteDatabase, Database
-from .service import printer, number_to_word, mail
+from .service import printer, mail
 from .environment import Environment
 from . import api
 
 
 environment = Environment.get()
-database = environment.register.get('database')
+database = environment.register.get('database', type=Database, proxy=True)
 
 
 bank_service = api.Bank(database)
@@ -109,10 +110,13 @@ class Account:
 class NumberToWord:
     @staticmethod
     def on_get(request, response):
-        response.json = number_to_word.number_to_word(
-            float(request.params.get('number')),
-            number_to_word.ruble,
-            number_to_word.kopeck,
+        response.json = number2words(
+            request.params.get('number'),
+            lang='ru',
+            to='currency',
+            currency='RUB',
+            cents=True,
+            seperator=' ',
         )
 
 

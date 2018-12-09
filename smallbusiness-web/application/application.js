@@ -65,8 +65,9 @@ const vue = new Vue({
                 this.axios.counter --
             },
 
-            error(event) {
+            error(error) {
                 this.axios.counter --
+                throw error
             }
         },
 

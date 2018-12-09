@@ -12,6 +12,7 @@ class Test(TestCommand):
 
 setup(
     name='smallbusiness-framework',
+    version='0.0.1a0',
     requires=[
         'yoyo',
         'pymysql',
@@ -19,6 +20,8 @@ setup(
         'cached_property',
         'openpyxl',
         'weasyprint',
+        'attrs',
+        'num2words',
     ],
     extras_require={
         'dev': ['pytest']

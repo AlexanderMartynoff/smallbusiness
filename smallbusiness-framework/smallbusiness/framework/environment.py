@@ -1,7 +1,9 @@
 from os.path import dirname, abspath, join, exists
 from ruamel import yaml
-from typing import Any, Dict, List, Optional, TextIO, ContextManager
+from typing import Any, Dict, List, Optional, TextIO, ContextManager, Type, TypeVar, cast
 from contextlib import contextmanager
+
+A = TypeVar('A')
 
 
 FRAMEWORK_DIR = dirname(abspath(__file__))
@@ -15,12 +17,15 @@ class _Register:
     def __init__(self):
         self._register = {}
 
-    def get(self, key, _type=None) -> Any:
+    def get(self, key, type: Type[A], proxy: bool = False) -> A:
 
         if key not in self._register.keys():
-            self._register[key] = _Proxy()
+            if proxy:
+                self._register[key] = _Proxy()
+            else:
+                raise KeyError(f'Service by key `{key}` not found in the register')
 
-        return self._register[key]
+        return cast(A, self._register[key])
 
     def set(self, key, value):
         service = self._register.get(key, None)
@@ -97,7 +102,7 @@ class Environment:
         return self
 
     def _setup_parameter(self, path):
-        """ It should be call first """
+        """ This should called first """
 
         with self.open_resource(path) as file:
             self._parameter = yaml.load(file.read(), yaml.RoundTripLoader)

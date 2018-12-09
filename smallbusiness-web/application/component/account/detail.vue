@@ -29,7 +29,7 @@
 
                 <li class="nav-item" v-if="isExist()">
                     <a href="#" class="nav-link" @click.prevent.stop="openPrintAlert()">
-                        <i class="fas fa-file-signature"></i> Report
+                        <i class="fas fa-print"></i> Report
                     </a>
                 </li>
 
@@ -240,17 +240,16 @@
                 </table>
 
                 <div class="form-row">
-                    <div class="form-group col-md-6 offset-md-4">
-
+                    <div class="form-group col-md-8 offset-md-2">
                         <label>Number as words</label>
-                        <div class="form-control text-monospace">
+                        <div class="form-control text-monospace text-truncate">
                             <strong>{{totalAmountAsWords}}</strong>
                         </div>
                     </div>
 
                     <div class="form-group col-md-2">
                         <label>Total amount</label>
-                        <div class="form-control text-monospace">
+                        <div class="form-control text-monospace text-truncate">
                             <strong>{{totalAmount}}</strong>
                         </div>
                     </div>
@@ -533,8 +532,6 @@
                     }
                 }).then(asWords => {
                     this.totalAmountAsWords = asWords
-                }).catch(error => {
-
                 })
             }
         },

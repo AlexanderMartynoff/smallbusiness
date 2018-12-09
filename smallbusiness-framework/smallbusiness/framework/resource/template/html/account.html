@@ -3,13 +3,25 @@
 
 <html>
     <head>
+        <title>Счет на оплату № {{account.id}} от {{strftimestamp(account.date)}}</title>
         <style type="text/css">
+            @page {
+                @top-right{
+                    content: "Страница " counter(page) " из " counter(pages) " счета на оплату № {{account.id}} от {{strftimestamp(account.date)}}";
+                }
+            }
+
+            @page :first {
+                @top-right{
+                    content: "";
+                }
+            }
+
             {% include 'css/report.css' %}
         </style>
     </head>
     
     <body>
-
         <table class="bordered-table padding-table" cellspacing="0" cellpadding="0">
             <tr>
                 <td>{{account.provider_bank_name}}</td>

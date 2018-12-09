@@ -4,7 +4,20 @@
 
 <html>
     <head>
+        <title>СЧЕТ-ФАКТУРА № {{account.id}} от {{strftimestamp(account.date)}}</title>
         <style type="text/css">
+            @page {
+                @top-right{
+                    content: "Страница " counter(page) " из " counter(pages) " счет-фактуры № {{account.id}} от {{strftimestamp(account.date)}}";
+                }
+            }
+
+            @page :first {
+                @top-right{
+                    content: "";
+                }
+            }
+
             {% include 'css/report.css' %}
         </style>
     </head>
