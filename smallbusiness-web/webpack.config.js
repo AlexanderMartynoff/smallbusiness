@@ -9,7 +9,7 @@ module.exports = {
     mode: 'none',
 
     entry: {
-        '../smallbusiness-module-company/smallbusiness/module/company/static/build/application': resolve('./application/application.js'),
+        '../smallbusiness-module-company/smallbusiness/module/company/static/build/application': resolve('./application/entry/application.js'),
         '../smallbusiness-module-company/smallbusiness/module/company/static/build/css': resolve('./application/style/scss/layout.scss')
     },
 

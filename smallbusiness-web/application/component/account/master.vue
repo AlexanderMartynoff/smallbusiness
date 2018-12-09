@@ -24,7 +24,7 @@
             </application-toolbar>
 
             <table class="table table-striped table-hover">
-                <thead>
+                <thead class="bg-light">
                     <tr>
                         <th scope="col">№</th>
                         <th scope="col">Date</th>

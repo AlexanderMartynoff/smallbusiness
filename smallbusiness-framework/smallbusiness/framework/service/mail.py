@@ -13,7 +13,7 @@ from ..database import Database
 
 
 environment = Environment.get()
-database = environment.register.get('database', type=Database, proxy=True)
+database = environment.register.get('database', proxy=True)
 account_service = Account(database)
 
 

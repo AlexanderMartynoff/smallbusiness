@@ -21,6 +21,7 @@ from smallbusiness.framework.endpoint import (
     Report,
     NumberToWord,
     Mail,
+    TableSequence,
 )
 
 MODULE_DIR = dirname(abspath(__file__))
@@ -58,6 +59,7 @@ application.add_route('/api/time_unit', TimeUnit)
 application.add_route('/api/currency_unit', CurrencyUnit)
 application.add_route('/api/number_to_word', NumberToWord)
 application.add_route('/api/mail', Mail)
+application.add_route('/api/database/sequence/{table}', TableSequence)
 application.add_route('/api/report/{entity}/{entity_id}', Report.ID)
 
 

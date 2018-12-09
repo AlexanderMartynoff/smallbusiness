@@ -1,5 +1,10 @@
 <template>
     <div class="application-menu bg-primary">
+        <b-modal title="System settings"
+                 ref="settingsForm"
+                 :no-fade="true">
+            <settings-form></settings-form>
+        </b-modal>
 
         <div class="application-menu-section-top">
             <b-dropdown class="application-menu-item" variant="link" v-b-tooltip.hover.auto title="Applications" no-caret>
@@ -38,7 +43,7 @@
             </div>
 
             <div class="application-menu-item" v-b-tooltip.hover.auto title="Settings">
-                <button type="button" class="btn btn-link">
+                <button type="button" class="btn btn-link" @click="showSettingsForm">
                     <i class="fas fa-cog"></i>
                 </button>
             </div>
@@ -66,6 +71,10 @@
         methods: {
             isActive(path) {
                 return _.includes(this.$route.path, path)
+            },
+
+            showSettingsForm() {
+                this.$refs.settingsForm.show()
             }
         }
     }

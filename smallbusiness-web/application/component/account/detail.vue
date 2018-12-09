@@ -197,7 +197,7 @@
                     
                 </div>
 
-                <table class="table table-light">
+                <table class="table">
                     <thead class="bg-light">
                         <tr>
                             <th></th>

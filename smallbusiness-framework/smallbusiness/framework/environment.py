@@ -17,7 +17,7 @@ class _Register:
     def __init__(self):
         self._register = {}
 
-    def get(self, key, type: Type[A], proxy: bool = False) -> A:
+    def get(self, key, proxy: bool = False) -> Any:
 
         if key not in self._register.keys():
             if proxy:
@@ -25,7 +25,7 @@ class _Register:
             else:
                 raise KeyError(f'Service by key `{key}` not found in the register')
 
-        return cast(A, self._register[key])
+        return self._register[key]
 
     def set(self, key, value):
         service = self._register.get(key, None)

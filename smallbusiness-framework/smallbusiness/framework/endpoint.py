@@ -8,7 +8,7 @@ from . import api
 
 
 environment = Environment.get()
-database = environment.register.get('database', type=Database, proxy=True)
+database = environment.register.get('database', proxy=True)
 
 
 bank_service = api.Bank(database)
@@ -17,6 +17,7 @@ time_unit_service = api.TimeUnit(database)
 partner_service = api.Partner(database)
 account_product_service = api.AccountProduct(database)
 account_service = api.Account(database)
+table_sequence_service = api.TableSequence(database)
 
 
 class Bank:
@@ -138,6 +139,12 @@ class Mail:
                 subject=request.json['subject'],
                 attachments=mail.Attachment.parse(request.json.get('attachments', [])),
             )
+
+
+class TableSequence:
+    @staticmethod
+    def on_get(request, response, table):
+        response.json = table_sequence_service.selectone(table)
 
 
 class Report:

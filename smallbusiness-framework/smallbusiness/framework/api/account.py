@@ -47,6 +47,7 @@ class Account(Service):
                 .fetchone()
 
             if account:
+                # TODO: replace where sqlbuilder with python `dict`
                 account.update(products=AccountProduct(result=result).selectall(
                     T.account_product.account_id == account_id
                 ))
