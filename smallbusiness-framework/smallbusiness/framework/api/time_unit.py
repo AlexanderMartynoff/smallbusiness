@@ -6,7 +6,7 @@ from ..database import Service
 class TimeUnit(Service):
 
     def selectall(self):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.time_unit) \
                 .fields(
                     T.time_unit.id,

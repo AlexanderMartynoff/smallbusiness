@@ -5,3 +5,4 @@ from .currency_unit import *
 from .time_unit import *
 from .partner import *
 from .database import *
+from .configuration import *

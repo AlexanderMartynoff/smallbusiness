@@ -113,7 +113,7 @@
 
         <p>
             Всего наименований {{account.products | length}}, на сумму {{format_currency(account_total_price)}} руб.<br/>
-            <strong>{{convert_number_to_word(account_total_price)}}</strong>
+            <strong>{{num2words(account_total_price)}}</strong>
         </p>
 
         <p>

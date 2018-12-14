@@ -3,7 +3,7 @@ from ruamel import yaml
 from typing import Any, Dict, List, Optional, TextIO, ContextManager, Type, TypeVar, cast
 from contextlib import contextmanager
 
-A = TypeVar('A')
+T = TypeVar('T')
 
 
 FRAMEWORK_DIR = dirname(abspath(__file__))

@@ -7,7 +7,7 @@ class Partner(Service):
 
     def selectall(self):
 
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.partner) \
                 .fields(
                     T.partner.id,
@@ -24,7 +24,7 @@ class Partner(Service):
 
     def selectone(self, partner_id):
 
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result).tables((T.partner + T.bank).on(T.partner.bank_id == T.bank.id)) \
                 .fields(
                     T.partner.id,
@@ -49,7 +49,7 @@ class Partner(Service):
 
     def updateone(self, partner_id, partner):
 
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             Q(result=result).tables(T.partner) \
                 .where(T.partner.id == partner_id) \
                 .update({
@@ -65,14 +65,14 @@ class Partner(Service):
 
     def deleteone(self, partner_id):
 
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             Q(result=result).tables(T.partner) \
                 .where(T.partner.id == partner_id) \
                 .delete() \
                 .execute()
 
     def insertone(self, partner):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.partner) \
                     .insert({
                         T.partner.name: partner['name'],

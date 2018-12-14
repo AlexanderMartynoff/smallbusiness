@@ -6,7 +6,7 @@ from ..database import Service
 class CurrencyUnit(Service):
 
     def selectall(self):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.currency_unit) \
                 .fields(
                     T.currency_unit.id,

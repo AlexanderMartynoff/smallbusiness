@@ -3,26 +3,15 @@ import locale
 
 import falcon
 
-from smallbusiness.framework.database import SqliteDatabase
+from smallbusiness.framework.database.adapter import SqliteDatabase
 from smallbusiness.framework.plugin.falcon import Request, Response
 from smallbusiness.framework.environment import (
     FRAMEWORK_DIR,
     FRAMEWORK_RESOURCE_DIR,
     SQLITE_DB,
-    Environment
+    Environment,
 )
-from smallbusiness.framework.endpoint import (
-    Account,
-    AccountProduct,
-    Partner,
-    TimeUnit,
-    CurrencyUnit,
-    Bank,
-    Report,
-    NumberToWord,
-    Mail,
-    TableSequence,
-)
+from smallbusiness.framework import endpoint
 
 MODULE_DIR = dirname(abspath(__file__))
 MODULE_RESOURCE_DIR = MODULE_DIR + '/resource'
@@ -48,19 +37,20 @@ application = falcon.API(
     response_type=Response,
 )
 
-application.add_route('/api/account', Account)
-application.add_route('/api/account/{id}', Account.ID)
-application.add_route('/api/account_product', AccountProduct)
-application.add_route('/api/bank', Bank)
-application.add_route('/api/bank/{bank_id}', Bank.ID)
-application.add_route('/api/partner', Partner)
-application.add_route('/api/partner/{id}', Partner.ID)
-application.add_route('/api/time_unit', TimeUnit)
-application.add_route('/api/currency_unit', CurrencyUnit)
-application.add_route('/api/number_to_word', NumberToWord)
-application.add_route('/api/mail', Mail)
-application.add_route('/api/database/sequence/{table}', TableSequence)
-application.add_route('/api/report/{entity}/{entity_id}', Report.ID)
+application.add_route('/api/account', endpoint.Account)
+application.add_route('/api/account/{id}', endpoint.Account.ID)
+application.add_route('/api/account_product', endpoint.AccountProduct)
+application.add_route('/api/bank', endpoint.Bank)
+application.add_route('/api/bank/{bank_id}', endpoint.Bank.ID)
+application.add_route('/api/partner', endpoint.Partner)
+application.add_route('/api/partner/{id}', endpoint.Partner.ID)
+application.add_route('/api/time_unit', endpoint.TimeUnit)
+application.add_route('/api/currency_unit', endpoint.CurrencyUnit)
+application.add_route('/api/number_to_word', endpoint.NumberToWord)
+application.add_route('/api/mail', endpoint.Mail)
+application.add_route('/api/database/sequence/{table}', endpoint.TableSequence)
+application.add_route('/api/configuration', endpoint.Configuration)
+application.add_route('/api/report/{entity}/{entity_id}', endpoint.Report.ID)
 
 
 for static_dir in environment['server']['static_dirs']:

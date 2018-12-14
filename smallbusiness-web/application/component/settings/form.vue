@@ -7,7 +7,7 @@
             <div class="form-row">
                 <div class="form-group col-md-12 mb-0">
                     <label>Account documents auto-increment</label>
-                    <input class="form-control" v-model="accountSequence" type="text"/>
+                    <input class="form-control" v-model="configuration.sequence.account" type="text"/>
                 </div>
             </div>
         </form>
@@ -36,14 +36,24 @@
 
         data() {
             return {
-                accountSequence: 0
+                configuration: {
+                    sequence: {
+                        account: null
+                    }
+                }
             }
         },
 
-        mounted() {
-            this.$axios.get('/api/database/sequence/account').then(table => {
-                this.accountSequence = table.sequence
-            })
+        methods: {
+            saveConfiguration() {
+                this.$axios.put('/api/configuration', this.configuration)
+            },
+
+            loadConfiguration() {
+                return this.$axios.get('/api/configuration').then(configuration => {
+                    this.configuration = configuration
+                })
+            }
         }
     }
 </script>

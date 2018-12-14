@@ -44,7 +44,7 @@ environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
 environment.globals.update(
     get_account_total_price=_account_total_price,
     get_account_product_total_price=_account_product_total_price,
-    convert_number_to_word=lambda number: number2words(number, lang='ru', to='currency', currency='RUB', cents=False, seperator=' '),
+    num2words=lambda number: number2words(number, lang='ru', to='currency', currency='RUB', cents=False, seperator=' '),
     strftimestamp=lambda ts, format='%Y/%m/%d': datetime.fromtimestamp(ts / 1000).strftime(format),
     format_currency=lambda number: locale.format('%.2f', number, grouping=True)
 )

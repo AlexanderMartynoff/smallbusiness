@@ -1,9 +1,7 @@
 <template>
     <div class="application-menu bg-primary">
-        <b-modal title="System settings"
-                 ref="settingsForm"
-                 :no-fade="true">
-            <settings-form></settings-form>
+        <b-modal title="System settings" ref="configurationModal" :no-fade="true" @ok="saveConfiguration">
+            <settings-form ref="configurationForm"></settings-form>
         </b-modal>
 
         <div class="application-menu-section-top">
@@ -43,7 +41,7 @@
             </div>
 
             <div class="application-menu-item" v-b-tooltip.hover.auto title="Settings">
-                <button type="button" class="btn btn-link" @click="showSettingsForm">
+                <button type="button" class="btn btn-link" @click="showConfigurationForm">
                     <i class="fas fa-cog"></i>
                 </button>
             </div>
@@ -73,8 +71,12 @@
                 return _.includes(this.$route.path, path)
             },
 
-            showSettingsForm() {
-                this.$refs.settingsForm.show()
+            showConfigurationForm() {
+                this.$refs.configurationForm.loadConfiguration().then(() => this.$refs.configurationModal.show())
+            },
+
+            saveConfiguration() {
+                this.$refs.configurationForm.saveConfiguration()
             }
         }
     }

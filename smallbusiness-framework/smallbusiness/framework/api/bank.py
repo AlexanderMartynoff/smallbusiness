@@ -6,7 +6,7 @@ from ..database import Service
 class Bank(Service):
 
     def deleteone(self, bank_id):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.bank) \
                 .where(T.bank.id == bank_id) \
                 .delete() \
@@ -14,7 +14,7 @@ class Bank(Service):
 
     def updateone(self, bank_id, bank):
 
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.bank) \
                 .where(T.bank.id == bank_id) \
                 .update({
@@ -28,7 +28,7 @@ class Bank(Service):
 
     def selectone(self, bank_id):
 
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.bank) \
                 .fields(
                     T.bank.id,
@@ -43,7 +43,7 @@ class Bank(Service):
                 .fetchone()
 
     def selectall(self):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.bank) \
                 .fields(
                     T.bank.id,
@@ -57,7 +57,7 @@ class Bank(Service):
                 .fetchall()
 
     def insertone(self, bank):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.bank) \
                 .insert({
                     T.bank.name: bank['name'],

@@ -1,13 +1,13 @@
 from sqlbuilder.smartsql import T, Q
 
 from . import account
-from ..database import Service
+from ..database.core import Service
 
 
 class AccountProduct(Service):
 
     def selectall(self, where):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result) \
                 .tables(
                     T.account_product +
@@ -26,7 +26,7 @@ class AccountProduct(Service):
                 .fetchall()
 
     def updatemany(self, products):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             for product in products:
                 Q(result=result) \
                     .tables(T.account_product) \
@@ -40,7 +40,7 @@ class AccountProduct(Service):
                     .execute()
 
     def deletemany(self, products):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             for product in products:
                 Q(result=result) \
                     .tables(T.account_product) \
@@ -49,7 +49,7 @@ class AccountProduct(Service):
                     .execute()
 
     def insertmany(self, products):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result) \
                 .tables(T.account_product) \
                 .fields(

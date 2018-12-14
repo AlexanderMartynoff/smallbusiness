@@ -9,7 +9,8 @@ from ..instrument import group_by_operations
 class Account(Service):
 
     def selectone_filled(self, account_id):
-        with self.result() as result:
+
+        with self.sqlbuilder.result() as result:
             account = Q(result=result).tables(
                     T.account +
                     T.partner.as_('provider').on(T.account.provider_id == T.provider.id) +
@@ -47,8 +48,8 @@ class Account(Service):
                 .fetchone()
 
             if account:
-                # TODO: replace where sqlbuilder with python `dict`
-                account.update(products=AccountProduct(result=result).selectall(
+                # TODO: replace sqlbuilder `Q().where` with python `dict`
+                account.update(products=AccountProduct(context=result.context()).selectall(
                     T.account_product.account_id == account_id
                 ))
 
@@ -56,7 +57,7 @@ class Account(Service):
 
     def selectone(self, account_id):
 
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
 
             account = Q(result=result) \
                 .tables(T.account) \
@@ -73,14 +74,14 @@ class Account(Service):
                 .fetchone()
 
             if account:
-                account.update(products=AccountProduct(result=result).selectall(
+                account.update(products=AccountProduct(context=result.context()).selectall(
                     T.account_product.account_id == account_id
                 ))
 
             return account
 
     def selectall(self):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
 
             return Q(result=result) \
                 .tables(
@@ -103,7 +104,7 @@ class Account(Service):
                 .fetchall()
 
     def insertone(self, account):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             created_account = Q(result=result) \
                 .tables(T.account) \
                 .insert({
@@ -116,7 +117,7 @@ class Account(Service):
                 .fetchinsertid()
 
             if account['products']:
-                account_product_api = AccountProduct(result=result)
+                account_product_api = AccountProduct(conext=result.context())
 
                 for product in account['products']:
                     product['account_id'] = created_account['id']
@@ -127,7 +128,7 @@ class Account(Service):
 
     def updateone(self, account_id, account):
 
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             Q(result=result) \
                 .tables(T.account) \
                 .where(T.account.id == account_id) \
@@ -140,7 +141,7 @@ class Account(Service):
                 }) \
                 .execute()
 
-            account_product_api = AccountProduct(result=result)
+            account_product_api = AccountProduct(context=result.context())
 
             insert_products, update_products, delete_products = \
                 group_by_operations(account['products'], {'account_id': account_id})
@@ -155,7 +156,7 @@ class Account(Service):
                 account_product_api.deletemany(delete_products)
 
     def deleteone(self, account_id):
-        with self.result() as result:
+        with self.sqlbuilder.result() as result:
             return Q(result=result) \
                 .tables(T.account) \
                 .where(T.account.id == account_id) \

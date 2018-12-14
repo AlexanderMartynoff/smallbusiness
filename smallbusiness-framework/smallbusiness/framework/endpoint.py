@@ -1,7 +1,7 @@
 from typing import cast
+from datetime import datetime
 
 from . instrument import number2words
-from .database import SqliteDatabase, Database
 from .service import printer, mail
 from .environment import Environment
 from . import api
@@ -18,6 +18,7 @@ partner_service = api.Partner(database)
 account_product_service = api.AccountProduct(database)
 account_service = api.Account(database)
 table_sequence_service = api.TableSequence(database)
+configuration_service = api.Configuration(database)
 
 
 class Bank:
@@ -121,6 +122,20 @@ class NumberToWord:
         )
 
 
+class TableSequence:
+    @staticmethod
+    def on_get(request, response, table):
+        response.json = table_sequence_service.selectone(table)
+
+
+class Configuration:
+    def on_get(request, response):
+        response.json = configuration_service.selectone()
+
+    def on_put(request, response):
+        response.json = configuration_service.updateone(request.json)
+
+
 class Mail:
     @staticmethod
     def on_post(request, response):
@@ -141,18 +156,13 @@ class Mail:
             )
 
 
-class TableSequence:
-    @staticmethod
-    def on_get(request, response, table):
-        response.json = table_sequence_service.selectone(table)
-
-
 class Report:
 
     class ID:
         @staticmethod
         def on_get(request, response, entity, entity_id):
             account = account_service.selectone_filled(entity_id)
+            account_date = datetime.fromtimestamp(account['date'] / 1000).strftime('%Y_%m_d')
 
             if entity == 'account':
                 response.body = printer.account_as_pdf(account)
@@ -164,7 +174,10 @@ class Report:
                 raise NotImplementedError(f'Unknown report type `{entity}`')
 
             if request.params.get('disposition', None) == 'attachment':
-                response.append_header('Content-Disposition', f'attachment; filename="{entity}.pdf"')
+                response.append_header(
+                    'Content-Disposition',
+                    f'attachment; filename="{entity}_no_{entity_id}_from_{account_date}.pdf"'
+                )
             else:
                 response.append_header('Content-Disposition', 'inline')
 
