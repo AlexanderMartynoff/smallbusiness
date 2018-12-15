@@ -1,14 +1,18 @@
-from typing import List, Dict, Optional, AnyStr, Any
+from typing import List, Dict, Optional, AnyStr, Any, Tuple
 from itertools import groupby
 from collections import defaultdict
 import num2words
 
 
-def group_by_operations(source_items: List[Dict[Any, Any]],
-                        update: Optional[Dict[Any, Any]] = None,
-                        key: AnyStr = '_crud'):
+ItemType = Dict[AnyStr, Any]
+ItemsType = List[ItemType]
 
-    groups = defaultdict(list)
+
+def groupbycrud(source_items: ItemsType,
+                update: Optional[ItemType] = None,
+                key: AnyStr = '_crud') -> Tuple[ItemsType, ItemsType, ItemsType]:
+
+    groups: Dict[AnyStr, ItemsType] = defaultdict(list)
 
     for operation, grouped_items in groupby(source_items, lambda source_item: source_item.get('_crud', None)):
 

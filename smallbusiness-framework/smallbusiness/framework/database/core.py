@@ -21,7 +21,6 @@ class Result(smartsql.Result):
 
     def execute_fetchnone(self) -> None:
         self._cursor.execute(*self.execute())
-        return self._cursor.fetchone()
 
     def execute_fetchone(self) -> Dict[AnyStr, Any]:
         self._cursor.execute(*self.execute())
@@ -91,7 +90,7 @@ class State:
 class SqlBuilder:
     """ API facade for `sqlbuilder` package. """
 
-    def __init__(self, database: Database = None, state: 'State' = None):
+    def __init__(self, database: Database = None, state: State = None):
 
         if database is None and state is None:
             raise ValueError('`database` or `state` must be provide')

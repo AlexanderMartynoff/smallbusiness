@@ -3,7 +3,7 @@ from sqlbuilder.smartsql.expressions import func
 
 from .account_product import AccountProduct
 from ..database import Service
-from ..instrument import group_by_operations
+from ..instrument import groupbycrud
 
 
 class Account(Service):
@@ -93,9 +93,7 @@ class Account(Service):
                     T.account.date,
                     T.purchaser.name.as_('purchaser_name'),
                     (Q().tables(T.account_product)
-                        .fields(func.sum(
-                            T.account_product.value * T.account_product.price
-                         ))
+                        .fields(func.sum(T.account_product.value * T.account_product.price))
                         .where(T.account_product.account_id == T.account.id)
                         .group_by(T.account_product.account_id)
                         .as_('price'))
@@ -144,7 +142,7 @@ class Account(Service):
             account_product_api = AccountProduct(state=result.state())
 
             insert_products, update_products, delete_products = \
-                group_by_operations(account['products'], {'account_id': account_id})
+                groupbycrud(account['products'], {'account_id': account_id})
 
             if len(insert_products):
                 account_product_api.insertmany(insert_products)

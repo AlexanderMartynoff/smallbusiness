@@ -1,9 +1,9 @@
 from os.path import dirname, abspath, join, exists
 from ruamel import yaml
-from typing import Any, Dict, List, Optional, TextIO, ContextManager, Type, TypeVar, cast
+from typing import Any, Dict, List, Optional, TextIO, ContextManager, Type, TypeVar, cast, Generic
 from contextlib import contextmanager
 
-T = TypeVar('T')
+T_co = TypeVar('T_co', contravariant=True)
 
 
 FRAMEWORK_DIR = dirname(abspath(__file__))
@@ -36,7 +36,7 @@ class _Register:
             if service.ready:
                 raise ValueError('Service proxy already has implementation')
             else:
-                service._set_implementation(value)
+                service.set_implementation(value)
         else:
             raise ValueError('Service instance already setup')
 
@@ -55,7 +55,7 @@ class _Proxy:
 
         return getattr(self._implementation, name)
 
-    def _set_implementation(self, implementation: Any):
+    def set_implementation(self, implementation: Any):
         self._implementation = implementation
 
     @property

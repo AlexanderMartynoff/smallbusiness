@@ -3,15 +3,15 @@ import locale
 
 import falcon
 
-from smallbusiness.framework.database.adapter import SqliteDatabase
+from smallbusiness.framework.database.adapter import SqliteDatabase, PostgresDatabase
 from smallbusiness.framework.plugin.falcon import Request, Response
+from smallbusiness.framework import endpoint
 from smallbusiness.framework.environment import (
     FRAMEWORK_DIR,
     FRAMEWORK_RESOURCE_DIR,
     SQLITE_DB,
     Environment,
 )
-from smallbusiness.framework import endpoint
 
 MODULE_DIR = dirname(abspath(__file__))
 MODULE_RESOURCE_DIR = MODULE_DIR + '/resource'
@@ -23,7 +23,8 @@ environment = Environment.get().setup(
     ],
     parameter_path='./parameters.yaml',
     register_services={
-        'database': SqliteDatabase(SQLITE_DB)
+        'database': SqliteDatabase(SQLITE_DB),
+        # 'database': PostgresDatabase('smallbusiness', 'alexander', 'marmazetka@99'),
     }
 )
 

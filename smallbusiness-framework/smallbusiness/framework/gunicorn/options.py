@@ -1,8 +1,8 @@
 def pre_request(worker, request):
     if request.path == '/':
-        request.path = '/static/entry/authorized.html'
-    elif request.path in ['/public', '/login']:
-        request.path = '/static/entry/unauthorized.html'
+        request.path = '/static/entry/application.html'
+    elif request.path == '/login':
+        request.path = '/static/entry/application.security.html'
 
 
 threads = 1

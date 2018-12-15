@@ -114,8 +114,10 @@ class Sender:
     def login(self):
         self._server.login(self._user, self._password)
 
-    def send(self, *, from_address: str, to_addresses: List[str],
-             subject: str, body: str,
+    def send(self, from_address: str,
+             to_addresses: List[str],
+             subject: str,
+             body: str,
              attachments: Optional[List[Attachment]] = None):
 
         if not to_addresses:

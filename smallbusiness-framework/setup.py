@@ -16,6 +16,7 @@ setup(
     requires=[
         'yoyo',
         'pymysql',
+        'psycopg2-binary',
         'sqlbuilder',
         'cached_property',
         'openpyxl',
