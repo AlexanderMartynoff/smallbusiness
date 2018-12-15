@@ -1,19 +1,23 @@
-from typing import Type, TypeVar, ContextManager, Any, AnyStr, Sequence, Dict
+from typing import Type, TypeVar, ContextManager, Any, AnyStr, Sequence, Dict, NewType
 from contextlib import contextmanager
 
-from sqlbuilder.smartsql import Q, T, Result, compile, Compiler
-from sqlbuilder.smartsql.factory import factory
+from sqlbuilder import smartsql
+from sqlbuilder.smartsql import Q, T, compile, Compiler
+
+# Stub for DBAPI cursor type
+# Just for code self-documentation
+Cursor = Any
 
 
-DBAPICursorT = TypeVar('DBAPICursorT', bound=Any)
-
-
-class CursorResult(Result):
-    def __init__(self, compile, database, cursor):
+class Result(smartsql.Result):
+    def __init__(self, compile: Compiler, database: 'Database', cursor: Cursor):
         super().__init__(compile)
 
         self._database = database
         self._cursor = cursor
+
+    def state(self) -> 'State':
+        return State(self._database, self._cursor)
 
     def execute_fetchnone(self) -> None:
         self._cursor.execute(*self.execute())
@@ -30,17 +34,18 @@ class CursorResult(Result):
     def execute_fetchinsertid(self) -> Dict[AnyStr, Any]:
         raise NotImplementedError
 
-    def operation(self) -> 'CursorResultOperation':
-        return CursorResultOperation(self)
-
-    def context(self) -> 'ServiceContext':
-        return ServiceContext(self._database, self._cursor)
+    def operation(self) -> 'TerminalOperation':
+        return TerminalOperation(self)
 
     delete = update = count = insert = select = operation
 
 
-class CursorResultOperation:
-    def __init__(self, result: CursorResult):
+class TerminalOperation:
+    """ Everyone query that maked with sqlbuilder
+        must terminated with one of thus methods.
+    """
+
+    def __init__(self, result: Result):
         self._result = result
 
     def execute(self) -> None:
@@ -60,42 +65,22 @@ class Database:
     """ Common facade for get some DB services. """
 
     @contextmanager
-    def cursor(self) -> ContextManager[DBAPICursorT]:
+    def cursor(self) -> ContextManager[Cursor]:
         raise NotImplementedError
 
-    def result(self, cursor: DBAPICursorT) -> CursorResult:
+    def result(self, cursor: Cursor) -> Result:
         raise NotImplementedError
 
 
-class SqlBuilder:
-    """ API for `sqlbuilder` package. """
+class State:
+    """ For re-use connection state. """
 
-    def __init__(self, database: Database = None, context: 'ServiceContext' = None):
-        self._database = database
-        self._context = context
-
-    @contextmanager
-    def result(self) -> ContextManager[CursorResult]:
-        if self._context is None:
-            with self._database.cursor() as cursor:
-                yield self._database.result(cursor)
-        else:
-            yield self._context.database.result(self._context.cursor)
-
-    @property
-    def cursor(self):
-        return self._cursor
-
-
-class ServiceContext:
-    """ For reuse service state. """
-
-    def __init__(self, database: Database, cursor: DBAPICursorT):
+    def __init__(self, database: Database, cursor: Cursor):
         self._database = database
         self._cursor = cursor
 
     @property
-    def cursor(self) -> DBAPICursorT:
+    def cursor(self) -> Cursor:
         return self._cursor
 
     @property
@@ -103,11 +88,35 @@ class ServiceContext:
         return self._database
 
 
+class SqlBuilder:
+    """ API facade for `sqlbuilder` package. """
+
+    def __init__(self, database: Database = None, state: 'State' = None):
+
+        if database is None and state is None:
+            raise ValueError('`database` or `state` must be provide')
+
+        self._database = database
+        self._state = state
+
+    @contextmanager
+    def result(self) -> ContextManager[Result]:
+        if self._state is None:
+            with self._database.cursor() as cursor:
+                yield self._database.result(cursor)
+        else:
+            yield self._state.database.result(self._state.cursor)
+
+
 class Service:
 
-    def __init__(self, database: Database = None,
-                 context: ServiceContext = None):
-        self._sqlbuilder = SqlBuilder(database=database, context=context)
+    def __init__(self, database: Database = None, state: State = None):
+        self._database = database
+        self._sqlbuilder = SqlBuilder(database=database, state=state)
+
+    @property
+    def database(self):
+        return self._database
 
     @property
     def sqlbuilder(self) -> SqlBuilder:

@@ -49,7 +49,7 @@ class Account(Service):
 
             if account:
                 # TODO: replace sqlbuilder `Q().where` with python `dict`
-                account.update(products=AccountProduct(context=result.context()).selectall(
+                account.update(products=AccountProduct(state=result.state()).selectall(
                     T.account_product.account_id == account_id
                 ))
 
@@ -74,7 +74,7 @@ class Account(Service):
                 .fetchone()
 
             if account:
-                account.update(products=AccountProduct(context=result.context()).selectall(
+                account.update(products=AccountProduct(state=result.state()).selectall(
                     T.account_product.account_id == account_id
                 ))
 
@@ -141,7 +141,7 @@ class Account(Service):
                 }) \
                 .execute()
 
-            account_product_api = AccountProduct(context=result.context())
+            account_product_api = AccountProduct(state=result.state())
 
             insert_products, update_products, delete_products = \
                 group_by_operations(account['products'], {'account_id': account_id})

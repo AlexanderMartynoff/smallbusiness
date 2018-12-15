@@ -10,7 +10,6 @@ from . import api
 environment = Environment.get()
 database = environment.register.get('database', proxy=True)
 
-
 bank_service = api.Bank(database)
 currency_unit_service = api.CurrencyUnit(database)
 time_unit_service = api.TimeUnit(database)

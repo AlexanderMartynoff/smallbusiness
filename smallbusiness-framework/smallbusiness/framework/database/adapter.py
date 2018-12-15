@@ -2,13 +2,9 @@ from typing import Type, TypeVar, Generic, ContextManager
 import sqlite3
 from contextlib import contextmanager
 from sqlbuilder.smartsql.dialects import sqlite, mysql
+from sqlbuilder.smartsql.factory import factory
 
-from .core import (
-    Database,
-    SqlBuilder,
-    CursorResult,
-    DBAPICursorT
-)
+from .core import Database, SqlBuilder, Result, Cursor
 
 
 class SqliteDatabase(Database):
@@ -17,7 +13,7 @@ class SqliteDatabase(Database):
         self._databasename = databasename
 
     @contextmanager
-    def cursor(self) -> ContextManager[DBAPICursorT]:
+    def cursor(self) -> ContextManager[Cursor]:
 
         def row_factory(cursor, row):
             return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}
@@ -30,13 +26,13 @@ class SqliteDatabase(Database):
 
             cursor.close()
 
-    def result(self, cursor) -> CursorResult:
-        return SqliteCursorResult(self, cursor)
+    def result(self, cursor) -> Result:
+        return SqliteResult(self, cursor)
 
 
-class SqliteCursorResult(CursorResult):
+class SqliteResult(Result):
 
-    def __init__(self, database, cursor):
+    def __init__(self, database: Database, cursor: Cursor):
         super().__init__(sqlite.compile, database, cursor)
 
     def execute_fetchinsertid(self):
