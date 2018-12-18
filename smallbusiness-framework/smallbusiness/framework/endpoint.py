@@ -1,166 +1,149 @@
-from typing import cast
+from typing import cast, Dict, Any
 from datetime import datetime
+import falcon
 
-from . instrument import number2words
+from .instrument import number2currency
 from .service import printer, mail
-from .environment import Environment
-from . import api
+from .service.mail import parse_attachment
+from . import security
+from .api import api
 
 
-environment = Environment.get()
-database = environment.register.get('database', proxy=True)
+class Endpoint:
 
-bank_service = api.Bank(database)
-currency_unit_service = api.CurrencyUnit(database)
-time_unit_service = api.TimeUnit(database)
-partner_service = api.Partner(database)
-account_product_service = api.AccountProduct(database)
-account_service = api.Account(database)
-table_sequence_service = api.TableSequence(database)
-configuration_service = api.Configuration(database)
+    def __init__(self, api: api.API):
+        self._api = api
 
+    @property
+    def api(self):
+        return self._api
 
-class Bank:
-    @staticmethod
-    def on_get(request, response):
-        response.json = bank_service.selectall()
-
-    @staticmethod
-    def on_post(request, response):
-        response.json = bank_service.insertone(request.json)
-
-    class ID:
-        @staticmethod
-        def on_get(request, response, bank_id):
-            response.json = bank_service.selectone(bank_id)
-
-        @staticmethod
-        def on_put(request, response, bank_id):
-            response.json = bank_service.updateone(bank_id, request.json)
-
-        @staticmethod
-        def on_delete(request, response, bank_id):
-            response.json = bank_service.deleteone(bank_id)
+    @property
+    def settings(self) -> Dict[str, Any]:
+        return self._api.settings
 
 
-class CurrencyUnit:
-    @staticmethod
-    def on_get(request, response):
-        response.json = currency_unit_service.selectall()
+class Bank(Endpoint):
+
+    def on_get(self, request, response):
+        response.json = self.api.bank.selectall()
+
+    def on_post(self, request, response):
+        response.json = self.api.insertone(request.json)
+
+    class ID(Endpoint):
+        def on_get(self, request, response, bank_id):
+            response.json = self.api.selectone(bank_id)
+
+        def on_put(self, request, response, bank_id):
+            response.json = self.api.updateone(bank_id, request.json)
+
+        def on_delete(self, request, response, bank_id):
+            response.json = self.api.deleteone(bank_id)
 
 
-class TimeUnit:
-    @staticmethod
-    def on_get(request, response):
-        response.json = time_unit_service.selectall()
+class CurrencyUnit(Endpoint):
+    def on_get(self, request, response):
+        response.json = self.api.currency_unit.selectall()
 
 
-class Partner:
-    @staticmethod
-    def on_get(request, response):
-        response.json = partner_service.selectall()
-
-    @staticmethod
-    def on_post(request, response):
-        response.json = partner_service.insertone(request.json)
-
-    class ID:
-        @staticmethod
-        def on_get(request, response, id):
-            response.json = partner_service.selectone(id)
-
-        @staticmethod
-        def on_put(request, response, id):
-            response.json = partner_service.updateone(id, request.json)
-
-        @staticmethod
-        def on_delete(request, response, id):
-            response.json = partner_service.deleteone(id)
+class TimeUnit(Endpoint):
+    def on_get(self, request, response):
+        response.json = self.api.time_unit.selectall()
 
 
-class AccountProduct:
-    @staticmethod
-    def on_get(request, response, id=None):
-        response.json = account_product_service.selectall(request.params['account_id'])
+class Partner(Endpoint):
+    def on_get(self, request, response):
+        response.json = self.api.partner.selectall()
+
+    def on_post(self, request, response):
+        response.json = self.api.partner.insertone(request.json)
+
+    class ID(Endpoint):
+        def on_get(self, request, response, id):
+            response.json = self.api.partner.selectone(id)
+
+        def on_put(self, request, response, id):
+            response.json = self.api.partner.updateone(id, request.json)
+
+        def on_delete(self, request, response, id):
+            response.json = self.api.partner.deleteone(id)
 
 
-class Account:
+class Security(Endpoint):
+    def on_get(self, request, response):
 
-    @staticmethod
-    def on_get(request, response):
-        response.json = account_service.selectall()
+        try:
+            pass
+        except RuntimeError as error:
+            pass
+        else:
+            self.api.security.remember(request.params['login'], request, response)
 
-    @staticmethod
-    def on_post(request, response):
-        response.json = account_service.insertone(request.json)
-
-    class ID:
-        @staticmethod
-        def on_get(request, response, id):
-            response.json = account_service.selectone(id)
-
-        @staticmethod
-        def on_put(request, response, id):
-            response.json = account_service.updateone(id, request.json)
-
-        @staticmethod
-        def on_delete(request, response, id):
-            response.json = account_service.deleteone(id)
+        response.status = falcon.HTTP_401
 
 
-class NumberToWord:
-    @staticmethod
-    def on_get(request, response):
-        response.json = number2words(
-            request.params.get('number'),
-            lang='ru',
-            to='currency',
-            currency='RUB',
-            cents=True,
-            seperator=' ',
-        )
+class AccountProduct(Endpoint):
+    def on_get(self, request, response):
+        response.json = self.api.account_product.selectall(request.params['account_id'])
 
 
-class TableSequence:
-    @staticmethod
-    def on_get(request, response, table):
-        response.json = table_sequence_service.selectone(table)
+class Account(Endpoint):
+
+    def on_get(self, request, response):
+        response.json = self.api.account.selectall()
+
+    def on_post(self, request, response):
+        response.json = self.api.account.insertone(request.json)
+
+    class ID(Endpoint):
+
+        def on_get(self, request, response, id):
+            response.json = self.api.account.selectone(id)
+
+        def on_put(self, request, response, id):
+            response.json = self.api.account.updateone(id, request.json)
+
+        def on_delete(self, request, response, id):
+            response.json = self.api.account.deleteone(id)
 
 
-class Configuration:
-    def on_get(request, response):
-        response.json = configuration_service.selectone()
-
-    def on_put(request, response):
-        response.json = configuration_service.updateone(request.json)
+class Number2Word(Endpoint):
+    def on_get(self, request, response):
+        response.json = number2currency(request.params.get('number'), lang='ru', currency='RUB')
 
 
-class Mail:
-    @staticmethod
-    def on_post(request, response):
+class Configuration(Endpoint):
+    def on_get(self, request, response):
+        response.json = self.api.configuration.selectone()
 
+    def on_put(self, request, response):
+        response.json = self.api.configuration.updateone(request.json)
+
+
+class Mail(Endpoint):
+    def on_post(self, request, response):
         with mail.Sender(
-            environment['smtp']['host'],
-            environment['smtp']['port'],
-            environment['smtp']['user'],
-            environment['smtp']['password'],
-            environment['smtp']['ssl'],
+            self.settings['smtp']['host'],
+            self.settings['smtp']['port'],
+            self.settings['smtp']['user'],
+            self.settings['smtp']['password'],
+            self.settings['smtp']['ssl'],
         ) as sender:
             sender.send(
-                from_address=environment['smtp']['from'],
+                from_address=self.settings['smtp']['from'],
                 to_addresses=request.json['recipients'],
                 body=request.json['body'],
                 subject=request.json['subject'],
-                attachments=mail.Attachment.parse(request.json.get('attachments', [])),
+                attachments=mail.parse_attachment(request.json.get('attachments', []), self.api),
             )
 
 
 class Report:
 
-    class ID:
-        @staticmethod
-        def on_get(request, response, entity, entity_id):
-            account = account_service.selectone_filled(entity_id)
+    class ID(Endpoint):
+        def on_get(self, request, response, entity, entity_id):
+            account = self.api.account.selectone_filled(entity_id)
             account_date = datetime.fromtimestamp(account['date'] / 1000).strftime('%Y_%m_d')
 
             if entity == 'account':

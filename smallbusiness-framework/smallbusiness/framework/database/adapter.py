@@ -52,8 +52,8 @@ class PostgresDatabase(Database):
     def __init__(self, database: str,
                  user: str,
                  password: str = None,
-                 port: int = 5432,
-                 host: str = 'localhost'):
+                 port: int = None,
+                 host: str = None):
 
         self._database = database
         self._user = user

@@ -6,19 +6,13 @@ from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 from contextlib import contextmanager
 
-from ..environment import Environment, FRAMEWORK_RESOURCE_DIR
-from ..api.account import Account
+from ..resource import FRAMEWORK_RESOURCE_DIR
 from ..service import printer
-from ..database import Database
-
-
-environment = Environment.get()
-database = environment.register.get('database', proxy=True)
-account_service = Account(database)
+from .. import api
 
 
 class Attachment:
-    _subclasses = set()
+    subclasses = set()
     type: Optional[str] = None
 
     def __init_subclass__(cls):
@@ -33,60 +27,24 @@ class Attachment:
 
     @classmethod
     def add_subclass(cls, subcls):
-        cls._subclasses.add(cls)
-
-    @classmethod
-    def _search_type(cls, name):
-        return next((subcls for subcls in cls._subclasses if subcls.type == name), None)
-
-    @classmethod
-    def parse(cls, attachments: List[Dict[str, Any]]):
-        """ Parse attachments protocol data.
-
-            >>> attachments
-            >>> [
-            >>>   {
-            >>>     type: 'type_name',
-            >>>     arguments: {}
-            >>>   }
-            >>> ]
-
-            Each attachment record (aka dict) have next properties:
-            - type (str) - name that was used for defining concrete attachment implementation
-            - arguments (dict) - dict that will passed to __init__ method of concrete implementation
-              >>> concrete_attachment = Attachment(**attachment.get('arguments', {})
-        """
-
-        concrete_attachments = []
-
-        for attachment in attachments:
-            attachment_cls_name = attachment.get('type', None)
-            arguments = attachment.get('arguments', {})
-
-            attachment_cls = cls._search_type(attachment_cls_name)
-
-            if attachment_cls is not None:
-                concrete_attachments.append(attachment_cls(**arguments))
-            else:
-                raise NotImplementedError(f'Unknown attachment type `{attachment_cls_name}`')
-
-        return concrete_attachments
+        cls.subclasses.add(cls)
 
 
 class AttachmentReport(Attachment):
     type = 'report'
 
-    def __init__(self, id, entity, format='pdf'):
+    def __init__(self, id, entity, api, format='pdf'):
         self._id = id
         self._entity = entity
         self._format = format
+        self._api = api
 
     @property
     def name(self) -> str:
         return f'{self._entity}.{self._format}'
 
     def read(self) -> bytes:
-        account = account_service.selectone_filled(self._id)
+        account = self._api.account.selectone_filled(self._id)
 
         if self._entity == 'account':
             return printer.account_as_pdf(account)
@@ -171,3 +129,40 @@ class Sender:
 
         if evalue is not None:
             raise evalue
+
+
+def parse_attachment(attachments: List[Dict[str, Any]], api: api.API) -> List[Attachment]:
+    """ Parse attachments protocol data.
+
+        >>> attachments
+        >>> [
+        >>>   {
+        >>>     type: 'type_name',
+        >>>     arguments: {}
+        >>>   }
+        >>> ]
+
+        Each attachment record (aka dict) have next properties:
+        - type (str) - name that was used for defining concrete attachment implementation
+        - arguments (dict) - dict that will passed to __init__ method of concrete implementation
+          >>> concrete_attachment = Attachment(**attachment.get('arguments', {})
+    """
+
+    concrete_attachments = []
+
+    for attachment in attachments:
+        attachment_cls_name = attachment.get('type', None)
+        arguments = attachment.get('arguments', {})
+
+        attachment_cls = _search_attachment_type(attachment_cls_name)
+
+        if attachment_cls is not None:
+            concrete_attachments.append(attachment_cls(**arguments, api=api))
+        else:
+            raise NotImplementedError(f'Unknown attachment type `{attachment_cls_name}`')
+
+    return concrete_attachments
+
+
+def _search_attachment_type(type_name: str) -> Optional[Type[Attachment]]:
+    return next((subcls for subcls in Attachment.subclasses if subcls.type == type_name), None)

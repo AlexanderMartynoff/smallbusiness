@@ -44,7 +44,6 @@ export default class AxiosPlugin extends Axios {
 
             interceptor: {
                 request(options) {
-                    alert('axios')
                     return options
                 },
 

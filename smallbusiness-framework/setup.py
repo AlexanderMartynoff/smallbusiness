@@ -14,6 +14,8 @@ setup(
     name='smallbusiness-framework',
     version='0.0.1a0',
     requires=[
+        'PyJWT',
+        'falcon',
         'yoyo',
         'pymysql',
         'psycopg2-binary',

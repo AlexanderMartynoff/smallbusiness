@@ -7,8 +7,8 @@ import weasyprint
 import jinja2
 
 
-from .. environment import FRAMEWORK_RESOURCE_DIR
-from .. instrument import number2words
+from ..resource import FRAMEWORK_RESOURCE_DIR
+from ..instrument import number2words
 
 
 def _account_product_total_price(product: List[Dict[str, Any]]):

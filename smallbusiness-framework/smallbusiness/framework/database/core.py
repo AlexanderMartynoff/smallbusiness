@@ -5,7 +5,7 @@ from sqlbuilder import smartsql
 from sqlbuilder.smartsql import Q, T, compile, Compiler
 
 # Stub for DBAPI cursor type
-# Just for code self-documentation
+# Just for self-documentation code
 Cursor = Any
 
 
@@ -40,7 +40,7 @@ class Result(smartsql.Result):
 
 
 class TerminalOperation:
-    """ Everyone query that maked with sqlbuilder
+    """ Everyone query that was maked with sqlbuilder
         must terminated with one of thus methods.
     """
 
@@ -61,7 +61,7 @@ class TerminalOperation:
 
 
 class Database:
-    """ Common facade for get some DB services. """
+    """ Common facade for get DB services. """
 
     @contextmanager
     def cursor(self) -> ContextManager[Cursor]:

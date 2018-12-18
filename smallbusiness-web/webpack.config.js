@@ -10,7 +10,9 @@ module.exports = {
 
     entry: {
         '../smallbusiness-module-company/smallbusiness/module/company/static/build/application': resolve('./application/entry/application.js'),
-        '../smallbusiness-module-company/smallbusiness/module/company/static/build/css': resolve('./application/style/scss/layout.scss')
+        '../smallbusiness-module-company/smallbusiness/module/company/static/build/css': resolve('./application/style/scss/layout.scss'),
+
+        '../smallbusiness-module-company/smallbusiness/module/company/static/build/application.security': resolve('./application/entry/application.security.js'),
     },
 
     devtool: 'source-map',

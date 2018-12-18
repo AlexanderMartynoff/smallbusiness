@@ -1,3 +1,4 @@
+from .api import *
 from .account import *
 from .account_product import *
 from .bank import *
@@ -6,3 +7,4 @@ from .time_unit import *
 from .partner import *
 from .database import *
 from .configuration import *
+from .user import *
