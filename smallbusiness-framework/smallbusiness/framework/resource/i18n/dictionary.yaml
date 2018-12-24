@@ -1,0 +1,10 @@
+currency:
+    - Ruble
+    - Dollar
+    - Euro
+time:
+    - Second
+    - Hour
+    - Day
+    - Month
+    - Year

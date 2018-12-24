@@ -2,148 +2,157 @@ from typing import cast, Dict, Any
 from datetime import datetime
 import falcon
 
+from .service.api import endpoint
 from .instrument import number2currency
 from .service import printer, mail
 from .service.mail import parse_attachment
-from . import security
-from .api import api
 
 
-class Endpoint:
+class Bank:
+    @endpoint
+    def on_get(request, response, api):
+        response.json = api.bank.selectall()
 
-    def __init__(self, api: api.API):
-        self._api = api
+    @endpoint
+    def on_post(request, response, api):
+        response.json = api.bank.insertone(request.json)
 
-    @property
-    def api(self):
-        return self._api
+    class ID:
+        @endpoint
+        def on_get(request, response, bank_id, api):
+            response.json = api.bank.selectone(bank_id)
 
-    @property
-    def settings(self) -> Dict[str, Any]:
-        return self._api.settings
+        @endpoint
+        def on_put(request, response, bank_id, api):
+            response.json = api.bank.updateone(bank_id, request.json)
 
-
-class Bank(Endpoint):
-
-    def on_get(self, request, response):
-        response.json = self.api.bank.selectall()
-
-    def on_post(self, request, response):
-        response.json = self.api.insertone(request.json)
-
-    class ID(Endpoint):
-        def on_get(self, request, response, bank_id):
-            response.json = self.api.selectone(bank_id)
-
-        def on_put(self, request, response, bank_id):
-            response.json = self.api.updateone(bank_id, request.json)
-
-        def on_delete(self, request, response, bank_id):
-            response.json = self.api.deleteone(bank_id)
+        @endpoint
+        def on_delete(request, response, bank_id, api):
+            response.json = api.bank.deleteone(bank_id)
 
 
-class CurrencyUnit(Endpoint):
-    def on_get(self, request, response):
-        response.json = self.api.currency_unit.selectall()
+class CurrencyUnit:
+    @endpoint
+    def on_get(request, response, api):
+        response.json = api.currency_unit.selectall()
 
 
-class TimeUnit(Endpoint):
-    def on_get(self, request, response):
-        response.json = self.api.time_unit.selectall()
+class TimeUnit:
+    @endpoint
+    def on_get(request, response, api):
+        response.json = api.time_unit.selectall()
 
 
-class Partner(Endpoint):
-    def on_get(self, request, response):
-        response.json = self.api.partner.selectall()
+class Partner:
+    @endpoint
+    def on_get(request, response, api):
+        response.json = api.partner.selectall()
 
-    def on_post(self, request, response):
-        response.json = self.api.partner.insertone(request.json)
+    @endpoint
+    def on_post(request, response, api):
+        response.json = api.partner.insertone(request.json)
 
-    class ID(Endpoint):
-        def on_get(self, request, response, id):
-            response.json = self.api.partner.selectone(id)
+    class ID:
+        @endpoint
+        def on_get(request, response, id, api):
+            response.json = api.partner.selectone(id)
 
-        def on_put(self, request, response, id):
-            response.json = self.api.partner.updateone(id, request.json)
+        @endpoint
+        def on_put(request, response, id, api):
+            response.json = api.partner.updateone(id, request.json)
 
-        def on_delete(self, request, response, id):
-            response.json = self.api.partner.deleteone(id)
+        @endpoint
+        def on_delete(request, response, id, api):
+            response.json = api.partner.deleteone(id)
 
 
-class Security(Endpoint):
-    def on_get(self, request, response):
+class Security:
+    @endpoint
+    def on_get(request, response, api):
+        user = api.user.selectone_for_security(
+            request.params['login'],
+            request.params['password'],
+        )
 
-        try:
-            pass
-        except RuntimeError as error:
-            pass
+        if user is not None:
+            api.security.put(user['login'], request, response)
+            response.json = user
         else:
-            self.api.security.remember(request.params['login'], request, response)
-
-        response.status = falcon.HTTP_401
-
-
-class AccountProduct(Endpoint):
-    def on_get(self, request, response):
-        response.json = self.api.account_product.selectall(request.params['account_id'])
+            response.status = falcon.HTTP_401
+            response.json = None
 
 
-class Account(Endpoint):
-
-    def on_get(self, request, response):
-        response.json = self.api.account.selectall()
-
-    def on_post(self, request, response):
-        response.json = self.api.account.insertone(request.json)
-
-    class ID(Endpoint):
-
-        def on_get(self, request, response, id):
-            response.json = self.api.account.selectone(id)
-
-        def on_put(self, request, response, id):
-            response.json = self.api.account.updateone(id, request.json)
-
-        def on_delete(self, request, response, id):
-            response.json = self.api.account.deleteone(id)
+class AccountProduct:
+    @endpoint
+    def on_get(request, response, api):
+        response.json = api.account_product.selectall(request.params['account_id'])
 
 
-class Number2Word(Endpoint):
-    def on_get(self, request, response):
+class Account:
+
+    @endpoint
+    def on_get(request, response, context, api):
+        response.json = api.account.selectall()
+
+    @endpoint
+    def on_post(request, response, api):
+        response.json = api.account.insertone(request.json)
+
+    class ID:
+        @endpoint
+        def on_get(request, response, id, api):
+            response.json = api.account.selectone(id)
+
+        @endpoint
+        def on_put(request, response, id, api):
+            response.json = api.account.updateone(id, request.json)
+
+        @endpoint
+        def on_delete(request, response, id, api):
+            response.json = api.account.deleteone(id)
+
+
+class Number2Word:
+    @endpoint
+    def on_get(request, response):
         response.json = number2currency(request.params.get('number'), lang='ru', currency='RUB')
 
 
-class Configuration(Endpoint):
-    def on_get(self, request, response):
-        response.json = self.api.configuration.selectone()
+class Configuration:
+    @endpoint
+    def on_get(request, response, api):
+        response.json = api.configuration.selectone()
 
-    def on_put(self, request, response):
-        response.json = self.api.configuration.updateone(request.json)
+    @endpoint
+    def on_put(request, response, api):
+        response.json = api.configuration.updateone(request.json)
 
 
-class Mail(Endpoint):
-    def on_post(self, request, response):
+class Mail:
+    @endpoint
+    def on_post(request, response, api, settings):
         with mail.Sender(
-            self.settings['smtp']['host'],
-            self.settings['smtp']['port'],
-            self.settings['smtp']['user'],
-            self.settings['smtp']['password'],
-            self.settings['smtp']['ssl'],
+            settings['smtp']['host'],
+            settings['smtp']['port'],
+            settings['smtp']['user'],
+            settings['smtp']['password'],
+            settings['smtp']['ssl'],
         ) as sender:
             sender.send(
-                from_address=self.settings['smtp']['from'],
+                from_address=settings['smtp']['from'],
                 to_addresses=request.json['recipients'],
                 body=request.json['body'],
                 subject=request.json['subject'],
-                attachments=mail.parse_attachment(request.json.get('attachments', []), self.api),
+                attachments=mail.parse_attachment(request.json.get('attachments', []), api),
             )
 
 
 class Report:
 
-    class ID(Endpoint):
-        def on_get(self, request, response, entity, entity_id):
-            account = self.api.account.selectone_filled(entity_id)
+    class ID:
+        @endpoint
+        def on_get(request, response, entity, entity_id, api):
+            account = api.account.selectone_filled(entity_id)
             account_date = datetime.fromtimestamp(account['date'] / 1000).strftime('%Y_%m_d')
 
             if entity == 'account':

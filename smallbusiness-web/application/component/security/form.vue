@@ -49,7 +49,6 @@
                     window.location = `/`
                 }).catch(error => {
                     this.valid = this.loading = false
-                    console.log(document.cookie)
                 })
             }
         },

@@ -10,4 +10,6 @@
 **/.eggs
 **/node_modules
 **/bundle
+**/.pot
+**/.mo
 **/*.sqlite3

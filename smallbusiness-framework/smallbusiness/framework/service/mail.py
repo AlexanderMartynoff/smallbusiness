@@ -7,8 +7,8 @@ from email.utils import COMMASPACE, formatdate
 from contextlib import contextmanager
 
 from ..resource import FRAMEWORK_RESOURCE_DIR
-from ..service import printer
-from .. import api
+from . import printer
+from .api import API
 
 
 class Attachment:
@@ -131,7 +131,7 @@ class Sender:
             raise evalue
 
 
-def parse_attachment(attachments: List[Dict[str, Any]], api: api.API) -> List[Attachment]:
+def parse_attachment(attachments: List[Dict[str, Any]], api: API) -> List[Attachment]:
     """ Parse attachments protocol data.
 
         >>> attachments

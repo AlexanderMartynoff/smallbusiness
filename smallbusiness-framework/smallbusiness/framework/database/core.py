@@ -93,7 +93,7 @@ class SqlBuilder:
     def __init__(self, database: Database = None, state: State = None):
 
         if database is None and state is None:
-            raise ValueError('`database` or `state` must be provide')
+            raise ValueError('One of `database` or `state` must be provide')
 
         self._database = database
         self._state = state

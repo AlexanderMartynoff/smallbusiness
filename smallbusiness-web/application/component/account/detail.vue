@@ -526,7 +526,7 @@
             },
 
             'totalAmount'(value) {
-                return this.$axios.get(`/api/number_to_word`, {
+                return this.$axios.get(`/api/number2word`, {
                     params: {
                         number: value
                     }

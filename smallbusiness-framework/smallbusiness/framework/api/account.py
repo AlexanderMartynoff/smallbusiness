@@ -115,7 +115,7 @@ class Account(Service):
                 .fetchinsertid()
 
             if account['products']:
-                account_product_api = AccountProduct(conext=result.context())
+                account_product_api = AccountProduct(state=result.state())
 
                 for product in account['products']:
                     product['account_id'] = created_account['id']

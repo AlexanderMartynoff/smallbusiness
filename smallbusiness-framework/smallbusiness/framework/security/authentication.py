@@ -1,47 +1,27 @@
+from typing import Any
 import jwt
 from falcon import Response, Request
 
-from .session import Session
-
 
 class AuthenticationPolicy:
-    def token(self):
+    def encode(self, data: Any):
+        NotImplementedError
+
+    def decode(self, data: str):
         NotImplementedError
 
     @property
     def name(self):
-        self.__class__.__name__
+        return self.__class__.__name__.lower()
 
 
 class JWTAuthenticationPolicy(AuthenticationPolicy):
-    def __init__(self, secret: str):
+    def __init__(self, secret: str, algorithm: str = 'HS256'):
         self._secret = secret
+        self._algorithm = algorithm
 
-    def validate(self, request) -> bool:
-        return False
+    def encode(self, data: Any) -> str:
+        return jwt.encode(data, self._secret, algorithm=self._algorithm).decode()
 
-
-class SecurityServer:
-
-    def __init__(self, policy: AuthenticationPolicy, session: Session):
-        self._policy = policy
-        self._session = session
-
-    def remember(self, identity: str, request: Request, response: Response):
-        self._session.put(self._policy.name, self._policy.token(), request, response)
-
-    def validate(self, request, response):
-        return self._policy.validate(self._session.get(self._policy.name, request, response))
-
-    @property
-    def policy(self):
-        return self._policy
-
-
-class AuthenticationMiddleware:
-    def __init__(self, security_server: SecurityServer):
-        self._security_server = security_server
-
-    def process_request(self, request, response):
-        if self._security_server.validate(request, response):
-            pass
+    def decode(self, token: str) -> bool:
+        return jwt.decode(token.encode(), self._secret, algorithms=[self._algorithm])

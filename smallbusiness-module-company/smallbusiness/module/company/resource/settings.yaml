@@ -20,3 +20,5 @@ database:
     user: 'alexander'
 security:
     secret: 'eyJhbGciOiAiSFMyNTYiLCAidHlwIj'
+i18n:
+    load_paths: ['./resource/i18n']

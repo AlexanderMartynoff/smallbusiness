@@ -9,23 +9,23 @@ T_co = TypeVar('T_co', contravariant=True)
 
 FRAMEWORK_DIR = dirname(abspath(__file__))
 FRAMEWORK_RESOURCE_DIR = FRAMEWORK_DIR + '/resource'
-SQLITE_DB = FRAMEWORK_RESOURCE_DIR + '/database.sqlite3'
+SQLITE_DB = FRAMEWORK_RESOURCE_DIR + '/database/application.sqlite'
 
 
 class Resource:
-    def __init__(self, dirs: List[str]):
-        self._dirs = dirs
+    def __init__(self, paths: List[str]):
+        self._paths = paths
 
-    def load_yaml(self, path):
+    def load_settings(self, target: str, type='yaml') -> Dict[str, Any]:
 
-        with self.load(path) as file:
+        with self.open(target) as file:
             return yaml.load(file.read(), yaml.RoundTripLoader)
 
     @contextmanager
-    def load(self, path, mode='rt') -> ContextManager[TextIO]:
-        for dir in self._dirs:
+    def open(self, target, mode='rt') -> ContextManager[TextIO]:
+        for path in self._paths:
             try:
-                with open(join(dir, path), mode) as file:
+                with open(join(path, target), mode) as file:
                     yield file
             except FileNotFoundError:
                 pass
