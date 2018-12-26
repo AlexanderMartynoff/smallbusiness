@@ -4,6 +4,7 @@
 # smallbusiness-framework project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
+
 #, fuzzy
 msgid ""
 msgstr ""
