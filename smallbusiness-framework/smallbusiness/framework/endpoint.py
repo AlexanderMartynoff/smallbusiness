@@ -4,70 +4,80 @@ import falcon
 
 from .service.api import endpoint
 from .instrument import number2currency
-from .service import printer, mail
+from .service import printer, mail, API
 from .service.mail import parse_attachment
 
 
+@endpoint
 class Bank:
-    @endpoint
-    def on_get(request, response, api):
+
+    @classmethod
+    def on_get(cls, request, response, api, _):
+        print(_('Ruble'))
         response.json = api.bank.selectall()
 
-    @endpoint
+    @staticmethod
     def on_post(request, response, api):
         response.json = api.bank.insertone(request.json)
 
+    @endpoint
     class ID:
-        @endpoint
+        @staticmethod
         def on_get(request, response, bank_id, api):
             response.json = api.bank.selectone(bank_id)
 
-        @endpoint
+        @staticmethod
         def on_put(request, response, bank_id, api):
             response.json = api.bank.updateone(bank_id, request.json)
 
-        @endpoint
+        @staticmethod
         def on_delete(request, response, bank_id, api):
             response.json = api.bank.deleteone(bank_id)
 
 
+@endpoint
 class CurrencyUnit:
-    @endpoint
+
+    @staticmethod
     def on_get(request, response, api):
         response.json = api.currency_unit.selectall()
 
 
+@endpoint
 class TimeUnit:
-    @endpoint
+    @staticmethod
     def on_get(request, response, api):
         response.json = api.time_unit.selectall()
 
 
+@endpoint
 class Partner:
-    @endpoint
+    @staticmethod
     def on_get(request, response, api):
         response.json = api.partner.selectall()
 
-    @endpoint
+    @staticmethod
     def on_post(request, response, api):
         response.json = api.partner.insertone(request.json)
 
+    @endpoint
     class ID:
-        @endpoint
+        @staticmethod
         def on_get(request, response, id, api):
             response.json = api.partner.selectone(id)
 
-        @endpoint
+        @staticmethod
         def on_put(request, response, id, api):
             response.json = api.partner.updateone(id, request.json)
 
-        @endpoint
+        @staticmethod
         def on_delete(request, response, id, api):
             response.json = api.partner.deleteone(id)
 
 
+@endpoint
 class Security:
-    @endpoint
+    @staticmethod
     def on_get(request, response, api):
         user = api.user.selectone_for_security(
             request.params['login'],
@@ -82,54 +92,59 @@ class Security:
             response.json = None
 
 
+@endpoint
 class AccountProduct:
-    @endpoint
+    @staticmethod
     def on_get(request, response, api):
         response.json = api.account_product.selectall(request.params['account_id'])
 
 
+@endpoint
 class Account:
-
-    @endpoint
+    @staticmethod
     def on_get(request, response, context, api):
         response.json = api.account.selectall()
 
-    @endpoint
+    @staticmethod
     def on_post(request, response, api):
         response.json = api.account.insertone(request.json)
 
+    @endpoint
     class ID:
-        @endpoint
+        @staticmethod
         def on_get(request, response, id, api):
             response.json = api.account.selectone(id)
 
-        @endpoint
+        @staticmethod
         def on_put(request, response, id, api):
             response.json = api.account.updateone(id, request.json)
 
-        @endpoint
+        @staticmethod
         def on_delete(request, response, id, api):
             response.json = api.account.deleteone(id)
 
 
+@endpoint
 class Number2Word:
-    @endpoint
+    @staticmethod
     def on_get(request, response):
         response.json = number2currency(request.params.get('number'), lang='ru', currency='RUB')
 
 
+@endpoint
 class Configuration:
-    @endpoint
+    @staticmethod
     def on_get(request, response, api):
         response.json = api.configuration.selectone()
 
-    @endpoint
+    @staticmethod
     def on_put(request, response, api):
         response.json = api.configuration.updateone(request.json)
 
 
+@endpoint
 class Mail:
-    @endpoint
+    @staticmethod
     def on_post(request, response, api, settings):
         with mail.Sender(
             settings['smtp']['host'],
@@ -149,8 +164,9 @@ class Mail:
 
 class Report:
 
+    @endpoint
     class ID:
-        @endpoint
+        @staticmethod
         def on_get(request, response, entity, entity_id, api):
             account = api.account.selectone_filled(entity_id)
             account_date = datetime.fromtimestamp(account['date'] / 1000).strftime('%Y_%m_d')

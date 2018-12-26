@@ -22,7 +22,7 @@ msgstr ""
 
 #: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Ruble"
-msgstr ""
+msgstr "Рубль"
 
 #: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Dollar"

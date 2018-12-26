@@ -7,16 +7,12 @@ import gettext
 from . resource import FRAMEWORK_RESOURCE_DIR
 
 
-def setup_translation():
+def translator():
     return gettext.translation(
         domain='framework',
         localedir=join(FRAMEWORK_RESOURCE_DIR, 'i18n/locale'),
         languages=['en', 'ru']
-    )
-
-
-def _(message: str, context: Dict[str, Any]):
-    pass
+    ).gettext
 
 
 def dictionary_extractor(file, keywords, comment_tags, options):

@@ -45,7 +45,7 @@ application = falcon.API(
 application.add_route('/api/account', endpoint.Account)
 application.add_route('/api/account/{id}', endpoint.Account.ID)
 application.add_route('/api/account_product', endpoint.AccountProduct)
-application.add_route('/api/bank', endpoint.Bank)
+application.add_route('/api/bank', endpoint.Bank())
 application.add_route('/api/bank/{bank_id}', endpoint.Bank.ID)
 application.add_route('/api/partner', endpoint.Partner)
 application.add_route('/api/partner/{id}', endpoint.Partner.ID)

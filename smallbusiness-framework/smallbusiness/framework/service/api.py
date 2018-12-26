@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Collection, get_type_hints
 from functools import wraps
 import inspect
 import attr
@@ -14,6 +14,8 @@ from ..api.user import User
 from ..resource import Resource
 from ..security import SecurityServer
 from ..database import Database
+
+from .. import i18n
 
 
 @attr.s(frozen=True, kw_only=True)
@@ -65,27 +67,60 @@ class ContextMiddleware:
         request.context['api'] = self._api
 
 
-def endpoint(wrapped):
+class _Endpointmethod:
+    def __init__(self, method):
+        self._method = method
+
+    def __get__(self, instance, cls):
+        if instance is None:
+            instance = cls
+
+        def function(*args, **kwargs):
+            return self._method(instance, cls, args, kwargs)
+
+        return function
+
+
+def _endpointmethod(wrapped):
+    return _Endpointmethod(wrapped)
+
+
+def endpoint(cls):
+    assert type(cls) is type, f'For only with class use not for ``{type(cls)}``'
+
+    class Endpoint(cls):
+        @_endpointmethod
+        def on_get(instance, cls, args, kwargs):
+            return _injector(super(cls, instance).on_get)(*args, **kwargs)
+
+        @_endpointmethod
+        def on_post(instance, cls, args, kwargs):
+            return _injector(super(cls, instance).on_post)(*args, **kwargs)
+
+        @_endpointmethod
+        def on_put(instance, cls, args, kwargs):
+            return _injector(super(cls, instance).on_put)(*args, **kwargs)
+
+        @_endpointmethod
+        def on_delete(instance, cls, args, kwargs):
+            return _injector(super(cls, instance).on_delete)(*args, **kwargs)
+
+    return Endpoint
+
+
+def _injector(wrapped):
     """ Special decorator that make decomposition
         for ``falcon`` dict ``request.context``.
         Wait for exists the next key in ``request.context``:
         ???
     """
 
-    if isinstance(wrapped, (staticmethod, classmethod)):
-        raise NotImplementedError
-    else:
-        signature = inspect.signature(wrapped)
+    signature = inspect.signature(wrapped)
 
     @wraps(wrapped)
     def wrapper(*args, **kwargs):
 
-        if len(args) == 3:
-            _self, request, response = args
-        elif len(args) == 2:
-            request, response = args
-        else:
-            raise TypeError(f'Unexpected argumets number - wait for 2 or 3, {len(args)} given')
+        request, response = args
 
         assert 'settings' in request.context and \
             'database' in request.context and \
@@ -103,7 +138,7 @@ def endpoint(wrapped):
             kwargs.update(context=request.context)
 
         if '_' in signature.parameters:
-            kwargs.update(_=None)
+            kwargs.update(_=i18n.translator())
 
         return wrapped(*args, **kwargs)
 

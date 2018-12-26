@@ -39,7 +39,7 @@ class SessionMiddleware:
         if 'session' not in request.context:
             request.context['session'] = self._session_storage.read(request, response) or Session()
         else:
-            raise KeyError('Key `session` already present in request context')
+            raise KeyError('Key ``session`` already present in request context')
 
     def process_response(self, request, response, resource, succeeded):
         if 'session' in request.context:
