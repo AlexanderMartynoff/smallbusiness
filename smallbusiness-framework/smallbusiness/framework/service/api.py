@@ -1,7 +1,11 @@
-from typing import Dict, Any, Collection, get_type_hints
+from typing import (
+    Dict, Any, Collection, Tuple, Type,
+    TypeVar, Callable, Union, get_type_hints
+)
 from functools import wraps
 import inspect
 import attr
+from falcon import Request, Response
 
 from ..api.account import Account
 from ..api.account_product import AccountProduct
@@ -16,6 +20,9 @@ from ..security import SecurityServer
 from ..database import Database
 
 from .. import i18n
+
+A = TypeVar('A')
+B = TypeVar('B')
 
 
 @attr.s(frozen=True, kw_only=True)
@@ -45,26 +52,24 @@ class ContextMiddleware:
         self._security = security
         self._resource = resource
 
-        self._api = API(
-            account=Account(database),
-            account_product=AccountProduct(database),
-            bank=Bank(database),
-            configuration=Configuration(database),
-            currency_unit=CurrencyUnit(database),
-            partner=Partner(database),
-            time_unit=TimeUnit(database),
-            user=User(database),
-            security=security,
-            settings=settings,
-            resource=resource,
-        )
-
     def process_request(self, request, response):
         request.context['settings'] = self._settings
         request.context['database'] = self._database
         request.context['security'] = self._security
         request.context['resource'] = self._resource
-        request.context['api'] = self._api
+        request.context['api'] = API(
+            account=Account(self._database),
+            account_product=AccountProduct(self._database),
+            bank=Bank(self._database),
+            configuration=Configuration(self._database),
+            currency_unit=CurrencyUnit(self._database),
+            partner=Partner(self._database),
+            time_unit=TimeUnit(self._database),
+            user=User(self._database),
+            security=self._security,
+            settings=self._settings,
+            resource=self._resource,
+        )
 
 
 class _Endpointmethod:
@@ -76,57 +81,70 @@ class _Endpointmethod:
             instance = cls
 
         def function(*args, **kwargs):
-            return self._method(instance, cls, args, kwargs)
+            try:
+                return self._method(instance, cls, args, kwargs)
+            except AttributeError as error:
+                raise NotImplementedError from error
 
         return function
 
+    def __set__(self):
+        raise NotImplementedError
 
-def _endpointmethod(wrapped):
+    def __delete__(self):
+        raise NotImplementedError
+
+
+def endpointmethod(wrapped):
     return _Endpointmethod(wrapped)
 
 
-def endpoint(cls):
-    assert type(cls) is type, f'For only with class use not for ``{type(cls)}``'
+def endpoint(cls: Type[A]) -> Type[A]:
+
+    assert type(cls) is type, f'For only with classes use not for ``{type(cls)}``'
 
     class Endpoint(cls):
-        @_endpointmethod
+        @endpointmethod
         def on_get(instance, cls, args, kwargs):
             return _injector(super(cls, instance).on_get)(*args, **kwargs)
 
-        @_endpointmethod
+        @endpointmethod
         def on_post(instance, cls, args, kwargs):
             return _injector(super(cls, instance).on_post)(*args, **kwargs)
 
-        @_endpointmethod
+        @endpointmethod
         def on_put(instance, cls, args, kwargs):
             return _injector(super(cls, instance).on_put)(*args, **kwargs)
 
-        @_endpointmethod
+        @endpointmethod
         def on_delete(instance, cls, args, kwargs):
             return _injector(super(cls, instance).on_delete)(*args, **kwargs)
 
     return Endpoint
 
 
-def _injector(wrapped):
+def _injector(wrapped: Callable[..., A]) -> Callable[..., A]:
     """ Special decorator that make decomposition
         for ``falcon`` dict ``request.context``.
         Wait for exists the next key in ``request.context``:
-        ???
+        - settings
+        - database
+        - security
+        - resource
+        - api
     """
 
     signature = inspect.signature(wrapped)
 
     @wraps(wrapped)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs) -> A:
 
         request, response = args
 
         assert 'settings' in request.context and \
             'database' in request.context and \
-            'security' in request.context and \
             'resource' in request.context and \
-            'api' in request.context, TypeError('Incorrect ``request.context`` given')
+            'api' in request.context, KeyError('Incorrect ``request.context``')
 
         if 'api' in signature.parameters:
             kwargs.update(api=request.context['api'])
@@ -137,8 +155,12 @@ def _injector(wrapped):
         if 'context' in signature.parameters:
             kwargs.update(context=request.context)
 
+        # request.context['session']
         if '_' in signature.parameters:
-            kwargs.update(_=i18n.translator())
+            kwargs.update(_=i18n.Translator())
+
+        if 'i18n' in signature.parameters:
+            kwargs.update(i18n=i18n.Translator())
 
         return wrapped(*args, **kwargs)
 

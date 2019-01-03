@@ -5,10 +5,10 @@ from falcon import Response, Request
 
 class AuthenticationPolicy:
     def encode(self, data: Any):
-        NotImplementedError
+        raise NotImplementedError
 
     def decode(self, data: str):
-        NotImplementedError
+        raise NotImplementedError
 
     @property
     def name(self):

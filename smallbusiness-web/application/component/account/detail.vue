@@ -11,7 +11,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link" @click.prevent.stop="toggleReadonly()">
+                    <a href="#" class="nav-link" @click.prevent.stop="toggleReadonly">
                         <span v-if="readonly">
                             <i class="fas fa-lock-open"></i> Unlock
                         </span>
@@ -21,14 +21,14 @@
                     </a>
                 </li>
 
-                <li class="nav-item" v-if="isExist()">
-                    <a href="#" class="nav-link" @click.prevent.stop="openDeleteAlert()">
+                <li class="nav-item" v-if="isExist">
+                    <a href="#" class="nav-link" @click.prevent.stop="openDeleteAlert">
                         <i class="fas fa-trash"></i> Delete
                     </a>
                 </li>
 
-                <li class="nav-item" v-if="isExist()">
-                    <a href="#" class="nav-link" @click.prevent.stop="openPrintAlert()">
+                <li class="nav-item" v-if="isExist">
+                    <a href="#" class="nav-link" @click.prevent.stop="openPrintAlert">
                         <i class="fas fa-print"></i> Report
                     </a>
                 </li>
@@ -36,13 +36,13 @@
                 <h4 class="application-sidebar-header">PRODUCTS</h4>
 
                 <li class="nav-item">
-                    <a href="#" class="nav-link" @click.prevent.stop="addAccountProduct()">
+                    <a href="#" class="nav-link" @click.prevent.stop="addAccountProduct">
                         <i class="fas fa-plus-circle"></i> Add
                     </a>
                 </li>
 
                 <li class="nav-item" v-if="selectedProducts.length > 0">
-                    <a href="#" class="nav-link" @click.prevent.stop="openDeleteAccountProductAlert()">
+                    <a href="#" class="nav-link" @click.prevent.stop="openDeleteAccountProductAlert">
                         <i class="fas fa-trash"></i> Delete
                     </a>
                 </li>
@@ -64,7 +64,7 @@
                      :hide-header="true"
                      :no-fade="true"
                      @ok="deleteAccount(id)"
-                     @cancel="closeDeleteAlert()">
+                     @cancel="closeDeleteAlert">
                 <h4>Delete account?</h4>
             </b-modal>
 
@@ -90,19 +90,19 @@
 
                 <div slot="modal-footer">
 
-                    <button type="button" class="btn btn-secondary" @click="closePrintAlert()">
+                    <button type="button" class="btn btn-secondary" @click="closePrintAlert">
                         Cancel
                     </button>
 
-                    <button class="btn btn-primary" type="button" :disabled="selectedReportNoOne()" @click="openReports()">
+                    <button class="btn btn-primary" type="button" :disabled="selectedReportNoOne" @click="openReports">
                         View
                     </button>
 
-                    <button type="button" class="btn btn-primary" :disabled="selectedReportExists()" @click="openMailAlert()">
+                    <button type="button" class="btn btn-primary" :disabled="selectedReportExists" @click="openMailAlert">
                         Mail
                     </button>
 
-                    <download :urls="selectedReportUrls" :disabled="selectedReportExists()" tag="button" class="btn btn-primary">
+                    <download :urls="selectedReportUrls" :disabled="selectedReportExists" tag="button" class="btn btn-primary">
                         Download
                     </download>
                 </div>
@@ -113,13 +113,13 @@
                      :hide-header="true"
                      :no-fade="true"
                      @ok="deleteAccountProductFromAlert(id)"
-                     @cancel="closeDeleteAccountProductAlert()">
+                     @cancel="closeDeleteAccountProductAlert">
                 <h4>Delete account product?</h4>
             </b-modal>
 
             <application-toolbar>
 
-                <span v-if="isExist()">
+                <span v-if="isExist">
                     Document № {{id}} from {{formatTimestamp(account.date)}}
                 </span>
                 <span v-else>
@@ -313,14 +313,6 @@
 
         methods: {
             formatTimestamp: formatTimestamp,
-            
-            selectedReportNoOne() {
-                return _.size(this.selectedReports) !== 1
-            },
-
-            selectedReportExists() {
-                return _.size(this.selectedReports) === 0
-            },
 
             computeReportUrl(report, disposition) {
                 return `/api/report/${report}/${this.id}?disposition=${disposition}`
@@ -468,6 +460,14 @@
         },
 
         computed: {
+
+            selectedReportExists() {
+                return _.size(this.selectedReports) === 0
+            },
+
+            selectedReportNoOne() {
+                return _.size(this.selectedReports) !== 1
+            },
 
             mailReportRecipients() {
                 return _.map(this.partners, partner => this.partnerToRecipient(partner))

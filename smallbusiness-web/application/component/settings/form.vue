@@ -2,7 +2,7 @@
     <div class="setttings-form">
 
     <b-tabs>
-      <b-tab title="Documents and Reports" active>
+      <b-tab title="Documents" active>
         <form class="pt-2 pb-2">
             <div class="form-row">
                 <div class="form-group col-md-12 mb-0">
@@ -13,7 +13,7 @@
         </form>
       </b-tab>
 
-      <b-tab title="About">
+      <b-tab title="Security">
         <div class="pt-2 pb-2">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit,
             sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.

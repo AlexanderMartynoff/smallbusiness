@@ -4,6 +4,11 @@ from contextlib import contextmanager
 from sqlbuilder import smartsql
 from sqlbuilder.smartsql import Q, T, compile, Compiler
 
+from ..logger import getlogger
+
+
+logger = getlogger(__name__)
+
 # Stub for DBAPI cursor type
 # Just for self-documentation code
 Cursor = Any
@@ -22,15 +27,15 @@ class Result(smartsql.Result):
     def execute_fetchnone(self) -> None:
         self._cursor.execute(*self.execute())
 
-    def execute_fetchone(self) -> Dict[AnyStr, Any]:
+    def execute_fetchone(self) -> Dict[str, Any]:
         self._cursor.execute(*self.execute())
         return self._cursor.fetchone()
 
-    def execute_fetchall(self) -> Sequence[Dict[AnyStr, Any]]:
+    def execute_fetchall(self) -> Sequence[Dict[str, Any]]:
         self._cursor.execute(*self.execute())
         return self._cursor.fetchall()
 
-    def execute_fetchinsertid(self) -> Dict[AnyStr, Any]:
+    def execute_fetchinsertid(self) -> Dict[str, Any]:
         raise NotImplementedError
 
     def operation(self) -> 'TerminalOperation':
@@ -50,13 +55,13 @@ class TerminalOperation:
     def execute(self) -> None:
         return self._result.execute_fetchnone()
 
-    def fetchone(self) -> Dict[AnyStr, Any]:
+    def fetchone(self) -> Dict[str, Any]:
         return self._result.execute_fetchone()
 
-    def fetchall(self) -> Sequence[Dict[AnyStr, Any]]:
+    def fetchall(self) -> Sequence[Dict[str, Any]]:
         return self._result.execute_fetchall()
 
-    def fetchinsertid(self) -> Dict[AnyStr, Any]:
+    def fetchinsertid(self) -> Dict[str, Any]:
         return self._result.execute_fetchinsertid()
 
 
@@ -93,7 +98,7 @@ class SqlBuilder:
     def __init__(self, database: Database = None, state: State = None):
 
         if database is None and state is None:
-            raise ValueError('One of `database` or `state` must be provide')
+            raise ValueError('One of ``database`` or ``state`` must be provide')
 
         self._database = database
         self._state = state

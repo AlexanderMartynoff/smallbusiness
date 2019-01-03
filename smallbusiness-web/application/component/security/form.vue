@@ -2,14 +2,14 @@
     <div class="form-security-container">
         <b-progress class="form-security-progress" v-if="loading" :value="100" variant="primary" animated></b-progress>
 
-        <form class="form-security p-3 shadow-lg rounded border" v-else>
+        <form class="form-security p-3 shadow-lg rounded border" v-else @keypress=onKeypress>
             <div class="form-group">
                 <label for="login">Login</label>
-                <b-form-input type="text" v-model="login" :state="valid" placeholder="Enter login"/>
+                <b-form-input type="text" v-model="login" :state="valid" ref="login" placeholder="Enter login"/>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <b-form-input type="text" v-model="password" :state="valid" placeholder="Enter password"/>
+                <b-form-input type="password" v-model="password" :state="valid" placeholder="Enter password"/>
             </div>
             <div class="row">
                 <div class="col-4">
@@ -26,13 +26,14 @@
 </template>
 
 <script type="text/javascript">
+
     export default {
         data() {
             return {
                 loading: false,
+                valid: null,
                 login: null,
                 password: null,
-                valid: null,
             }
         },
 
@@ -40,17 +41,24 @@
             submit() {
                 this.loading = true
 
-                this.$axios.get(`/api/security/authenticate`, {
+                this.$axios.get('/api/security/authenticate', {
                     params: {
                         login: this.login,
                         password: this.password,
                     }
-                }).then(response => {
-                    window.location = `/`
+                }).then(user => {
+                    location.replace('/')
                 }).catch(error => {
-                    this.valid = this.loading = false
+                    this.valid = false
+                    this.loading = false
                 })
-            }
+            },
+
+            onKeypress(event) {
+                if (event.code === 'Enter') {
+                    this.submit()
+                }
+            },
         },
 
         computed: {
@@ -67,9 +75,10 @@
             login() {
                 this.valid = null
             },
+
             password() {
                 this.valid = null
-            },
+            }
         }
     }
 </script>

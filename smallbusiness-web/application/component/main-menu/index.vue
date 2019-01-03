@@ -47,7 +47,7 @@
             </div>
 
             <div class="application-menu-item" v-b-tooltip.hover.auto title="Logout">
-                <button type="button" class="btn btn-link">
+                <button type="button" class="btn btn-link" @click="logout">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
@@ -57,14 +57,10 @@
 
 <script type="text/javascript">
     import _ from 'lodash'
+    import cookies from 'js-cookie'
+    import store from 'store2'
 
     export default {
-
-        data() {
-            return {
-                path: null
-            }
-        },
 
         methods: {
             isActive(path) {
@@ -77,6 +73,11 @@
 
             saveConfiguration() {
                 this.$refs.configurationForm.saveConfiguration()
+            },
+
+            logout() {
+                cookies.remove('falconsession')
+                location.replace('/login')
             }
         }
     }

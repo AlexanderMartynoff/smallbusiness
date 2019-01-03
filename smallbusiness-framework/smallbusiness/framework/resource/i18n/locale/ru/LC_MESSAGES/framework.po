@@ -26,33 +26,29 @@ msgstr "Рубль"
 
 #: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Dollar"
-msgstr ""
+msgstr "Доллар"
 
 #: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Euro"
-msgstr ""
+msgstr "Евро"
 
 #: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Second"
-msgstr ""
+msgstr "Секунда"
 
 #: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Hour"
-msgstr ""
+msgstr "Час"
 
 #: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Day"
-msgstr ""
+msgstr "День"
 
 #: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Month"
-msgstr ""
+msgstr "Месяц"
 
 #: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Year"
-msgstr ""
-
-#: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
-msgid "HELLO"
-msgstr ""
+msgstr "Год"
 

@@ -14,5 +14,12 @@ Vue.use(Axios)
 Vue.component('security-form', SecurityForm)
 
 const _vue = new Vue({
-    el: '._vue'
+    el: '._vue',
+    axios: {
+        interceptor: {
+            response(response) {
+                return response.data
+            }
+        }
+    }
 })

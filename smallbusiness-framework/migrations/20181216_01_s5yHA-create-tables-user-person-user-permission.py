@@ -1,5 +1,5 @@
 """
-create tables: user, person
+create tables: user, person, user_permission
 """
 
 from yoyo import step
@@ -29,7 +29,8 @@ steps = [
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             login TEXT,
             password TEXT,
-            person_id INTEGER
+            person_id INTEGER,
+            sudo INTEGER
         );
     """,
 
@@ -38,6 +39,22 @@ steps = [
     """),
 
     step("""
-        INSERT INTO user VALUES (NULL, 'admin', 'admin', 1);
+        INSERT INTO user VALUES (1, 'admin', 'admin', 1, 1);
+    """),
+
+    step("""
+        CREATE TABLE user_permission (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            user_id INTEGER
+        );
+    """,
+
+    """
+        DROP TABLE IF EXISTS user_permission;
+    """),
+
+    step("""
+        INSERT INTO user_permission VALUES (1, 'bank.read', 1);
     """),
 ]

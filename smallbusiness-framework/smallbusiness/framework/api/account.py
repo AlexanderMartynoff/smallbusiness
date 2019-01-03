@@ -7,7 +7,6 @@ from ..instrument import groupbycrud
 
 
 class Account(Service):
-
     def selectone_filled(self, account_id):
 
         with self.sqlbuilder.result() as result:
@@ -48,7 +47,6 @@ class Account(Service):
                 .fetchone()
 
             if account:
-                # TODO: replace sqlbuilder `Q().where` with python `dict`
                 account.update(products=AccountProduct(state=result.state()).selectall(
                     T.account_product.account_id == account_id
                 ))

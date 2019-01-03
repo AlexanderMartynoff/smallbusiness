@@ -8,6 +8,10 @@ from sqlbuilder.smartsql.dialects import sqlite, mysql
 from sqlbuilder.smartsql.factory import factory
 
 from .core import Database, SqlBuilder, Result, Cursor
+from ..logger import getlogger
+
+
+logger = getlogger(__name__)
 
 
 class SqliteDatabase(Database):
@@ -22,7 +26,9 @@ class SqliteDatabase(Database):
             return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}
 
         with sqlite3.connect(self._database) as connection:
+            connection.set_trace_callback(logger.debug)
             connection.row_factory = row_factory
+
             cursor = connection.cursor()
 
             yield cursor

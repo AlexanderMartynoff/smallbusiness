@@ -5,7 +5,7 @@ def pre_request(worker, request):
         request.path = '/static/entry/application.security.html'
 
 
-threads = 1
+threads = 4
 worker_class = 'sync'
 workers = 1
 bind = '127.0.0.1'

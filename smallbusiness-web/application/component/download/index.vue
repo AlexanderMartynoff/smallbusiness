@@ -28,10 +28,13 @@
 
         methods: {
             download() {
-                this.sources = _.chain(forceArray(this.urls)).concat(forceArray(this.url)).map((source, index) => ({
-                    key: Date.now() + index,
-                    url: source,
-                })).value()
+                this.sources = _.chain(forceArray(this.urls))
+                    .concat(forceArray(this.url))
+                    .map((source, index) => ({
+                        key: Date.now() + index,
+                        url: source,
+                    }))
+                    .value()
             }
         }
     }

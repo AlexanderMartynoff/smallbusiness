@@ -15,6 +15,6 @@ class TableSequence(Service):
     def updateone(self, table, sequence):
         with self.sqlbuilder.result() as result:
             return Q(result=result) \
-                .raw('UPDATE SQLITE_SEQUENCE SET seq = ? WHERE name = ?', [sequence, table]) \
+                .raw('UPDATE SQLITE_SEQUENCE SET seq = ? WHERE name = ?', [int(sequence), table]) \
                 .select() \
                 .execute()
