@@ -13,3 +13,5 @@
 **/*.pot
 **/*.mo
 **/*.sqlite3
+.ipynb_checkpoints
+.mypy_cache
