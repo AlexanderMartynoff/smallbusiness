@@ -32,7 +32,9 @@ class SecurityServer:
             try:
                 return self._authentication.decode(request.context['session'][self._authentication.name])
             except KeyError as error:
-                return None
+                pass
+
+        return None
 
     @property
     def authorization(self):

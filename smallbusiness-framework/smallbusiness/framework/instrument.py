@@ -4,19 +4,23 @@ from collections import defaultdict
 import num2words
 
 
-CRUDItem = Dict[AnyStr, Any]
+CRUDItem = Dict[str, Any]
 CRUDItems = List[CRUDItem]
 
 
 def groupbycrud(source_items: CRUDItems,
                 update: Optional[CRUDItem] = None,
-                key: AnyStr = '_crud') -> Tuple[CRUDItems, CRUDItems, CRUDItems]:
+                key: str = '_crud') -> Tuple[CRUDItems, CRUDItems, CRUDItems]:
 
-    groups: Dict[AnyStr, CRUDItems] = defaultdict(list)
+    groups: Dict[str, CRUDItems] = defaultdict(list)
 
     for operation, grouped_items in groupby(source_items, lambda source_item: source_item.get('_crud', None)):
 
         if operation is not None:
+
+            if update is None:
+                update = {}
+
             groups[operation] = [{**grouped_item, **update} for grouped_item in grouped_items]
 
     return groups['insert'], groups['update'], groups['delete']

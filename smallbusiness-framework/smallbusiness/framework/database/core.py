@@ -1,28 +1,37 @@
-from typing import Type, TypeVar, ContextManager, Any, AnyStr, Sequence, Dict, NewType
+from typing import (
+    Type,
+    TypeVar,
+    Any,
+    AnyStr,
+    Sequence,
+    Dict,
+    NewType,
+    Generator,
+    Tuple,
+    Optional,
+)
 from contextlib import contextmanager
-
 from sqlbuilder import smartsql
 from sqlbuilder.smartsql import Q, T, compile, Compiler
+from contextvars import ContextVar
 
 from ..logger import getlogger
+from ..service import api
 
 
 logger = getlogger(__name__)
 
-# Stub for DBAPI cursor type
-# Just for self-documentation code
 Cursor = Any
+Database_co = TypeVar('Database_co', bound='Database', covariant=True)
+
+_database: ContextVar[Optional[Database_co]] = ContextVar('database', default=None)
+_cursor: ContextVar[Optional[Cursor]] = ContextVar('cursor', default=None)
 
 
 class Result(smartsql.Result):
-    def __init__(self, compile: Compiler, database: 'Database', cursor: Cursor):
+    def __init__(self, compile: Compiler, cursor: Cursor):
         super().__init__(compile)
-
-        self._database = database
         self._cursor = cursor
-
-    def state(self) -> 'State':
-        return State(self._database, self._cursor)
 
     def execute_fetchnone(self) -> None:
         self._cursor.execute(*self.execute())
@@ -69,54 +78,44 @@ class Database:
     """ Common facade for get DB services. """
 
     @contextmanager
-    def cursor(self) -> ContextManager[Cursor]:
+    def cursor(self) -> Generator[Cursor, None, None]:
         raise NotImplementedError
 
     def result(self, cursor: Cursor) -> Result:
         raise NotImplementedError
 
 
-class State:
-    """ For re-use connection state. """
-
-    def __init__(self, database: Database, cursor: Cursor):
-        self._database = database
-        self._cursor = cursor
-
-    @property
-    def cursor(self) -> Cursor:
-        return self._cursor
-
-    @property
-    def database(self) -> Database:
-        return self._database
-
-
 class SqlBuilder:
     """ API facade for `sqlbuilder` package. """
 
-    def __init__(self, database: Database = None, state: State = None):
-
-        if database is None and state is None:
-            raise ValueError('One of ``database`` or ``state`` must be provide')
-
+    def __init__(self, database: Database = None):
         self._database = database
-        self._state = state
 
     @contextmanager
-    def result(self) -> ContextManager[Result]:
-        if self._state is None:
+    def result(self) -> Generator[Result, None, None]:
+
+        if _database.get() is None or _cursor.get() is None:
+            assert self._database is not None, 'No database instance found'
+
             with self._database.cursor() as cursor:
-                yield self._database.result(cursor)
+                cursor_token = _cursor.set(cursor)
+                database_token = _database.set(self._database)
+                try:
+                    yield _database.get().result(_cursor.get())
+                except Exception as error:
+                    raise error
+                finally:
+                    _cursor.reset(cursor_token)
+                    _database.reset(database_token)
         else:
-            yield self._state.database.result(self._state.cursor)
+            yield _database.get().result(_cursor.get())
 
 
 class Service:
 
-    def __init__(self, database: Database = None, state: State = None):
+    def __init__(self, database: Database = None):
         self._database = database
-        self._sqlbuilder = SqlBuilder(database=database, state=state)
+        self._sqlbuilder = SqlBuilder(database=database)
 
     @property
     def database(self):

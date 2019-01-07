@@ -1,10 +1,21 @@
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    TextIO,
+    IO,
+    ContextManager,
+    Type,
+    TypeVar,
+    cast,
+    Generic,
+    Generator
+)
+
 from os.path import dirname, abspath, join, exists, isdir
 from ruamel import yaml
-from typing import Any, Dict, List, Optional, TextIO, ContextManager, Type, TypeVar, cast, Generic
 from contextlib import contextmanager
-
-
-T_co = TypeVar('T_co', contravariant=True)
 
 
 FRAMEWORK_DIR = dirname(abspath(__file__))
@@ -22,7 +33,7 @@ class Resource:
             return yaml.load(file.read(), yaml.RoundTripLoader)
 
     @contextmanager
-    def open(self, target, mode='rt') -> ContextManager[TextIO]:
+    def open(self, target, mode='rt') -> Generator[IO[Any], None, None]:
         for path in self._paths:
             try:
                 with open(join(path, target), mode) as file:

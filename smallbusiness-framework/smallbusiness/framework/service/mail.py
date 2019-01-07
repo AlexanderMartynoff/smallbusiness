@@ -1,4 +1,4 @@
-from typing import List, Optional, Union, Dict, Any, Type, Set
+from typing import List, Optional, Union, Dict, Any, Type, Set, Callable
 import smtplib
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -16,7 +16,7 @@ logger = getlogger(__name__)
 
 
 class Attachment:
-    subclasses: Set['Attachment'] = set()
+    subclasses: Set[Type[Any]] = set()
     type: Optional[str] = None
 
     def __init_subclass__(cls):
@@ -62,7 +62,9 @@ class AttachmentReport(Attachment):
 
 
 class Sender:
-    def __init__(self, host: str, port: str, user: str, password: str, ssl: bool):
+    _server: smtplib.SMTP
+
+    def __init__(self, host: str, port: int, user: str, password: str, ssl: bool):
         self._host = host
         self._port = port
         self._user = user
@@ -177,5 +179,5 @@ def parse_attachment(attachments: List[Dict[str, Any]], api: API, i18n) -> List[
     return concrete_attachments
 
 
-def _search_attachment_type(type_name: str) -> Optional[Type[Attachment]]:
+def _search_attachment_type(type_name: str) -> Optional[Type[Any]]:
     return next((subcls for subcls in Attachment.subclasses if subcls.type == type_name), None)

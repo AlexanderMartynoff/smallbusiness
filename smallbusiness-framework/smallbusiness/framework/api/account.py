@@ -47,7 +47,7 @@ class Account(Service):
                 .fetchone()
 
             if account:
-                account.update(products=AccountProduct(state=result.state()).selectall(
+                account.update(products=AccountProduct().selectall(
                     T.account_product.account_id == account_id
                 ))
 
@@ -72,7 +72,7 @@ class Account(Service):
                 .fetchone()
 
             if account:
-                account.update(products=AccountProduct(state=result.state()).selectall(
+                account.update(products=AccountProduct().selectall(
                     T.account_product.account_id == account_id
                 ))
 
@@ -113,7 +113,7 @@ class Account(Service):
                 .fetchinsertid()
 
             if account['products']:
-                account_product_api = AccountProduct(state=result.state())
+                account_product_api = AccountProduct()
 
                 for product in account['products']:
                     product['account_id'] = created_account['id']
@@ -137,7 +137,7 @@ class Account(Service):
                 }) \
                 .execute()
 
-            account_product_api = AccountProduct(state=result.state())
+            account_product_api = AccountProduct()
 
             insert_products, update_products, delete_products = \
                 groupbycrud(account['products'], {'account_id': account_id})

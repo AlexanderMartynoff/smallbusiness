@@ -14,28 +14,23 @@ class Permission:
 
     @attr.s(frozen=True)
     class Operation:
-        _entity: str = attr.ib()
-
-        _read: str = 'read'
-        _write: str = 'write'
-        _update: str = 'update'
-        _delete: str = 'delete'
+        entity: str = attr.ib()
 
         @property
         def read(self):
-            return self._entity + '.' + self._read
+            return self.entity + '.read'
 
         @property
         def write(self):
-            return self._entity + '.' + self._write
+            return self.entity + '.write'
 
         @property
         def update(self):
-            return self._entity + '.' + self._update
+            return self.entity + '.update'
 
         @property
         def delete(self):
-            return self._entity + '.' + self._delete
+            return self.entity + '.delete'
 
     bank = Operation('bank')
     currencyunit = Operation('currencyunit')

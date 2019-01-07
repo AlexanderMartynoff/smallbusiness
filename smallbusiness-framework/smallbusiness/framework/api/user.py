@@ -18,9 +18,7 @@ class User(Service):
                 .fetchone()
 
             if user:
-                user.update(permissions=Permission(state=result.state()).selectall(
-                    user['id']
-                ))
+                user.update(permissions=Permission().selectall(user['id']))
 
             return user
 
@@ -38,8 +36,6 @@ class User(Service):
                 .fetchone()
 
             if user:
-                user.update(permissions=Permission(state=result.state()).selectall(
-                    user['id']
-                ))
+                user.update(permissions=Permission().selectall(user['id']))
 
             return user

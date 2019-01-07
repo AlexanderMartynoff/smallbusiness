@@ -36,10 +36,9 @@ def haspermission(permission):
                 KeyError('Expected ``security`` key in ``request.context``')
 
             security = request.context['security']
-            usercontext = security.get_context(request, response)
 
-            # There is a place for error raising
-            security.authorization.checkpermission(permission, usercontext)
+            security.authorization.checkpermission(
+                permission, security.get_context(request, response))
 
             return wrapped(*args, **kwargs)
 

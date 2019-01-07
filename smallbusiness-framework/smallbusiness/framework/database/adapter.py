@@ -20,7 +20,7 @@ class SqliteDatabase(Database):
         self._database = database
 
     @contextmanager
-    def cursor(self) -> ContextManager[Cursor]:
+    def cursor(self) -> Cursor:
 
         def row_factory(cursor, row):
             return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}
@@ -36,13 +36,13 @@ class SqliteDatabase(Database):
             cursor.close()
 
     def result(self, cursor) -> Result:
-        return SqliteResult(self, cursor)
+        return SqliteResult(cursor)
 
 
 class SqliteResult(Result):
 
-    def __init__(self, database: Database, cursor: Cursor):
-        super().__init__(sqlite.compile, database, cursor)
+    def __init__(self, cursor: Cursor):
+        super().__init__(sqlite.compile, cursor)
 
     def execute_fetchinsertid(self):
         self._cursor.execute(*self.execute())
@@ -68,7 +68,7 @@ class PostgresDatabase(Database):
         self._port = port
 
     @contextmanager
-    def cursor(self) -> ContextManager[Cursor]:
+    def cursor(self) -> Cursor:
         connection = psycopg2.connect(
             dbname=self._database,
             user=self._user,
@@ -85,13 +85,13 @@ class PostgresDatabase(Database):
         connection.close()
 
     def result(self, cursor) -> Result:
-        return PostgresResult(self, cursor)
+        return PostgresResult(cursor)
 
 
 class PostgresResult(Result):
 
-    def __init__(self, database: Database, cursor: Cursor):
-        super().__init__(smartsql.compile, database, cursor)
+    def __init__(self, cursor: Cursor):
+        super().__init__(smartsql.compile, cursor)
 
     def execute_fetchinsertid(self):
         self._cursor.execute(*self.execute())

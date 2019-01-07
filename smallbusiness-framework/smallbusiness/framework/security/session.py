@@ -1,4 +1,4 @@
-from typing import Dict, Any, Union, Type
+from typing import Dict, Any, Union, Type, Optional
 import json
 from collections import MutableMapping
 
@@ -21,9 +21,10 @@ class CockieSessionStorage(SessionStorage):
         self._encode = encode
         self._decode = decode
 
-    def read(self, request: Request, response: Response) -> Dict[str, Any]:
+    def read(self, request: Request, response: Response) -> Optional[Dict[str, Any]]:
         if self._coockie_name in request.cookies:
             return self._decode(request.cookies[self._coockie_name])
+        return None
 
     def write(self, request: Request, response: Response,
               session: Dict[str, Any], path: str = '/'):

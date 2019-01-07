@@ -1,7 +1,15 @@
 from typing import (
-    Dict, Any, Collection, Tuple, Type,
-    TypeVar, Callable, Union, get_type_hints
+    Dict,
+    Any,
+    Collection,
+    Tuple,
+    Type,
+    TypeVar,
+    Callable,
+    Union,
+    cast,
 )
+from contextvars import ContextVar
 from functools import wraps
 import inspect
 import attr
@@ -17,27 +25,26 @@ from ..api.configuration import Configuration
 from ..api.user import User
 from ..resource import Resource
 from ..security import SecurityServer
-from ..database import Database
-
+from ..database import Database, Cursor
 from .. import i18n
 
-A = TypeVar('A')
-B = TypeVar('B')
+_T_co = TypeVar('_T_co', covariant=True)
+_T = TypeVar('_T')
 
 
-@attr.s(frozen=True, kw_only=True)
+@attr.s(frozen=True, auto_attribs=True, kw_only=True)
 class API:
-    account: Account = attr.ib()
-    account_product: AccountProduct = attr.ib()
-    bank: Bank = attr.ib()
-    configuration: Configuration = attr.ib()
-    currency_unit: CurrencyUnit = attr.ib()
-    partner: Partner = attr.ib()
-    time_unit: TimeUnit = attr.ib()
-    user: User = attr.ib()
-    resource: Resource = attr.ib()
-    security: SecurityServer = attr.ib()
-    settings: Dict[str, Any] = attr.ib()
+    account: Account
+    account_product: AccountProduct
+    bank: Bank
+    configuration: Configuration
+    currency_unit: CurrencyUnit
+    partner: Partner
+    time_unit: TimeUnit
+    user: User
+    resource: Resource
+    security: SecurityServer
+    settings: Dict[str, Any]
 
 
 class ContextMiddleware:
@@ -51,25 +58,27 @@ class ContextMiddleware:
         self._database = database
         self._security = security
         self._resource = resource
+        self._api = API(
+            account=Account(database),
+            account_product=AccountProduct(database),
+            bank=Bank(database),
+            configuration=Configuration(database),
+            currency_unit=CurrencyUnit(database),
+            partner=Partner(database),
+            time_unit=TimeUnit(database),
+            user=User(database),
+            security=security,
+            settings=settings,
+            resource=resource,
+        )
 
     def process_request(self, request, response):
         request.context['settings'] = self._settings
         request.context['database'] = self._database
         request.context['security'] = self._security
         request.context['resource'] = self._resource
-        request.context['api'] = API(
-            account=Account(self._database),
-            account_product=AccountProduct(self._database),
-            bank=Bank(self._database),
-            configuration=Configuration(self._database),
-            currency_unit=CurrencyUnit(self._database),
-            partner=Partner(self._database),
-            time_unit=TimeUnit(self._database),
-            user=User(self._database),
-            security=self._security,
-            settings=self._settings,
-            resource=self._resource,
-        )
+        request.context['api'] = self._api
+        request.context['i18n'] = i18n.Translator()
 
 
 class _Endpointmethod:
@@ -99,34 +108,32 @@ def endpointmethod(wrapped):
     return _Endpointmethod(wrapped)
 
 
-def endpoint(cls: Type[A]) -> Type[A]:
+def endpoint(wrapped: Type[_T]) -> Type[_T]:
 
-    assert type(cls) is type, f'For only with classes use not for ``{type(cls)}``'
-
-    class Endpoint(cls):
+    class Endpoint(wrapped):  # type: ignore
         @endpointmethod
         def on_get(instance, cls, args, kwargs):
-            return _injector(super(cls, instance).on_get)(*args, **kwargs)
+            return injector(super(cls, instance).on_get)(*args, **kwargs)
 
         @endpointmethod
         def on_post(instance, cls, args, kwargs):
-            return _injector(super(cls, instance).on_post)(*args, **kwargs)
+            return injector(super(cls, instance).on_post)(*args, **kwargs)
 
         @endpointmethod
         def on_put(instance, cls, args, kwargs):
-            return _injector(super(cls, instance).on_put)(*args, **kwargs)
+            return injector(super(cls, instance).on_put)(*args, **kwargs)
 
         @endpointmethod
         def on_delete(instance, cls, args, kwargs):
-            return _injector(super(cls, instance).on_delete)(*args, **kwargs)
+            return injector(super(cls, instance).on_delete)(*args, **kwargs)
 
-    return Endpoint
+    return cast(Type[_T], Endpoint)
 
 
-def _injector(wrapped: Callable[..., A]) -> Callable[..., A]:
+def injector(wrapped: Callable[..., _T_co]) -> Callable[..., _T_co]:
     """ Special decorator that make decomposition
         for ``falcon`` dict ``request.context``.
-        Wait for exists the next key in ``request.context``:
+        Expect for next keys in ``request.context``:
         - settings
         - database
         - security
@@ -137,14 +144,15 @@ def _injector(wrapped: Callable[..., A]) -> Callable[..., A]:
     signature = inspect.signature(wrapped)
 
     @wraps(wrapped)
-    def wrapper(*args, **kwargs) -> A:
+    def wrapper(*args: Any, **kwargs: Any) -> _T_co:
 
         request, response = args
 
         assert 'settings' in request.context and \
             'database' in request.context and \
             'resource' in request.context and \
-            'api' in request.context, KeyError('Incorrect ``request.context``')
+            'api' in request.context and \
+            'i18n' in request.context, KeyError('Incorrect ``request.context``')
 
         if 'api' in signature.parameters:
             kwargs.update(api=request.context['api'])
@@ -152,15 +160,11 @@ def _injector(wrapped: Callable[..., A]) -> Callable[..., A]:
         if 'settings' in signature.parameters:
             kwargs.update(settings=request.context['settings'])
 
-        if 'context' in signature.parameters:
-            kwargs.update(context=request.context)
-
-        # request.context['session']
         if '_' in signature.parameters:
-            kwargs.update(_=i18n.Translator())
+            kwargs.update(_=request.context['i18n'])
 
         if 'i18n' in signature.parameters:
-            kwargs.update(i18n=i18n.Translator())
+            kwargs.update(i18n=request.context['i18n'])
 
         return wrapped(*args, **kwargs)
 

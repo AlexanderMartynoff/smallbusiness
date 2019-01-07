@@ -4,7 +4,6 @@ import falcon
 import i18n
 from falcon.http_error import HTTPError
 
-
 from smallbusiness import framework
 from smallbusiness.framework.service.api import ContextMiddleware
 from smallbusiness.framework.service.authorization import DBAuthorizationPolicy
