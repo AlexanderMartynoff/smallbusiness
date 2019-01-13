@@ -48,7 +48,6 @@
         year: 'year',
     }
 
-
     export default {
         props: {
             value: {

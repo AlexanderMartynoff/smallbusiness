@@ -16,9 +16,9 @@ class ModiferRegistry {
             .head()
             .value()
 
-        try {
-            return _.isFunction(modificatorObject.modificator) ? modificatorObject.modificator(data) : data
-        } catch (_error) {}
+        if (!_.isUndefined(modificatorObject) && _.isFunction(modificatorObject.modificator)) {
+            return modificatorObject.modificator(data)
+        }
 
         return data
     }
@@ -38,7 +38,6 @@ registry.register(({direction, url, method}) => {
     
     return request
 })
-
 
 registry.register(({direction, url, method}) => {
     return direction === 'response' && /\/api\/account/.test(url) && method === 'get'
@@ -60,5 +59,35 @@ registry.register(({direction, url, method}) => {
     
     return response
 })
+
+
+registry.register(({direction, url, method}) => {
+    return direction === 'response' && /\/api\/user/.test(url) && method === 'get'
+}, request => {
+
+    if (_.isArray(request)) {
+        var users = request
+    } else {
+        var users = [request]
+    }
+
+    _.forEach(users, user => {
+        user.sudo = Boolean(user.sudo)
+
+        if (_.isArray(user.permissions)) {
+            user.permissions = user.permissions.map(permission => {
+                return _.merge(permission, {
+                    'create': Boolean(permission.create),
+                    'read': Boolean(permission.read),
+                    'update': Boolean(permission.update),
+                    'delete': Boolean(permission.delete),
+                })
+            })
+        }
+    })
+
+    return request
+})
+
 
 export {registry}

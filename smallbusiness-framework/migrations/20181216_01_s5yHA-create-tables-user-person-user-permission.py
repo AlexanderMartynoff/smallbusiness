@@ -44,9 +44,14 @@ steps = [
 
     step("""
         CREATE TABLE user_permission (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            user_id INTEGER
+            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+            `user_id` INTEGER,
+            `entity` TEXT,
+            `create` INTEGER,
+            `read` INTEGER,
+            `update` INTEGER,
+            `delete` INTEGER,
+            UNIQUE(`user_id`, `entity`)
         );
     """,
 
@@ -54,7 +59,4 @@ steps = [
         DROP TABLE IF EXISTS user_permission;
     """),
 
-    step("""
-        INSERT INTO user_permission VALUES (1, 'bank.read', 1);
-    """),
 ]

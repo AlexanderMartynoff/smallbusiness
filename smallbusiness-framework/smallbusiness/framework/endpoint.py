@@ -26,12 +26,57 @@ class Security:
         if not login or not password:
             raise HTTPUnauthorized()
 
-        user = api.user.selectone_by_pair(login, password)
+        user = api.user.selectone_by_login_password(login, password)
 
         if user is not None:
             api.security.put_context(user, request, response)
         else:
             raise HTTPUnauthorized()
+
+
+@endpoint
+class Permission:
+    @staticmethod
+    @haspermission(permission.permission.read)
+    def on_get(request, response, api):
+        response.json = permission.entities()
+
+
+@endpoint
+class User:
+    @staticmethod
+    @haspermission(permission.user.read)
+    def on_get(request, response, api):
+        response.json = api.user.selectall()
+
+    @staticmethod
+    @haspermission(permission.user.create)
+    def on_post(request, response, api):
+        response.json = api.user.insertone(request.json)
+
+    @endpoint
+    class ID:
+        @staticmethod
+        @haspermission(permission.user.read)
+        def on_get(request, response, user_id, api):
+            response.json = api.user.selectone(user_id)
+
+        @staticmethod
+        @haspermission(permission.user.update)
+        def on_put(request, response, user_id, api):
+            response.json = api.user.updateone(user_id, request.json)
+
+        @staticmethod
+        @haspermission(permission.user.update)
+        def on_delete(request, response, user_id, api):
+            response.json = api.user.deleteone(user_id)
+
+    @endpoint
+    class Activation:
+        @staticmethod
+        @haspermission(permission.user.update)
+        def on_put(request, response, user_id, api):
+            response.json = api.user.activate(user_id)
 
 
 @endpoint
@@ -51,7 +96,7 @@ class Bank:
         response.json = api.bank.selectall()
 
     @staticmethod
-    @haspermission(permission.bank.write)
+    @haspermission(permission.bank.create)
     def on_post(request, response, api):
         response.json = api.bank.insertone(request.json)
 
@@ -98,7 +143,7 @@ class Partner:
         response.json = api.partner.selectall()
 
     @staticmethod
-    @haspermission(permission.partner.write)
+    @haspermission(permission.partner.create)
     def on_post(request, response, api):
         response.json = api.partner.insertone(request.json)
 
@@ -132,11 +177,11 @@ class AccountProduct:
 class Account:
     @staticmethod
     @haspermission(permission.account.read)
-    def on_get(request, response, context, api):
+    def on_get(request, response, api):
         response.json = api.account.selectall()
 
     @staticmethod
-    @haspermission(permission.account.write)
+    @haspermission(permission.account.create)
     def on_post(request, response, api):
         response.json = api.account.insertone(request.json)
 
@@ -182,7 +227,7 @@ class Configuration:
 @endpoint
 class Mail:
     @staticmethod
-    @haspermission(permission.mail.write)
+    @haspermission(permission.mail.create)
     def on_post(request, response, api, settings, i18n):
         with mail.Sender(
             settings['smtp']['host'],
@@ -208,7 +253,7 @@ class Report:
         @haspermission(permission.mail.read)
         def on_get(request, response, entity, entity_id, api, i18n: Translator):
             account = api.account.selectone_filled(entity_id)
-            account_date = datetime.fromtimestamp(account['date'] / 1000).strftime('%Y_%m_d')
+            account_date = datetime.fromtimestamp(account['date'] / 1000).strftime('%Y_%m_%d')
 
             if entity == 'account':
                 response.body = printer.account_as_pdf(account, i18n)
@@ -222,7 +267,7 @@ class Report:
             if request.params.get('disposition', None) == 'attachment':
                 response.append_header(
                     'Content-Disposition',
-                    f'attachment; filename="{entity}_no_{entity_id}_from_{account_date}.pdf"'
+                    f'attachment; filename="{entity}-{entity_id}-{account_date}.pdf"'
                 )
             else:
                 response.append_header('Content-Disposition', 'inline')

@@ -1,8 +1,6 @@
 <template>
     <div class="application-menu bg-primary">
-        <b-modal title="System settings" ref="configurationModal" :no-fade="true" @ok="saveConfiguration">
-            <settings-form ref="configurationForm"></settings-form>
-        </b-modal>
+        <settings-facade-modal ref="settingsModal"></settings-facade-modal>
 
         <div class="application-menu-section-top">
             <b-dropdown class="application-menu-item" variant="link" v-b-tooltip.hover.auto title="Applications" no-caret>
@@ -58,7 +56,6 @@
 <script type="text/javascript">
     import _ from 'lodash'
     import cookies from 'js-cookie'
-    import store from 'store2'
 
     export default {
 
@@ -68,11 +65,7 @@
             },
 
             showConfigurationForm() {
-                this.$refs.configurationForm.loadConfiguration().then(() => this.$refs.configurationModal.show())
-            },
-
-            saveConfiguration() {
-                this.$refs.configurationForm.saveConfiguration()
+                this.$refs.settingsModal.show()
             },
 
             logout() {

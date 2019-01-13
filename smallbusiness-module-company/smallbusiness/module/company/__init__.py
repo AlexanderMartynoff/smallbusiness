@@ -66,6 +66,10 @@ application.add_route('/api/security/authenticate', endpoint.Security)
 application.add_route('/api/session', endpoint.Session)
 application.add_route('/api/number2word', endpoint.Number2Word)
 application.add_route('/api/mail', endpoint.Mail)
+application.add_route('/api/user', endpoint.User)
+application.add_route('/api/user/{user_id}', endpoint.User.ID)
+application.add_route('/api/user/{user_id}/activate', endpoint.User.Activation)
+application.add_route('/api/permission', endpoint.Permission)
 
 
 for static_dir in settings['server']['static_dirs']:

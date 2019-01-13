@@ -18,7 +18,8 @@ import ApplicationSidebar from '@/application/component/application/application-
 import ApplicationBody from '@/application/component/application/application-body'
 import ApplicationToolbar from '@/application/component/application/application-toolbar'
 
-import SettingsForm from '@/application/component/settings/form'
+import SettingsFacadeModal from '@/application/component/settings/facade-modal'
+import SettingsUserModal from '@/application/component/settings/user-modal'
 
 import Axios from '@/application/plugin/axios'
 import {registry} from '@/application/modifer'
@@ -46,7 +47,8 @@ Vue.component('application-sidebar', ApplicationSidebar)
 Vue.component('application-body', ApplicationBody)
 Vue.component('application-toolbar', ApplicationToolbar)
 
-Vue.component('settings-form', SettingsForm)
+Vue.component('settings-facade-modal', SettingsFacadeModal)
+Vue.component('settings-user-modal', SettingsUserModal)
 
 
 function start (session) {

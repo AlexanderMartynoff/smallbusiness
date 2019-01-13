@@ -140,7 +140,7 @@ class Account(Service):
             account_product_api = AccountProduct()
 
             insert_products, update_products, delete_products = \
-                groupbycrud(account['products'], {'account_id': account_id})
+                groupbycrud(account.get('products', []), {'account_id': account_id})
 
             if len(insert_products):
                 account_product_api.insertmany(insert_products)

@@ -11,9 +11,9 @@ from typing import (
 )
 from contextvars import ContextVar
 from functools import wraps
+from falcon import Request, Response
 import inspect
 import attr
-from falcon import Request, Response
 
 from ..api.account import Account
 from ..api.account_product import AccountProduct

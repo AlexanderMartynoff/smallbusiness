@@ -1,9 +1,10 @@
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Optional
 from falcon import errors
 import attr
 
+from .. import api
+from ..database import Database
 from ..security import AuthorizationPolicy
-from ..api import User
 from ..logger import getlogger
 
 logger = getlogger(__name__)
@@ -14,23 +15,44 @@ class Permission:
 
     @attr.s(frozen=True)
     class Operation:
-        entity: str = attr.ib()
+        _entity: str = attr.ib()
+
+        @property
+        def create(self):
+            return self._entity + '.create'
 
         @property
         def read(self):
-            return self.entity + '.read'
-
-        @property
-        def write(self):
-            return self.entity + '.write'
+            return self._entity + '.read'
 
         @property
         def update(self):
-            return self.entity + '.update'
+            return self._entity + '.update'
 
         @property
         def delete(self):
-            return self.entity + '.delete'
+            return self._entity + '.delete'
+
+    def entities(self):
+        properties = []
+
+        for property_name in dir(self):
+            property = getattr(self, property_name)
+
+            if isinstance(property, self.Operation):
+                properties += [property_name]
+
+        return properties
+
+    def entries(self, user_id):
+        return [{
+            'entity': entity,
+            'user_id': user_id,
+            'create': False,
+            'read': False,
+            'update': False,
+            'delete': False,
+        } for entity in self.entities()]
 
     bank = Operation('bank')
     currencyunit = Operation('currencyunit')
@@ -44,25 +66,33 @@ class Permission:
     number2word = Operation('number2word')
     report = Operation('report')
     session = Operation('session')
+    permission = Operation('permission')
 
 
 permission = Permission()
 
 
 class DBAuthorizationPolicy(AuthorizationPolicy):
-    def __init__(self, database):
-        self._database = database
+    def __init__(self, database: Database):
+        self._userapi = api.User(database)
 
     def checkpermission(self, permission: str,
-                        usercontext: Dict[str, Any]) -> None:
+                        usercontext: Optional[Dict[str, Any]]) -> None:
 
         if not usercontext:
             raise errors.HTTPUnauthorized()
 
-        user = User(self._database).selectone_by_login(usercontext['login'])
+        user = self._userapi.selectone_by_login(usercontext['login'])
 
         if user is None:
             raise errors.HTTPUnauthorized()
 
-        if not user['sudo'] and permission not in user['permissions']:
+        user_permissions = []
+
+        for user_permission in user['permissions']:
+            for operation in 'create', 'read', 'update', 'delete':
+                if user_permission[operation]:
+                    user_permissions.append(user_permission['entity'] + '.' + operation)
+
+        if not user['sudo'] and permission not in user_permissions:
             raise errors.HTTPForbidden(f'For the resource must have permission ``{permission}``')
