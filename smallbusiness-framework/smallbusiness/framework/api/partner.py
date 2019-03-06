@@ -1,3 +1,4 @@
+from typing import Dict, Any, Union, List
 from sqlbuilder.smartsql import T, Q
 
 from ..database import Service
@@ -5,7 +6,7 @@ from ..database import Service
 
 class Partner(Service):
 
-    def selectall(self):
+    def selectall(self) -> List[Dict[str, Any]]:
 
         with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.partner) \
@@ -22,7 +23,7 @@ class Partner(Service):
                 .select() \
                 .fetchall()
 
-    def selectone(self, partner_id):
+    def selectone(self, partner_id: int) -> Dict[str, Any]:
 
         with self.sqlbuilder.result() as result:
             return Q(result=result).tables((T.partner + T.bank).on(T.partner.bank_id == T.bank.id)) \
@@ -47,7 +48,8 @@ class Partner(Service):
                 .select() \
                 .fetchone()
 
-    def updateone(self, partner_id, partner):
+    def updateone(self, partner_id: int,
+                  partner: Dict[str, Any]) -> None:
 
         with self.sqlbuilder.result() as result:
             Q(result=result).tables(T.partner) \
@@ -63,7 +65,7 @@ class Partner(Service):
                 }) \
                 .execute()
 
-    def deleteone(self, partner_id):
+    def deleteone(self, partner_id: int) -> None:
 
         with self.sqlbuilder.result() as result:
             Q(result=result).tables(T.partner) \
@@ -71,7 +73,7 @@ class Partner(Service):
                 .delete() \
                 .execute()
 
-    def insertone(self, partner):
+    def insertone(self, partner: Dict[str, Any]) -> Dict[str, Any]:
         with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.partner) \
                     .insert({

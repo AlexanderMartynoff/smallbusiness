@@ -1,4 +1,4 @@
-from typing import Type, TypeVar, Generic, ContextManager
+from typing import Type, TypeVar, Generic, ContextManager, Generator
 import sqlite3
 import psycopg2.extras
 from contextlib import contextmanager
@@ -20,7 +20,7 @@ class SqliteDatabase(Database):
         self._database = database
 
     @contextmanager
-    def cursor(self) -> Cursor:
+    def cursor(self) -> Generator[Cursor, None, None]:
 
         def row_factory(cursor, row):
             return {name: row[number] for number, (name, *_) in enumerate(cursor.description)}
@@ -31,9 +31,12 @@ class SqliteDatabase(Database):
 
             cursor = connection.cursor()
 
-            yield cursor
-
-            cursor.close()
+            try:
+                yield cursor
+            except Exception as error:
+                raise error
+            finally:
+                cursor.close()
 
     def result(self, cursor) -> Result:
         return SqliteResult(cursor)
@@ -68,7 +71,7 @@ class PostgresDatabase(Database):
         self._port = port
 
     @contextmanager
-    def cursor(self) -> Cursor:
+    def cursor(self) -> Generator[Cursor, None, None]:
         connection = psycopg2.connect(
             dbname=self._database,
             user=self._user,
@@ -78,11 +81,14 @@ class PostgresDatabase(Database):
         )
         cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-        yield cursor
-
-        connection.commit()
-        cursor.close()
-        connection.close()
+        try:
+            yield cursor
+        except Exception as error:
+            raise error
+        finally:
+            connection.commit()
+            cursor.close()
+            connection.close()
 
     def result(self, cursor) -> Result:
         return PostgresResult(cursor)

@@ -23,5 +23,5 @@ class JWTAuthenticationPolicy(AuthenticationPolicy):
     def encode(self, data: Any) -> str:
         return jwt.encode(data, self._secret, algorithm=self._algorithm).decode()
 
-    def decode(self, token: str) -> bool:
+    def decode(self, token: str) -> Any:
         return jwt.decode(token.encode(), self._secret, algorithms=[self._algorithm])

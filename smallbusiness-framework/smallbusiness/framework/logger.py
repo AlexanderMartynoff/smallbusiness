@@ -9,7 +9,7 @@ def setup(handlername: str ='stream',
           format: str = LOGGER_FORMAT):
 
     handler = logging.StreamHandler()
-    level = logging.getLevelName(level.upper())
+    level = logging.getLevelName(level.upper())  # type: ignore
 
     handler.setFormatter(logging.Formatter(format))
     logging.basicConfig(handlers=[handler], level=level)

@@ -166,10 +166,12 @@
             getCalendarByDate(date) {
                 const startDayCalendar = datefns.startOfWeek(datefns.startOfMonth(date), {weekStartsOn: 1})
 
-                return _.chain().range(6).map(weekDayNumber => {
-                    const startWeekDay = datefns.addDays(startDayCalendar, weekDayNumber * 7)
-                    return datefns.eachDay(startWeekDay, datefns.addDays(startWeekDay, 6))
-                }).value()
+                return _.chain()
+                    .range(6)
+                    .map(weekDayNumber => {
+                        const startWeekDay = datefns.addDays(startDayCalendar, weekDayNumber * 7)
+                        return datefns.eachDay(startWeekDay, datefns.addDays(startWeekDay, 6))
+                    }).value()
             },
         },
 

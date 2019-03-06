@@ -14,14 +14,17 @@ def groupbycrud(source_items: CRUDItems,
 
     groups: Dict[str, CRUDItems] = defaultdict(list)
 
-    for operation, grouped_items in groupby(source_items, lambda source_item: source_item.get('_crud', None)):
-
+    for operation, grouped_items in groupby(
+        source_items, lambda source_item: source_item.get('_crud', None)
+    ):
         if operation is not None:
 
             if update is None:
                 update = {}
 
-            groups[operation] = [{**grouped_item, **update} for grouped_item in grouped_items]
+            groups[operation] = [{
+                **grouped_item, **update
+            } for grouped_item in grouped_items]
 
     return groups['insert'], groups['update'], groups['delete']
 

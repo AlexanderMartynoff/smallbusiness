@@ -1,6 +1,6 @@
 from typing import Dict, Any, Union, Type, Optional
-import json
 from collections import MutableMapping
+import json
 
 from falcon import Response, Request
 
@@ -27,7 +27,7 @@ class CockieSessionStorage(SessionStorage):
         return None
 
     def write(self, request: Request, response: Response,
-              session: Dict[str, Any], path: str = '/'):
+              session: Dict[str, Any], path: str = '/') -> None:
         response.set_cookie(
             self._coockie_name,
             self._encode(session),
@@ -41,7 +41,7 @@ class SessionMiddleware:
     def __init__(self, session_storage: SessionStorage):
         self._session_storage = session_storage
 
-    def process_request(self, request: Request, response: Response):
+    def process_request(self, request: Request, response: Response) -> None:
         if 'session' not in request.context:
             request.context['session'] = self._session_storage.read(request, response) or {}
         else:
@@ -49,7 +49,7 @@ class SessionMiddleware:
 
     def process_response(self, request: Request,
                          response: Response,
-                         resource: Any, succeeded: bool):
+                         resource: Any, succeeded: bool) -> None:
         if 'session' in request.context:
             self._session_storage.write(request, response, request.context['session'])
         else:

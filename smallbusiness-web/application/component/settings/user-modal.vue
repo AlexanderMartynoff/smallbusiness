@@ -18,24 +18,41 @@
 
             <template slot="modal-footer">
                 <b-button variant="secondary" @click="onCancel">Cancel</b-button>
-                <b-button variant="danger" @click="onDelete" v-if="isReal">Delete</b-button>
+                <b-button variant="danger"
+                          @click="onDelete"
+                          :disabled="user.sudo"
+                          v-if="isReal">Delete</b-button>
                 <b-button variant="primary" @click="onSave">Save</b-button>
             </template>
 
             <form class="mt-2 mb-0">
-                <div class="form-row">
+                <div class="form-row">                    
                     <div class="form-group col-md-12">
                         <label>Login</label>
                         <input class="form-control" v-model="user.login" type="text"/>
                     </div>
+
                     <div class="form-group col-md-12">
                         <label>Password</label>
                         <input class="form-control" v-model="user.password" type="text"/>
                     </div>
+
                     <div class="form-group col-md-12" v-if="user.permissions.length > 0">
-                        <label>Permissions</label>
+                        <label>
+                            Permissions
+                        </label>
+                        
                         <table class="table table-striped mt-2 mb-0">
                             <thead class="bg-light">
+                                <tr>
+                                    <td colspan="1"></td>
+                                    <td colspan="4">
+                                        <b-form-checkbox class="float-right mr-0"
+                                                         v-model="user.sudo"
+                                                         :unchecked-value="false"
+                                                         :value="true">sudo</b-form-checkbox>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <th>Entity</th>
                                     <th>C</th>
@@ -55,6 +72,7 @@
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </form>
         </b-modal>
@@ -77,6 +95,7 @@
                     permissions: [],
                 },
                 deleteMode: false,
+                sudo: false,
             }
         },
 
@@ -153,6 +172,13 @@
         computed: {
             isReal() {
                 return !_.isNull(this.userId)
+            },
+
+            isSudo() {
+                if (_.isEmpty(this.user)) {
+                    return false
+                }
+                return this.user.sudo
             },
 
             name() {

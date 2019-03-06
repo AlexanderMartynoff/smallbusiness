@@ -1,10 +1,11 @@
+from typing import Dict, Any, Union, List
 from sqlbuilder.smartsql import T, Q
 
 from ..database import Service
 
 
 class Permission(Service):
-    def selectall(self, user_id):
+    def selectall(self, user_id) -> List[Dict[str, Any]]:
 
         with self.sqlbuilder.result() as result:
             return Q(result=result) \
@@ -21,7 +22,7 @@ class Permission(Service):
                 .select() \
                 .fetchall()
 
-    def insertmany(self, permissions):
+    def insertmany(self, permissions) -> None:
 
         with self.sqlbuilder.result() as result:
             Q(result=result) \
@@ -46,7 +47,7 @@ class Permission(Service):
                 ) \
                 .execute()
 
-    def updatemany(self, permissions):
+    def updatemany(self, permissions) -> None:
         with self.sqlbuilder.result() as result:
             for permission in permissions:
                 Q(result=result) \

@@ -14,6 +14,7 @@ from .service import printer, mail, API
 from .service.mail import parse_attachment
 from .i18n import Translator
 from .security import haspermission
+from .setup import setup
 
 
 @endpoint
@@ -32,6 +33,13 @@ class Security:
             api.security.put_context(user, request, response)
         else:
             raise HTTPUnauthorized()
+
+
+@endpoint
+class Migration:
+    @staticmethod
+    def on_post(_request, _response):
+        setup()
 
 
 @endpoint

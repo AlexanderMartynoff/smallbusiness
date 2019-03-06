@@ -6,4 +6,4 @@ from .time_unit import *
 from .partner import *
 from .database import *
 from .configuration import *
-from .user import *
+from .user import User

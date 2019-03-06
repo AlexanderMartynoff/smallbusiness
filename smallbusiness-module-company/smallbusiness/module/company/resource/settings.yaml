@@ -22,3 +22,7 @@ security:
     secret: 'eyJhbGciOiAiSFMyNTYiLCAidHlwIj'
 i18n:
     load_paths: ['./resource/i18n']
+migration:
+    yoyo:
+        config: './resource/database/yoyo.ini'
+        migrations: './resource/database/migrations'

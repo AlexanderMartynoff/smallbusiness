@@ -18,7 +18,7 @@ from ruamel import yaml
 from contextlib import contextmanager
 
 
-FRAMEWORK_DIR = dirname(abspath(__file__))
+FRAMEWORK_DIR = dirname(__file__)
 FRAMEWORK_RESOURCE_DIR = FRAMEWORK_DIR + '/resource'
 SQLITE_DB = FRAMEWORK_RESOURCE_DIR + '/database/application.sqlite'
 

@@ -1,9 +1,9 @@
-from typing import List, Optional, Union, Dict, Any, Type, Set, Callable
+from typing import List, Optional, Union, Dict, Any, Type, Set, Callable, TypeVar
 import smtplib
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import COMMASPACE, formatdate
+from email.utils import COMMASPACE, formatdate  # type: ignore
 from contextlib import contextmanager
 
 from ..resource import FRAMEWORK_RESOURCE_DIR
@@ -16,8 +16,11 @@ logger = getlogger(__name__)
 
 
 class Attachment:
-    subclasses: Set[Type[Any]] = set()
+    subclasses: Set[Type['Attachment']] = set()
     type: Optional[str] = None
+
+    def __init__(self, *args, **kwargs):
+        raise Exception('Must be override in subclass')
 
     def __init_subclass__(cls):
         cls.add_subclass(cls)
@@ -81,8 +84,8 @@ class Sender:
 
     def send(self, from_address: str,
              to_addresses: List[str],
-             subject: str,
-             body: str,
+             subject: Optional[str],
+             body: Optional[str],
              attachments: Optional[List[Attachment]] = None):
 
         if not to_addresses:
@@ -91,7 +94,7 @@ class Sender:
         if not from_address:
             raise ValueError('`from_address` must be not empty')
 
-        to_addresses = self._flatten_address_list(to_addresses)
+        to_addresses = _flatten_address_list(to_addresses)
         to_address = COMMASPACE.join(to_addresses)
 
         message = MIMEMultipart()
@@ -117,15 +120,6 @@ class Sender:
         self._server.sendmail(from_address, to_addresses, message.as_string())
 
         logger.info('Success send mail from ``%s`` to ``%s``', from_address, to_address)
-
-    def _flatten_address_list(self, address_list: List[str]) -> List[str]:
-        flatten_address_list: List[str] = []
-
-        for address in address_list:
-            if address:
-                flatten_address_list += [_.strip() for _ in address.split(',')]
-
-        return flatten_address_list
 
     def quit(self):
         self._server.quit()
@@ -179,5 +173,15 @@ def parse_attachment(attachments: List[Dict[str, Any]], api: API, i18n) -> List[
     return concrete_attachments
 
 
-def _search_attachment_type(type_name: str) -> Optional[Type[Any]]:
+def _search_attachment_type(type_name: str) -> Optional[Type[Attachment]]:
     return next((subcls for subcls in Attachment.subclasses if subcls.type == type_name), None)
+
+
+def _flatten_address_list(address_list: List[str]) -> List[str]:
+    flatten_address_list: List[str] = []
+
+    for address in address_list:
+        if address:
+            flatten_address_list += [_.strip() for _ in address.split(',')]
+
+    return flatten_address_list

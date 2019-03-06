@@ -9,7 +9,6 @@ from smallbusiness.framework.service.api import ContextMiddleware
 from smallbusiness.framework.service.authorization import DBAuthorizationPolicy
 from smallbusiness.framework.database.adapter import SqliteDatabase, PostgresDatabase
 from smallbusiness.framework.plugin.falcon import Request, Response
-from smallbusiness.framework import endpoint
 from smallbusiness.framework.security import (
     SecurityServer,
     JWTAuthenticationPolicy,
@@ -20,6 +19,8 @@ from smallbusiness.framework.security import (
 from smallbusiness.framework.resource import Resource, SQLITE_DB, FRAMEWORK_DIR
 from smallbusiness.framework import error
 from smallbusiness.framework import logger
+from smallbusiness.framework import endpoint
+
 
 MODULE_DIR = dirname(__file__)
 
@@ -70,6 +71,7 @@ application.add_route('/api/user', endpoint.User)
 application.add_route('/api/user/{user_id}', endpoint.User.ID)
 application.add_route('/api/user/{user_id}/activate', endpoint.User.Activation)
 application.add_route('/api/permission', endpoint.Permission)
+application.add_route('/api/migration', endpoint.Migration)
 
 
 for static_dir in settings['server']['static_dirs']:

@@ -1,3 +1,6 @@
+// In generally for conver bolean values
+// from int and int to boolean
+
 import _ from 'lodash'
 
 

@@ -1,8 +1,9 @@
 <template>
     <div class="form-security-container">
+
         <b-progress class="form-security-progress" v-if="loading" :value="100" variant="primary" animated></b-progress>
 
-        <form class="form-security p-3 shadow-lg rounded border" v-else @keypress=onKeypress>
+        <form class="form-security p-3 shadow-lg rounded border" v-if="!loading" @keypress="onKeypress">
             <div class="form-group">
                 <label for="login">Login</label>
                 <b-form-input type="text" v-model="login" :state="valid" ref="login" placeholder="Enter login"/>
@@ -21,6 +22,22 @@
             </div>
             
         </form>
+        <div class="text-right pt-10" v-if="!loading">
+
+            <b-dropdown variant="link"
+                        size="sm"
+                        :right="true"
+                        toggle-class="pr-0"
+                        menu-class="shadow-lg">
+                <template slot="button-content">
+                  <i class="fas fa-cogs"></i>
+                </template>
+                <b-dropdown-item href="#"
+                                 @click.prevent="applyMigrations">
+                             <i class="fas fa-database mr-1 align-baseline"></i> Apply migrations</b-dropdown-item>
+            </b-dropdown>
+        </div>
+
     </div>
 
 </template>
@@ -58,6 +75,13 @@
                 if (event.code === 'Enter') {
                     this.submit()
                 }
+            },
+
+            applyMigrations() {
+                this.loading = true
+                this.$axios.post('/api/migration').then(() => {
+                    this.loading = false
+                })
             },
         },
 
