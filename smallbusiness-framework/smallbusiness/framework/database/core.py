@@ -79,7 +79,7 @@ class SqlBuilder:
     def result(self) -> Generator[Result, None, None]:
         database, cursor = _database.get(), _cursor.get()
 
-        if _database.get() is None or _cursor.get() is None:
+        if database is None or cursor is None:
             assert self._database is not None, 'No database instance found'
 
             with self._database.cursor() as cursor:
@@ -93,7 +93,7 @@ class SqlBuilder:
                     _cursor.reset(cursor_token)
                     _database.reset(database_token)
         else:
-            yield _database.get().result(_cursor.get())  # type: ignore
+            yield database.result(cursor)
 
 
 class Service:

@@ -1,15 +1,15 @@
 # Russian translations for smallbusiness-framework.
-# Copyright (C) 2018 ORGANIZATION
+# Copyright (C) 2019 ORGANIZATION
 # This file is distributed under the same license as the
 # smallbusiness-framework project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: smallbusiness-framework 0.0.1a0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-12-23 18:51+0400\n"
-"PO-Revision-Date: 2018-12-24 02:06+0400\n"
+"POT-Creation-Date: 2019-03-14 23:01+0400\n"
+"PO-Revision-Date: 2019-03-14 23:03+0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
 "Language-Team: ru <LL@li.org>\n"
@@ -20,35 +20,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
+#: /Users/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Ruble"
 msgstr "Рубль"
 
-#: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
+#: /Users/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Dollar"
 msgstr "Доллар"
 
-#: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
+#: /Users/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Euro"
 msgstr "Евро"
 
-#: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
+#: /Users/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Second"
 msgstr "Секунда"
 
-#: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
+#: /Users/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Hour"
 msgstr "Час"
 
-#: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
+#: /Users/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Day"
 msgstr "День"
 
-#: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
+#: /Users/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Month"
 msgstr "Месяц"
 
-#: /home/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
+#: /Users/alexander/projects/smallbusiness/smallbusiness-framework/smallbusiness/framework/resource/i18n/dictionary.yaml:20
 msgid "Year"
 msgstr "Год"
 

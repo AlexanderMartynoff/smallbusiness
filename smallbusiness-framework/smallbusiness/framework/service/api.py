@@ -127,7 +127,7 @@ def endpoint(wrapped: Type[_T]) -> Type[_T]:
         def on_delete(instance, cls, args, kwargs):
             return injector(super(cls, instance).on_delete)(*args, **kwargs)
 
-    return cast(Type[_T], Endpoint)
+    return Endpoint
 
 
 def injector(wrapped: Callable[..., _T_co]) -> Callable[..., _T_co]:

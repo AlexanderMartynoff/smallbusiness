@@ -7,12 +7,12 @@ from .logger import getlogger
 logger = getlogger(__name__)
 
 
-def httperror_handler(error, request, response, parameters):
+def httperror_handler(request, response, error, parameters):
     response.json = {'title': error.title}
     response.status = error.status
 
 
-def exception_handler(error, request, response, parameters):
+def exception_handler(request, response, error, parameters):
     response.json = {'title': status_codes.HTTP_500}
     response.status = status_codes.HTTP_500
 

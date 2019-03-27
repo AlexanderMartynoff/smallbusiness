@@ -4,7 +4,7 @@ import logging
 LOGGER_FORMAT = '%(asctime)s - %(name)s:%(lineno)d - %(levelname)s - %(message)s'
 
 
-def setup(handlername: str ='stream',
+def setup(handlername: str = 'stream',
           level: str = 'debug',
           format: str = LOGGER_FORMAT):
 

@@ -1,7 +1,6 @@
 from os.path import dirname, abspath, join, exists
 import locale
 import falcon
-import i18n
 from falcon.http_error import HTTPError
 
 from smallbusiness import framework
