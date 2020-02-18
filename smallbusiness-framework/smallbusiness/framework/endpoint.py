@@ -4,7 +4,6 @@ import falcon
 from falcon.errors import HTTPUnauthorized
 from enum import Enum
 import time
-from datetime import datetime
 from collections import namedtuple
 
 from .service.api import endpoint
@@ -38,8 +37,8 @@ class Security:
 @endpoint
 class Migration:
     @staticmethod
-    def on_post(_request, _response):
-        setup()
+    def on_post(_request, _response, api):
+        setup(api)
 
 
 @endpoint

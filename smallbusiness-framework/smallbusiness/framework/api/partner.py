@@ -76,13 +76,13 @@ class Partner(Service):
     def insertone(self, partner: Dict[str, Any]) -> Dict[str, Any]:
         with self.sqlbuilder.result() as result:
             return Q(result=result).tables(T.partner) \
-                    .insert({
-                        T.partner.name: partner['name'],
-                        T.partner.address: partner['address'],
-                        T.partner.mail: partner['mail'],
-                        T.partner.taxpayer_number: partner['taxpayer_number'],
-                        T.partner.reason_code: partner['reason_code'],
-                        T.partner.bank_id: partner['bank_id'],
-                        T.partner.bank_checking_account: partner['bank_checking_account'],
-                    }) \
-                    .fetchinsertid()
+                .insert({
+                    T.partner.name: partner['name'],
+                    T.partner.address: partner['address'],
+                    T.partner.mail: partner['mail'],
+                    T.partner.taxpayer_number: partner['taxpayer_number'],
+                    T.partner.reason_code: partner['reason_code'],
+                    T.partner.bank_id: partner['bank_id'],
+                    T.partner.bank_checking_account: partner['bank_checking_account'],
+                }) \
+                .fetchinsertid()

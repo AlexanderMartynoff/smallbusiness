@@ -27,7 +27,7 @@ class Resource:
     def __init__(self, paths: List[str]):
         self._paths = paths
 
-    def load_settings(self, target: str, type='yaml') -> Dict[str, Any]:
+    def load_settings(self, target: str, type='yaml') -> Dict[str, Any, Resource]:
 
         with self.open(target) as file:
             return yaml.load(file.read(), yaml.RoundTripLoader)

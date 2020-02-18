@@ -65,8 +65,6 @@ class AttachmentReport(Attachment):
 
 
 class Sender:
-    _server: smtplib.SMTP
-
     def __init__(self, host: str, port: int, user: str, password: str, ssl: bool):
         self._host = host
         self._port = port

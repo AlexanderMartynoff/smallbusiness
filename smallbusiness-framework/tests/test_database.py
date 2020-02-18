@@ -23,7 +23,8 @@ def sqlite_crud(cursor_cls):
 def test_crud_selectone(abstract_crud):
     abstract_crud.selectone()
 
-    assert abstract_crud._cursor.get_executed(0) == abstract_crud._query.select()
+    assert abstract_crud._cursor.get_executed(0) == \
+        abstract_crud._query.select()
     assert abstract_crud._cursor.get_fetched(0) == {}
 
 

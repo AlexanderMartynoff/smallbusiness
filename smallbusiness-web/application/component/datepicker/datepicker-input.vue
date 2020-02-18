@@ -5,8 +5,7 @@
                :class="inputClasses"
                v-model="displayDate"
                @change="onDisplayDateChange"
-               @focus="showDatepickerDropdownEl"
-               @click.stop/>
+               @click.stop="showDatepickerDropdownEl"/>
 
             <div class="card datepicker-dropdown"
                  ref="datepickerDropdownEl"
@@ -21,7 +20,7 @@
             </div>
 
         <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" @click.stop="doFocus()">
+            <button class="btn btn-outline-secondary" type="button" @click.stop="showDatepickerDropdownEl">
                 <i class="far fa-calendar-alt"></i>
             </button>
         </div>

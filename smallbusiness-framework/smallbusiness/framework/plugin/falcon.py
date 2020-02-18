@@ -3,7 +3,7 @@ import json
 from typing import Dict, List, Union, Callable, AnyStr, Any
 
 from falcon import response, request
-from cached_property import cached_property
+from cached_property import cached_property as cachedproperty
 import sqlite3
 
 
@@ -36,7 +36,8 @@ def convert_notation(data: Any,
         ) for key, value in data.items()}
 
     elif isinstance(data, list):
-        return [convert_notation(value, atom_converter, True) for value in data]
+        return [convert_notation(
+            value, atom_converter, True) for value in data]
 
     elif not ignore_if_atom and isinstance(data, str):
         return atom_converter(data)
@@ -45,7 +46,7 @@ def convert_notation(data: Any,
 
 
 class Request(request.Request):
-    @cached_property
+    @cachedproperty
     def json(self):
         return self._convert(json.loads(self.stream.read().decode(ENCODING)))
 

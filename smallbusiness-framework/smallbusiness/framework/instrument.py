@@ -3,7 +3,7 @@ from itertools import groupby
 from collections import defaultdict
 import num2words
 
-
+# aliases
 CRUDItem = Dict[str, Any]
 CRUDItems = List[CRUDItem]
 
@@ -14,9 +14,8 @@ def groupbycrud(source_items: CRUDItems,
 
     groups: Dict[str, CRUDItems] = defaultdict(list)
 
-    for operation, grouped_items in groupby(
-        source_items, lambda source_item: source_item.get('_crud', None)
-    ):
+    for operation, grouped_items in groupby(source_items, lambda source_item: source_item.get(key, None)):
+
         if operation is not None:
 
             if update is None:

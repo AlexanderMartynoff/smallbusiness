@@ -12,7 +12,7 @@ class Translator:
         self._translation = gettext.translation(
             domain='framework',
             localedir=join(FRAMEWORK_RESOURCE_DIR, 'i18n/locale'),
-            languages=['en', 'ru']
+            languages=['ru', 'en']
         )
 
     def __call__(self, *args, **kwargs):

@@ -10,7 +10,7 @@ smtp:
     host: 'smtp.mail.ru'
     port: 465
     user: 'triplustri@mail.ru'
-    password: '99@marmazetka'
+    password: 'OhtPRAat31r%'
     from: 'triplustri@mail.ru'
 database:
     # sqlite, postgres, mysql
